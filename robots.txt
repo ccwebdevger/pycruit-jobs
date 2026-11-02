@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://jobs.pycruit.de/sitemap.xml
