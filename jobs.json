@@ -1,0 +1,38 @@
+[
+ {
+  "slug": "senior-controller-leipzig-nszk",
+  "titel": "Senior Controller (m/w/d)",
+  "ort": "Leipzig",
+  "plz": "",
+  "region": "Sachsen",
+  "arbeitszeit": "Vollzeit",
+  "homeoffice": "2 Tage pro Woche",
+  "gehalt_von": 75000,
+  "gehalt_bis": 85000,
+  "gehalt_zeigen": true,
+  "einleitung": "Sie verantworten das Controlling und den Monatsabschluss und sind Ansprechpartner für die Fachbereiche. Mit Ihren Analysen unterstützen Sie das Management bei wirtschaftlichen Entscheidungen.",
+  "ueber_unternehmen": "Unser Auftraggeber ist ein Unternehmen in der Region Leipzig. Das Finanzteam sucht Verstärkung im Controlling. Weitere Angaben zum Unternehmen erhalten Sie im persönlichen Gespräch.",
+  "aufgaben": [
+   "Sie steuern den Monatsabschluss nach HGB und stimmen ihn mit der Buchhaltung ab.",
+   "Sie erstellen Berichte und analysieren Abweichungen zu Plan und Vorjahr.",
+   "Sie pflegen Controllingprozesse und Auswertungen in SAP S/4HANA.",
+   "Sie beraten Führungskräfte und Fachbereiche mit belastbaren Zahlen.",
+   "Sie wirken bei Planung und Forecast mit."
+  ],
+  "profil": [
+   "Abgeschlossenes Studium der BWL mit Schwerpunkt Controlling",
+   "Mehrere Jahre Erfahrung im Controlling, idealerweise etwa 5 Jahre",
+   "Sichere Kenntnisse in SAP S/4HANA",
+   "Praxis im Monatsabschluss nach HGB",
+   "Sehr gutes Deutsch in Wort und Schrift"
+  ],
+  "angebot": [
+   "Unbefristete Festanstellung in Vollzeit",
+   "Homeoffice an 2 Tagen pro Woche",
+   "Arbeitsort Leipzig"
+  ],
+  "datum": "2026-11-02",
+  "gueltig_bis": "2027-01-01",
+  "deal_id": 145
+ }
+]
