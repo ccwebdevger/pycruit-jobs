@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Anzeige prüfen und freigeben | pycruit</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+.lay{display:grid;grid-template-columns:minmax(0,440px) minmax(0,1fr);gap:24px;max-width:1400px;margin:0 auto;padding:24px 20px}
+@media(max-width:980px){.lay{grid-template-columns:1fr}}
+.panel{position:sticky;top:16px;align-self:start;max-height:calc(100vh - 32px);overflow:auto}
+.panel .form{padding:20px}
+.panel label{margin-top:12px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.prev{border:1px solid var(--ln);border-radius:18px;overflow:hidden;background:#fff;min-height:70vh}
+.prev iframe{width:100%;height:100%;min-height:80vh;border:0;display:block}
+.bar{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn2{display:inline-flex;align-items:center;justify-content:center;font:inherit;font-weight:600;font-size:15px;border:1px solid #CFCFCF;background:#fff;color:var(--tx);border-radius:999px;padding:12px 20px;cursor:pointer}
+.btn2:hover{border-color:var(--pk);color:var(--pk)}
+.st{display:inline-block;font-size:13px;font-weight:600;border-radius:999px;padding:4px 10px;background:#F1EDF0;color:#5A5A5A}
+.st.on{background:#E3F4EA;color:#1E8A50}.st.ent{background:#FBF0DA;color:#9A6400}
+.hint{font-size:13px;color:var(--tx3);margin:6px 0 0}
+</style>
+</head><body>
+<header class="top"><div class="wrap" style="max-width:1400px"><img src="/assets/logo.png" alt="pycruit" width="82" height="36"><span class="st" id="st">wird geladen</span></div></header>
+<div class="lay">
+ <div class="panel"><form class="form" id="f" onsubmit="return false">
+  <h2 style="font-size:22px">Anzeige prüfen</h2>
+  <p class="sub" id="info">Einen Moment …</p>
+  <label for="titel">Titel</label><input type="text" id="titel" maxlength="120">
+  <div class="row2"><div><label for="ort">Ort</label><input type="text" id="ort" maxlength="80"></div><div><label for="plz">PLZ <span class="opt">(optional)</span></label><input type="text" id="plz" maxlength="5"></div></div>
+  <div class="row2"><div><label for="arbeitszeit">Arbeitszeit</label><select id="arbeitszeit"><option>Vollzeit</option><option>Teilzeit</option><option>Vollzeit oder Teilzeit</option></select></div><div><label for="homeoffice">Homeoffice <span class="opt">(leer = keins)</span></label><input type="text" id="homeoffice" maxlength="60"></div></div>
+  <div class="row2"><div><label for="gehalt_von">Gehalt von</label><input type="text" id="gehalt_von" inputmode="numeric"></div><div><label for="gehalt_bis">Gehalt bis</label><input type="text" id="gehalt_bis" inputmode="numeric"></div></div>
+  <label class="chk" style="margin-top:10px"><input type="checkbox" id="gehalt_zeigen"><span>Gehalt in der Anzeige zeigen</span></label>
+  <label for="einleitung">Einleitung</label><textarea id="einleitung" maxlength="600"></textarea>
+  <label for="ueber_unternehmen">Das Unternehmen (anonym)</label><textarea id="ueber_unternehmen" maxlength="600"></textarea>
+  <p class="hint">Keinen Namen, keine Produkte, nichts, woran man das Unternehmen erkennt.</p>
+  <label for="aufgaben">Aufgaben <span class="opt">(eine pro Zeile)</span></label><textarea id="aufgaben" style="min-height:130px"></textarea>
+  <label for="profil">Profil <span class="opt">(eine pro Zeile)</span></label><textarea id="profil" style="min-height:130px"></textarea>
+  <label for="angebot">Das bietet das Unternehmen <span class="opt">(eine pro Zeile)</span></label><textarea id="angebot" style="min-height:110px"></textarea>
+  <label for="gueltig_bis">Online bis</label><input type="text" id="gueltig_bis" placeholder="JJJJ-MM-TT">
+  <div class="bar">
+   <button class="btn" type="button" id="b-frei">Speichern und veröffentlichen</button>
+   <button class="btn2" type="button" id="b-save">Nur speichern</button>
+   <button class="btn2" type="button" id="b-off" style="display:none">Offline nehmen</button>
+  </div>
+  <div class="msg" id="msg" role="status" aria-live="polite"></div>
+ </form></div>
+ <div class="prev"><iframe id="pv" title="Vorschau" sandbox="allow-same-origin"></iframe></div>
+</div>
+<script src="/freigabe/render.js"></script>
+<script>
+(function(){
+ var ZIEL='https://ccpycruit.app.n8n.cloud/webhook/pycruit-anzeige';
+ var h=new URLSearchParams(location.hash.slice(1));var D=h.get('d'),T=h.get('t');
+ var F=['titel','ort','plz','arbeitszeit','homeoffice','gehalt_von','gehalt_bis','einleitung','ueber_unternehmen','gueltig_bis'];
+ var L=['aufgaben','profil','angebot'];var job=null;var $=function(i){return document.getElementById(i)};
+ function msg(t,ok){var m=$('msg');m.className='msg '+(ok?'ok':'err');m.textContent=t}
+ function zahl(v){v=String(v||'').replace(/[^\d]/g,'');return v?Number(v):null}
+ function lesen(){var j=Object.assign({},job);F.forEach(function(k){j[k]=$(k).value.trim()});L.forEach(function(k){j[k]=$(k).value.split('\n').map(function(s){return s.replace(/^[\s•\-–*]+/,'').trim()}).filter(Boolean)});j.gehalt_von=zahl(j.gehalt_von);j.gehalt_bis=zahl(j.gehalt_bis);j.gehalt_zeigen=$('gehalt_zeigen').checked;return j}
+ function fuellen(j){F.forEach(function(k){$(k).value=j[k]==null?'':j[k]});L.forEach(function(k){$(k).value=(j[k]||[]).join('\n')});$('gehalt_zeigen').checked=!!j.gehalt_zeigen}
+ function vorschau(){try{var html=stellenSeite(lesen()).replace('<head>','<head><base href="https://jobs.pycruit.de/">');$('pv').srcdoc=html}catch(e){}}
+ function status(s,link){var e=$('st');e.textContent=s||'Entwurf';e.className='st '+(s==='Online'?'on':(s==='Entwurf'?'ent':''));$('b-off').style.display=s==='Online'?'':'none';$('b-frei').textContent=s==='Online'?'Änderungen veröffentlichen':'Speichern und veröffentlichen';$('info').innerHTML=s==='Online'&&link?'Online unter <a href="'+link+'" target="_blank" rel="noopener">'+link.replace('https://','')+'</a>':'Prüfen, anpassen und veröffentlichen. Rechts sehen Sie die Vorschau.'}
+ function senden(aktion,extra){return fetch(ZIEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({d:D,t:T,aktion:aktion},extra||{}))}).then(function(r){return r.json().catch(function(){return{ok:false}})})}
+ if(!D||!T){msg('Der Link ist unvollständig. Bitte öffnen Sie ihn direkt aus der Mail.',false);return}
+ senden('laden').then(function(r){if(!r.ok){msg(r.fehler||'Der Link ist ungültig oder abgelaufen.',false);$('st').textContent='nicht gefunden';return}job=r.job;fuellen(job);status(r.status,r.link);vorschau()});
+ document.querySelectorAll('#f input,#f textarea,#f select').forEach(function(el){el.addEventListener('input',vorschau);el.addEventListener('change',vorschau)});
+ function knopf(id,aktion,txt){$(id).addEventListener('click',function(){if(!job)return;if(aktion==='offline'&&!confirm('Anzeige wirklich offline nehmen?'))return;var j=lesen();if(aktion!=='offline'&&(!j.titel||!j.ort||!j.aufgaben.length||!j.profil.length)){msg('Titel, Ort, Aufgaben und Profil brauchen wir mindestens.',false);return}var b=$(id),a=b.textContent;b.disabled=true;b.textContent='Einen Moment …';senden(aktion,{job:j}).then(function(r){b.disabled=false;b.textContent=a;if(r.ok){if(r.job){job=r.job;fuellen(job)}status(r.status,r.link);msg(txt+(r.link&&aktion==='freigeben'?' Die Seite ist in etwa einer Minute erreichbar.':''),true)}else msg(r.fehler||'Das hat nicht geklappt. Bitte noch einmal versuchen.',false)}).catch(function(){b.disabled=false;b.textContent=a;msg('Keine Verbindung. Bitte noch einmal versuchen.',false)})})}
+ knopf('b-save','speichern','Gespeichert.');knopf('b-frei','freigeben','Veröffentlicht.');knopf('b-off','offline','Die Anzeige ist offline.');
+})();
+</script>
+</body></html>
