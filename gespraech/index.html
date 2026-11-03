@@ -87,6 +87,8 @@
 
  <h2>Zustimmungen im Gespräch</h2>
  <label class="chk"><input type="checkbox" id="z_kunde"><span>Der Kandidat möchte dem Unternehmen dieser Stelle vorgestellt werden. Er weiß, um welches Unternehmen es geht.</span></label>
+ <label for="quelle" style="margin-top:10px">Wie hat er zugestimmt?</label>
+ <select id="quelle"><option value="gespraech">Mündlich im Gespräch</option><option value="linkedin">CV im LinkedIn-Chat geschickt, nachdem wir nach dem Unternehmen gefragt haben</option><option value="xing">CV im Xing-Chat geschickt, nachdem wir nach dem Unternehmen gefragt haben</option></select>
  <label class="chk"><input type="checkbox" id="z_weitere"><span>Wir dürfen sein Profil auch anderen passenden Arbeitgebern anbieten, zunächst anonymisiert, für zwölf Monate.</span></label>
  <p class="hint">Der Kandidat bekommt danach eine Mail und bestätigt beide Punkte noch einmal schriftlich.</p>
 
@@ -124,7 +126,7 @@
   var a=[];$('anf').querySelectorAll('select').forEach(function(s){a.push({punkt:anf[Number(s.dataset.i)],bewertung:s.value})});
   var daten={k:$('kandidat').value,datum:$('datum').value,art:$('art').value,modus:modus,transkript:modus==='transkript'?transkript:'',aufzeichnung:modus==='transkript'&&$('aufzeichnung').checked,
    motivation:$('motivation').value.trim(),verfuegbar:$('verfuegbar').value.trim(),wohnort:$('wohnort').value.trim(),gehalt_ist:$('gehalt_ist').value.trim(),gehalt_wunsch:$('gehalt_wunsch').value.trim(),mobilitaet:$('mobilitaet').value.trim(),homeoffice:$('homeoffice').value.trim(),
-   anforderungen:a,staerken:$('staerken').value.trim(),bedenken:$('bedenken').value.trim(),status:$('status').value,sterne:st?st.value:'',z_kunde:$('z_kunde').checked,z_weitere:$('z_weitere').checked};
+   anforderungen:a,staerken:$('staerken').value.trim(),bedenken:$('bedenken').value.trim(),status:$('status').value,sterne:st?st.value:'',z_kunde:$('z_kunde').checked,z_weitere:$('z_weitere').checked,quelle:$('quelle').value};
   if(!daten.sterne){msg('Bitte die Vermittelbarkeit wählen.',false);return}
   var b=$('senden');b.disabled=true;b.textContent=modus==='transkript'?'Die KI liest das Transkript …':'Einen Moment …';
   senden('speichern',{daten:daten}).then(function(r){b.disabled=false;b.textContent='Speichern';if(r.ok){msg('Gespeichert. '+daten.k+' steht jetzt auf „'+daten.status+'“. Die Gesprächsnotiz ist am Deal in Pipedrive.'+(r.link?(r.mail?' Der Kandidat hat eine Mail zur schriftlichen Bestätigung bekommen.':' In Pipedrive ist keine Mail-Adresse hinterlegt. Bitte schicken Sie ihm diesen Link zur Bestätigung, zum Beispiel über LinkedIn: '+r.link):''),true)}else msg(r.fehler||'Das hat nicht geklappt. Bitte noch einmal versuchen.',false)}).catch(function(){b.disabled=false;b.textContent='Speichern';msg('Keine Verbindung oder Zeitüberschreitung. Bitte in Pipedrive prüfen, ob die Notiz angekommen ist.',false)})});
