@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Kandidatenprofil prüfen | pycruit</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+.lay{display:grid;grid-template-columns:minmax(0,460px) minmax(0,1fr);gap:24px;max-width:1440px;margin:0 auto;padding:24px 20px}
+@media(max-width:1020px){.lay{grid-template-columns:1fr}}
+.panel{position:sticky;top:16px;align-self:start;max-height:calc(100vh - 32px);overflow:auto}
+.panel .form{padding:20px}.panel label{margin-top:12px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.prev{border:1px solid var(--ln);border-radius:18px;overflow:auto;background:#EDEDED;padding:16px}
+.prev iframe{width:794px;height:2260px;border:0;display:block;margin:0 auto;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.08)}
+.hint{font-size:12.5px;color:var(--tx3);margin:4px 0 0}
+.bar{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.btn2{display:inline-flex;align-items:center;justify-content:center;font:inherit;font-weight:600;font-size:15px;border:1px solid #CFCFCF;background:#fff;color:var(--tx);border-radius:999px;padding:12px 20px;cursor:pointer}
+textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px;min-height:120px}
+</style>
+</head><body>
+<header class="top"><div class="wrap" style="max-width:1440px"><img src="/assets/logo.png" alt="pycruit" width="82" height="36"><span class="opt" id="kopf">Kandidatenprofil</span></div></header>
+<div class="lay">
+ <div class="panel"><form class="form" id="f" onsubmit="return false">
+  <h2 style="font-size:22px">Profil prüfen</h2>
+  <p class="sub" id="info">Einen Moment …</p>
+  <div id="inhalt" style="display:none">
+  <label for="rolle">Zeile unter dem Namen</label><input type="text" id="rolle" maxlength="160">
+  <div class="row2"><div><label for="verfuegbar">Verfügbar</label><input type="text" id="verfuegbar" maxlength="60"></div><div><label for="gehalt">Gehaltswunsch</label><input type="text" id="gehalt" maxlength="60"></div></div>
+  <div class="row2"><div><label for="wohnort">Wohnort</label><input type="text" id="wohnort" maxlength="60"></div><div><label for="arbeitsmodell">Arbeitsmodell</label><input type="text" id="arbeitsmodell" maxlength="60"></div></div>
+  <label for="einschaetzung">Unsere Einschätzung</label><textarea id="einschaetzung" maxlength="900" style="min-height:120px"></textarea>
+  <label for="wechselmotivation">Wechselmotivation</label><input type="text" id="wechselmotivation" maxlength="300">
+  <label for="offen">Offen / im Gespräch klären</label><input type="text" id="offen" maxlength="300">
+  <label for="passung">Passung</label><textarea id="passung" class="mono"></textarea>
+  <p class="hint">Eine Zeile pro Kriterium: Kriterium | muss oder kann | erfüllt, teilweise oder offen | Beleg</p>
+  <label for="werdegang">Werdegang</label><textarea id="werdegang" class="mono" style="min-height:200px"></textarea>
+  <p class="hint">Pro Station: erste Zeile Zeit | Titel | Arbeitgeber, Ort. Darunter Punkte mit „- “. Leerzeile zwischen den Stationen.</p>
+  <label for="ausbildung">Ausbildung</label><textarea id="ausbildung" class="mono" style="min-height:70px"></textarea>
+  <p class="hint">Abschluss | Hochschule, Jahr</p>
+  <label for="sprachen">Sprachen</label><textarea id="sprachen" class="mono" style="min-height:60px"></textarea>
+  <p class="hint">Sprache | Niveau</p>
+  <label for="kenntnisse">Kenntnisse</label><input type="text" id="kenntnisse">
+  <p class="hint">Mit Komma getrennt. Ein * davor hebt die Kenntnis hervor.</p>
+  <label for="naechster_schritt">Nächster Schritt</label><textarea id="naechster_schritt" maxlength="400"></textarea>
+  <div class="bar"><button class="btn" type="button" id="b-frei">Freigeben und PDF erstellen</button><button class="btn2" type="button" id="b-save">Nur speichern</button></div>
+  <div class="msg" id="msg" role="status" aria-live="polite"></div>
+  </div>
+ </form></div>
+ <div class="prev"><iframe id="pv" title="Vorschau" sandbox="allow-same-origin"></iframe></div>
+</div>
+<script src="/profil/vorlage.js"></script>
+<script>
+(function(){
+ var ZIEL='https://ccpycruit.app.n8n.cloud/webhook/pycruit-profil';
+ var h=new URLSearchParams(location.hash.slice(1));var P={d:h.get('d'),k:h.get('k'),t:h.get('t')};var $=function(i){return document.getElementById(i)};var prof=null;
+ function msg(t,ok){var m=$('msg');m.className='msg '+(ok?'ok':'err');m.textContent=t}
+ function senden(aktion,extra){return fetch(ZIEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({aktion:aktion},P,extra||{}))}).then(function(r){return r.json().catch(function(){return{ok:false}})})}
+ var EIN=['rolle','einschaetzung','wechselmotivation','offen','naechster_schritt'],FA=['verfuegbar','gehalt','wohnort','arbeitsmodell'];
+ function sp(l){return l.split('|').map(function(x){return x.trim()})}
+ function fuellen(p){EIN.forEach(function(k){$(k).value=p[k]||''});FA.forEach(function(k){$(k).value=(p.fakten||{})[k]||''});
+  $('passung').value=(p.passung||[]).map(function(x){return [x.kriterium,x.gruppe,x.bewertung,x.beleg].join(' | ')}).join('\n');
+  $('werdegang').value=(p.werdegang||[]).map(function(x){return [x.zeit,x.titel,x.firma].join(' | ')+(x.punkte||[]).map(function(y){return '\n- '+y}).join('')}).join('\n\n');
+  $('ausbildung').value=(p.ausbildung||[]).map(function(x){return x.abschluss+' | '+x.ort_jahr}).join('\n');
+  $('sprachen').value=(p.sprachen||[]).map(function(x){return x.sprache+' | '+x.niveau}).join('\n');
+  $('kenntnisse').value=(p.kenntnisse||[]).map(function(x){return (x.top?'*':'')+x.name}).join(', ')}
+ function lesen(){var p=Object.assign({},prof);EIN.forEach(function(k){p[k]=$(k).value.trim()});p.fakten={};FA.forEach(function(k){p.fakten[k]=$(k).value.trim()});
+  p.passung=$('passung').value.split('\n').filter(function(l){return l.trim()}).map(function(l){var a=sp(l);return {kriterium:a[0]||'',gruppe:/^kann/i.test(a[1]||'')?'kann':'muss',bewertung:['erfüllt','teilweise','offen'].indexOf((a[2]||'').toLowerCase())>=0?(a[2]||'').toLowerCase():'offen',beleg:a.slice(3).join(' | ')}});
+  p.werdegang=$('werdegang').value.split(/\n\s*\n/).map(function(b){var z=b.split('\n').filter(function(l){return l.trim()});if(!z.length)return null;var a=sp(z[0]);return {zeit:a[0]||'',titel:a[1]||'',firma:a.slice(2).join(' | '),punkte:z.slice(1).map(function(l){return l.replace(/^\s*[-•*]\s*/,'').trim()}).filter(Boolean)}}).filter(Boolean);
+  p.ausbildung=$('ausbildung').value.split('\n').filter(function(l){return l.trim()}).map(function(l){var a=sp(l);return {abschluss:a[0],ort_jahr:a.slice(1).join(' | ')}});
+  p.sprachen=$('sprachen').value.split('\n').filter(function(l){return l.trim()}).map(function(l){var a=sp(l);return {sprache:a[0],niveau:a.slice(1).join(' | ')}});
+  p.kenntnisse=$('kenntnisse').value.split(',').map(function(x){x=x.trim();return x?{name:x.replace(/^\*\s*/,''),top:/^\*/.test(x)}:null}).filter(Boolean);return p}
+ function vorschau(){try{$('pv').srcdoc=profilHtml(lesen())}catch(e){}}
+ if(!P.d||!P.k||!P.t){$('info').textContent='Der Link ist unvollständig.';return}
+ senden('laden').then(function(r){if(!r.ok){$('info').textContent=r.fehler||'Der Link ist ungültig.';return}prof=r.profil;fuellen(prof);$('kopf').textContent=prof.kuerzel+' '+prof.name;
+  $('info').innerHTML='';$('info').appendChild(document.createTextNode((prof.stelle||'')+(prof.quelle?'. Grundlage: '+prof.quelle+'.':'')));if(prof.pdf){var a=document.createElement('a');a.href=prof.pdf;a.target='_blank';a.rel='noopener';a.textContent=' Freigegebenes PDF öffnen';$('info').appendChild(a)}
+  $('inhalt').style.display='';vorschau()}).catch(function(){$('info').textContent='Keine Verbindung.'});
+ document.querySelectorAll('#f input,#f textarea').forEach(function(el){el.addEventListener('input',vorschau)});
+ function knopf(id,aktion,txt){$(id).addEventListener('click',function(){if(!prof)return;var b=$(id),a=b.textContent;b.disabled=true;b.textContent=aktion==='freigeben'?'PDF wird erstellt …':'Einen Moment …';
+  senden(aktion,{profil:lesen()}).then(function(r){b.disabled=false;b.textContent=a;if(r.ok){if(r.profil)prof=r.profil;msg(txt+(r.link?' Das PDF steht in der Statustabelle und ist für den Kunden sichtbar, sobald die Zustimmung vorliegt.':''),true)}else msg(r.fehler||'Das hat nicht geklappt.',false)}).catch(function(){b.disabled=false;b.textContent=a;msg('Keine Verbindung oder Zeitüberschreitung.',false)})})}
+ knopf('b-save','speichern','Gespeichert.');knopf('b-frei','freigeben','Freigegeben.');
+})();
+</script>
+</body></html>
