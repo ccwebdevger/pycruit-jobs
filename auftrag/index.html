@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Auftragsklärung | pycruit</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+.box{max-width:820px;margin:0 auto;padding:28px 20px 60px}
+.form{padding:24px}
+.form h2{font-size:19px;margin:30px 0 2px;padding-top:18px;border-top:1px solid var(--ln)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:640px){.row2,.row3{grid-template-columns:1fr}}
+.tabs{display:flex;gap:8px;margin:10px 0 4px}
+.tab{font:inherit;font-weight:600;font-size:14px;border:1px solid #CFCFCF;background:#fff;border-radius:999px;padding:9px 16px;cursor:pointer}
+.tab.on{border-color:var(--pk);background:var(--pkbg);color:var(--pk2)}
+.hint{font-size:13px;color:var(--tx3);margin:6px 0 0}
+.dz{border:2px dashed #CFCFCF;border-radius:14px;padding:18px;text-align:center;color:var(--tx3);margin-top:8px}
+.dz b{color:var(--tx)}
+.score{border:1px solid var(--ln);border-radius:14px;padding:14px 16px;margin-top:12px;background:var(--bg2)}
+.score b{font-size:16px}
+.hide{display:none}
+.ki{font-size:14px;color:var(--tx2);margin-top:6px}
+</style>
+</head><body>
+<header class="top"><div class="wrap"><img src="/assets/logo.png" alt="pycruit" width="82" height="36"><span class="opt" id="kopf">Auftragsklärung</span></div></header>
+<main class="box">
+<form class="form" id="f" onsubmit="return false">
+ <span class="eyebrow">Intern</span>
+ <h1 style="font-size:clamp(24px,4vw,32px);margin:6px 0 4px">Auftragsklärung</h1>
+ <p class="sub" id="info">Einen Moment …</p>
+ <div id="inhalt" class="hide">
+
+ <h2 style="border:0;padding-top:0">Grundlage</h2>
+ <div class="tabs"><button type="button" class="tab on" data-m="manuell">Von Hand</button><button type="button" class="tab" data-m="transkript">Mit Transkript</button></div>
+ <div id="m-transkript" class="hide">
+  <div class="dz"><b>Transkript des Kundengesprächs</b><br>Plaud-Export oder Teams-Transkript als TXT, DOCX, SRT oder VTT<br><input type="file" id="datei" accept=".txt,.docx,.srt,.vtt,text/plain" style="margin-top:10px"></div>
+  <div id="transkriptInfo" class="hint"></div>
+  <label class="chk" style="margin-top:12px"><input type="checkbox" id="aufzeichnung"><span>Der Kunde hat der Aufzeichnung zu Beginn des Gesprächs zugestimmt.</span></label>
+  <p class="hint">Die KI füllt leere Felder aus dem Transkript. Was Sie eintragen, hat Vorrang.</p>
+ </div>
+
+ <h2>Stelle</h2>
+ <div class="row2"><div><label for="titel">Stellentitel</label><input id="titel" maxlength="120"></div><div><label for="ort">Arbeitsort</label><input id="ort" maxlength="80"></div></div>
+ <div class="row3">
+  <div><label for="arbeitszeit">Arbeitszeit</label><select id="arbeitszeit"><option>Vollzeit</option><option>Teilzeit</option><option>Vollzeit oder Teilzeit</option></select></div>
+  <div><label for="homeoffice">Homeoffice</label><input id="homeoffice" maxlength="60" placeholder="z. B. 2 Tage/Woche"></div>
+  <div><label for="niveau">Anforderungsniveau</label><select id="niveau"><option value="">bitte wählen</option><option value="80">1 Helfer</option><option value="81">2 Fachkraft</option><option value="82">3 Spezialist</option><option value="83">4 Experte</option></select></div>
+ </div>
+ <div class="row3">
+  <div><label for="gehalt_von">Gehalt von (brutto/Jahr)</label><input id="gehalt_von" inputmode="numeric"></div>
+  <div><label for="gehalt_bis">Gehalt bis</label><input id="gehalt_bis" inputmode="numeric"></div>
+  <div><label for="starttermin">Gewünschter Start</label><input type="date" id="starttermin"></div>
+ </div>
+ <label for="aufgaben">Aufgaben <span class="opt">(eine pro Zeile)</span></label><textarea id="aufgaben"></textarea>
+ <label for="muss">Muss-Kriterien <span class="opt">(eine pro Zeile)</span></label><textarea id="muss"></textarea>
+ <label for="kann">Kann-Kriterien <span class="opt">(eine pro Zeile)</span></label><textarea id="kann"></textarea>
+ <label for="vorstationen">Typische Vorstationen / Zielfirmen</label><input id="vorstationen" maxlength="300">
+
+ <h2>Hintergrund</h2>
+ <div class="row2">
+  <div><label for="grund">Warum ist die Stelle offen?</label><select id="grund"><option value="">bitte wählen</option><option>Nachbesetzung</option><option>Neu geschaffen</option><option>Wachstum</option><option>Interim / Vertretung</option></select></div>
+  <div><label for="offen_seit">Offen seit</label><input id="offen_seit" maxlength="60" placeholder="z. B. 3 Monaten"></div>
+ </div>
+ <label for="bisher">Was wurde bisher versucht?</label><textarea id="bisher" maxlength="1500" placeholder="Anzeigen, andere Dienstleister, eigene Ansprache, Ergebnis"></textarea>
+ <label for="folgen">Was passiert, wenn die Stelle unbesetzt bleibt?</label><textarea id="folgen" maxlength="1500"></textarea>
+ <div class="row2">
+  <div><label for="entscheider">Wer entscheidet?</label><input id="entscheider" maxlength="160"></div>
+  <div><label for="team">Team / Berichtslinie</label><input id="team" maxlength="160"></div>
+ </div>
+
+ <h2>Angebot und Anzeige</h2>
+ <label for="firma_text">Das Unternehmen in zwei, drei Sätzen</label><textarea id="firma_text" maxlength="800"></textarea>
+ <label for="benefits">Was bietet das Unternehmen? <span class="opt">(eine pro Zeile)</span></label><textarea id="benefits"></textarea>
+ <div class="row2">
+  <div><label for="anzeige">Anzeige auf jobs.pycruit.de</label><select id="anzeige"><option value="ja">ja</option><option value="nein">nein</option></select></div>
+  <div><label for="name_zeigen">Firmenname darf genannt werden</label><select id="name_zeigen"><option value="nein">nein, anonym</option><option value="ja">ja</option></select></div>
+ </div>
+
+ <h2>Prozess</h2>
+ <label for="schritte">Auswahlprozess</label><input id="schritte" maxlength="300" placeholder="z. B. Teams-Gespräch HR, dann vor Ort mit Fachbereich">
+ <div class="row2">
+  <div><label for="ansprechpartner">Ansprechpartner für Kandidaten-Feedback</label><input id="ansprechpartner" maxlength="160"></div>
+  <div><label for="feedback_tage">Feedback zugesagt innerhalb von (Werktagen)</label><input id="feedback_tage" inputmode="numeric" maxlength="2"></div>
+ </div>
+
+ <h2>Grenzen</h2>
+ <label for="offlimits">Off-Limits: Firmen, aus denen wir nicht abwerben <span class="opt">(eine pro Zeile)</span></label><textarea id="offlimits"></textarea>
+ <label for="nogos">Sonstige No-Gos</label><input id="nogos" maxlength="300">
+
+ <h2>Vertrag</h2>
+ <div class="row3">
+  <div><label for="exklusiv">Exklusiv</label><select id="exklusiv"><option value="">offen</option><option value="84">Ja</option><option value="85">Nein</option></select></div>
+  <div><label for="honorar">Honorar (Euro netto)</label><input id="honorar" inputmode="numeric"></div>
+  <div><label for="agb">AGB-Fassung</label><input id="agb" maxlength="60"></div>
+ </div>
+ <div class="row2">
+  <div><label for="verantwortlich">Jobverantwortlich</label><select id="verantwortlich"><option value="24260132">Christian</option><option value="24263740">Tina</option></select></div>
+  <div><label for="auftrag_am">Auftrag erteilt am <span class="opt">(leer = noch nicht)</span></label><input type="date" id="auftrag_am"></div>
+ </div>
+ <p class="hint">Mit einem Datum bei „Auftrag erteilt am“ rückt der Deal auf „Auftrag erteilt“, und die Statustabellen werden angelegt.</p>
+
+ <h2>Bewertung</h2>
+ <div class="row2">
+  <div><label for="hot">Hot: Pain und Commitment (1 bis 10)</label><select id="hot"></select></div>
+  <div><label for="sexy">Sexy: Attraktivität der Stelle (1 bis 10)</label><select id="sexy"></select></div>
+ </div>
+ <p class="hint">Leer lassen heißt: Die KI macht einen Vorschlag mit Begründung. Den können Sie danach ändern.</p>
+ <div id="kiBox" class="score hide"></div>
+
+ <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap"><button class="btn" type="button" id="senden">Speichern</button></div>
+ <div class="msg" id="msg" role="status" aria-live="polite"></div>
+ </div>
+</form>
+</main>
+<script src="/assets/mammoth.min.js" defer></script>
+<script>
+(function(){
+ var ZIEL='https://ccpycruit.app.n8n.cloud/webhook/pycruit-auftrag';
+ var h=new URLSearchParams(location.hash.slice(1));var D=h.get('d'),T=h.get('t');
+ var $=function(i){return document.getElementById(i)};var modus='manuell';var transkript='';
+ var TXT=['titel','ort','arbeitszeit','homeoffice','niveau','gehalt_von','gehalt_bis','starttermin','vorstationen','grund','offen_seit','bisher','folgen','entscheider','team','firma_text','anzeige','name_zeigen','schritte','ansprechpartner','feedback_tage','nogos','exklusiv','honorar','agb','verantwortlich','auftrag_am','hot','sexy'];
+ var LST=['aufgaben','muss','kann','benefits','offlimits'];
+ ['hot','sexy'].forEach(function(id){var s=$(id);var o=document.createElement('option');o.value='';o.textContent='KI-Vorschlag';s.appendChild(o);for(var i=10;i>=1;i--){o=document.createElement('option');o.value=String(i);o.textContent=String(i);s.appendChild(o)}});
+ function msg(t,ok){var m=$('msg');m.className='msg '+(ok?'ok':'err');m.textContent=t}
+ function senden(aktion,extra){return fetch(ZIEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({d:D,t:T,aktion:aktion},extra||{}))}).then(function(r){return r.json().catch(function(){return{ok:false}})})}
+ function fuellen(x){TXT.forEach(function(k){if(x[k]!=null&&x[k]!=='')$(k).value=String(x[k])});LST.forEach(function(k){if(Array.isArray(x[k]))$(k).value=x[k].join('\n')})}
+ function lesen(){var x={};TXT.forEach(function(k){x[k]=$(k).value.trim()});LST.forEach(function(k){x[k]=$(k).value.split('\n').map(function(s){return s.replace(/^[\s•\-–*]+/,'').trim()}).filter(Boolean)});return x}
+ function ki(r){if(!r||(!r.hot_grund&&!r.sexy_grund))return;var b=$('kiBox');b.classList.remove('hide');b.innerHTML='';[['Hot',r.hot,r.hot_grund],['Sexy',r.sexy,r.sexy_grund]].forEach(function(z){if(!z[2])return;var d=document.createElement('div');d.className='ki';var s=document.createElement('b');s.textContent=z[0]+': '+z[1]+'  ';d.appendChild(s);d.appendChild(document.createTextNode(z[2]));b.appendChild(d)})}
+ document.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){modus=b.dataset.m;document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===b)});$('m-transkript').classList.toggle('hide',modus!=='transkript')})});
+ function srtText(t){return t.replace(/\r/g,'').split('\n').filter(function(l){return l.trim()&&!/^\d+$/.test(l.trim())&&!/-->/.test(l)&&!/^WEBVTT/.test(l)&&!/^NOTE\b/.test(l)}).map(function(l){return l.replace(/<v ([^>]+)>/g,'$1: ').replace(/<[^>]+>/g,'')}).join('\n')}
+ $('datei').addEventListener('change',function(){var f=this.files[0];transkript='';$('transkriptInfo').textContent='';if(!f)return;if(f.size>5*1024*1024){$('transkriptInfo').textContent='Die Datei ist größer als 5 MB.';return}
+  var name=f.name.toLowerCase();var fertig=function(t){transkript=String(t||'').trim().slice(0,120000);$('transkriptInfo').textContent=transkript?('Transkript gelesen: '+transkript.length.toLocaleString('de-DE')+' Zeichen.'):'In der Datei war kein Text.'};
+  if(/\.docx$/.test(name)){if(!window.mammoth){$('transkriptInfo').textContent='DOCX lässt sich gerade nicht lesen. Bitte als TXT exportieren.';return}f.arrayBuffer().then(function(b){return mammoth.extractRawText({arrayBuffer:b})}).then(function(r){fertig(r.value)}).catch(function(){$('transkriptInfo').textContent='Die DOCX-Datei ließ sich nicht lesen.'})}
+  else f.text().then(function(t){fertig(/\.(srt|vtt)$/.test(name)?srtText(t):t)})});
+ if(!D||!T){$('info').textContent='Der Link ist unvollständig. Bitte öffnen Sie ihn aus Pipedrive.';return}
+ senden('laden').then(function(r){if(!r.ok){$('info').textContent=r.fehler||'Der Link ist ungültig.';return}
+  $('info').textContent=r.titel;$('kopf').textContent=r.titel;fuellen(r.daten||{});ki(r.daten||{});$('inhalt').classList.remove('hide')}).catch(function(){$('info').textContent='Keine Verbindung.'});
+ $('senden').addEventListener('click',function(){
+  if(modus==='transkript'){if(!transkript){msg('Bitte ein Transkript wählen oder auf „Von Hand“ wechseln.',false);return}if(!$('aufzeichnung').checked){msg('Ohne Zustimmung zur Aufzeichnung dürfen wir das Transkript nicht verwenden.',false);return}}
+  var x=lesen();x.modus=modus;x.transkript=modus==='transkript'?transkript:'';x.aufzeichnung=modus==='transkript'&&$('aufzeichnung').checked;
+  if(!x.titel){msg('Den Stellentitel brauchen wir mindestens.',false);return}
+  var b=$('senden');b.disabled=true;b.textContent=(modus==='transkript'||!x.hot||!x.sexy)?'Die KI arbeitet …':'Einen Moment …';
+  senden('speichern',{daten:x}).then(function(r){b.disabled=false;b.textContent='Speichern';if(r.ok){if(r.daten){fuellen(r.daten);ki(r.daten)}msg('Gespeichert.'+(r.erteilt?' Der Deal steht auf „Auftrag erteilt“.':'')+(r.tabellen?' Die Statustabellen sind angelegt, die Links stehen als Notiz am Deal.':''),true)}else msg(r.fehler||'Das hat nicht geklappt. Bitte noch einmal versuchen.',false)}).catch(function(){b.disabled=false;b.textContent='Speichern';msg('Keine Verbindung oder Zeitüberschreitung. Bitte in Pipedrive prüfen.',false)})});
+})();
+</script>
+</body></html>
