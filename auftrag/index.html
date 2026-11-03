@@ -42,32 +42,32 @@
  </div>
 
  <h2>Stelle</h2>
- <div class="row2"><div><label for="titel">Stellentitel</label><input id="titel" maxlength="120"></div><div><label for="ort">Arbeitsort</label><input id="ort" maxlength="80"></div></div>
+ <div class="row2"><div><label for="titel">Stellentitel</label><input type="text" id="titel" maxlength="120"></div><div><label for="ort">Arbeitsort</label><input type="text" id="ort" maxlength="80"></div></div>
  <div class="row3">
   <div><label for="arbeitszeit">Arbeitszeit</label><select id="arbeitszeit"><option>Vollzeit</option><option>Teilzeit</option><option>Vollzeit oder Teilzeit</option></select></div>
-  <div><label for="homeoffice">Homeoffice</label><input id="homeoffice" maxlength="60" placeholder="z. B. 2 Tage/Woche"></div>
+  <div><label for="homeoffice">Homeoffice</label><input type="text" id="homeoffice" maxlength="60" placeholder="z. B. 2 Tage/Woche"></div>
   <div><label for="niveau">Anforderungsniveau</label><select id="niveau"><option value="">bitte wählen</option><option value="80">1 Helfer</option><option value="81">2 Fachkraft</option><option value="82">3 Spezialist</option><option value="83">4 Experte</option></select></div>
  </div>
  <div class="row3">
-  <div><label for="gehalt_von">Gehalt von (brutto/Jahr)</label><input id="gehalt_von" inputmode="numeric"></div>
-  <div><label for="gehalt_bis">Gehalt bis</label><input id="gehalt_bis" inputmode="numeric"></div>
+  <div><label for="gehalt_von">Gehalt von (brutto/Jahr)</label><input type="text" id="gehalt_von" inputmode="numeric"></div>
+  <div><label for="gehalt_bis">Gehalt bis</label><input type="text" id="gehalt_bis" inputmode="numeric"></div>
   <div><label for="starttermin">Gewünschter Start</label><input type="date" id="starttermin"></div>
  </div>
  <label for="aufgaben">Aufgaben <span class="opt">(eine pro Zeile)</span></label><textarea id="aufgaben"></textarea>
  <label for="muss">Muss-Kriterien <span class="opt">(eine pro Zeile)</span></label><textarea id="muss"></textarea>
  <label for="kann">Kann-Kriterien <span class="opt">(eine pro Zeile)</span></label><textarea id="kann"></textarea>
- <label for="vorstationen">Typische Vorstationen / Zielfirmen</label><input id="vorstationen" maxlength="300">
+ <label for="vorstationen">Typische Vorstationen / Zielfirmen</label><input type="text" id="vorstationen" maxlength="300">
 
  <h2>Hintergrund</h2>
  <div class="row2">
   <div><label for="grund">Warum ist die Stelle offen?</label><select id="grund"><option value="">bitte wählen</option><option>Nachbesetzung</option><option>Neu geschaffen</option><option>Wachstum</option><option>Interim / Vertretung</option></select></div>
-  <div><label for="offen_seit">Offen seit</label><input id="offen_seit" maxlength="60" placeholder="z. B. 3 Monaten"></div>
+  <div><label for="offen_seit">Offen seit</label><input type="text" id="offen_seit" maxlength="60" placeholder="z. B. 3 Monaten"></div>
  </div>
  <label for="bisher">Was wurde bisher versucht?</label><textarea id="bisher" maxlength="1500" placeholder="Anzeigen, andere Dienstleister, eigene Ansprache, Ergebnis"></textarea>
  <label for="folgen">Was passiert, wenn die Stelle unbesetzt bleibt?</label><textarea id="folgen" maxlength="1500"></textarea>
  <div class="row2">
-  <div><label for="entscheider">Wer entscheidet?</label><input id="entscheider" maxlength="160"></div>
-  <div><label for="team">Team / Berichtslinie</label><input id="team" maxlength="160"></div>
+  <div><label for="entscheider">Wer entscheidet?</label><input type="text" id="entscheider" maxlength="160"></div>
+  <div><label for="team">Team / Berichtslinie</label><input type="text" id="team" maxlength="160"></div>
  </div>
 
  <h2>Angebot und Anzeige</h2>
@@ -79,21 +79,21 @@
  </div>
 
  <h2>Prozess</h2>
- <label for="schritte">Auswahlprozess</label><input id="schritte" maxlength="300" placeholder="z. B. Teams-Gespräch HR, dann vor Ort mit Fachbereich">
+ <label for="schritte">Auswahlprozess</label><input type="text" id="schritte" maxlength="300" placeholder="z. B. Teams-Gespräch HR, dann vor Ort mit Fachbereich">
  <div class="row2">
-  <div><label for="ansprechpartner">Ansprechpartner für Kandidaten-Feedback</label><input id="ansprechpartner" maxlength="160"></div>
-  <div><label for="feedback_tage">Feedback zugesagt innerhalb von (Werktagen)</label><input id="feedback_tage" inputmode="numeric" maxlength="2"></div>
+  <div><label for="ansprechpartner">Ansprechpartner für Kandidaten-Feedback</label><input type="text" id="ansprechpartner" maxlength="160"></div>
+  <div><label for="feedback_tage">Feedback zugesagt innerhalb von (Werktagen)</label><input type="text" id="feedback_tage" inputmode="numeric" maxlength="2"></div>
  </div>
 
  <h2>Grenzen</h2>
  <label for="offlimits">Off-Limits: Firmen, aus denen wir nicht abwerben <span class="opt">(eine pro Zeile)</span></label><textarea id="offlimits"></textarea>
- <label for="nogos">Sonstige No-Gos</label><input id="nogos" maxlength="300">
+ <label for="nogos">Sonstige No-Gos</label><input type="text" id="nogos" maxlength="300">
 
  <h2>Vertrag</h2>
  <div class="row3">
   <div><label for="exklusiv">Exklusiv</label><select id="exklusiv"><option value="">offen</option><option value="84">Ja</option><option value="85">Nein</option></select></div>
-  <div><label for="honorar">Honorar (Euro netto)</label><input id="honorar" inputmode="numeric"></div>
-  <div><label for="agb">AGB-Fassung</label><input id="agb" maxlength="60"></div>
+  <div><label for="honorar">Honorar (Euro netto)</label><input type="text" id="honorar" inputmode="numeric"></div>
+  <div><label for="agb">AGB-Fassung</label><input type="text" id="agb" maxlength="60"></div>
  </div>
  <div class="row2">
   <div><label for="verantwortlich">Jobverantwortlich</label><select id="verantwortlich"><option value="24260132">Christian</option><option value="24263740">Tina</option></select></div>
