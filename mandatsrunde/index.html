@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Mandatsrunde | pycruit</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+.box{max-width:1080px;margin:0 auto;padding:28px 20px 60px}
+.m{border:1px solid var(--ln);border-radius:16px;background:#fff;padding:16px 18px;margin-top:12px;display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:6px 16px;align-items:start}
+.m.flag{border-color:var(--pk);box-shadow:0 0 0 1px var(--pk) inset}
+.rang{font-size:26px;font-weight:700;color:var(--tx3);line-height:1}
+.ti{font-weight:700;font-size:16px}
+.ti a{color:var(--tx);text-decoration:none}
+.sub2{font-size:13px;color:var(--tx3);margin-top:3px}
+.ges{font-size:28px;font-weight:700;text-align:right;line-height:1}
+.ges small{display:block;font-size:12px;font-weight:500;color:var(--tx3)}
+.werte{grid-column:2/4;display:flex;flex-wrap:wrap;gap:10px 18px;margin-top:8px}
+.w{display:flex;align-items:center;gap:8px;font-size:14px}
+.w select{width:auto;padding:6px 10px;font-size:15px;font-weight:700;border-radius:10px}
+.w .d{font-size:12px;color:var(--tx3)}
+.up{color:#1E7A43}.dn{color:#D2126C}
+.grund{grid-column:2/4;font-size:14px;color:var(--tx2);margin-top:4px}
+.flags{grid-column:2/4;display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:12px;font-weight:600;border-radius:999px;padding:3px 9px;background:var(--pkbg);color:var(--pk2)}
+.tag.g{background:#F1EDF0;color:#5A5A5A}
+.notiz{grid-column:2/4;display:none;gap:8px;margin-top:6px}
+.notiz.on{display:flex}
+.notiz input{flex:1}
+h2.grp{font-size:17px;margin:30px 0 0}
+details summary{cursor:pointer;font-weight:600;margin-top:28px}
+.leg{font-size:12px;color:var(--tx3);margin-top:24px}
+@media(max-width:640px){.m{grid-template-columns:34px minmax(0,1fr)}.ges{grid-column:2;text-align:left}.werte,.grund,.flags,.notiz{grid-column:1/3}}
+</style>
+</head><body>
+<header class="top"><div class="wrap" style="max-width:1080px"><img src="/assets/logo.png" alt="pycruit" width="82" height="36"><span class="opt" id="kopf">Mandatsrunde</span></div></header>
+<main class="box">
+ <span class="eyebrow">Intern</span>
+ <h1 style="font-size:clamp(24px,4vw,32px);margin:6px 0 4px">Mandatsrunde</h1>
+ <p class="sub" id="info">Einen Moment …</p>
+ <div id="liste"></div>
+ <p class="leg">Gesamt ist das geometrische Mittel aus Hot, Sexy und Machbarkeit. Ist einer der Werte niedrig, sinkt das Mandat deutlich. Fehlt Hot oder Sexy, zählt der Wert als 5. Wer nichts ändert, lässt alles, wie es ist. Jede Änderung wird sofort in Pipedrive gespeichert. Die Machbarkeit schätzt die KI jeden Morgen neu.</p>
+ <div class="msg" id="msg" role="status" aria-live="polite"></div>
+</main>
+<script>
+(function(){
+ var ZIEL='https://ccpycruit.app.n8n.cloud/webhook/pycruit-runde';
+ var T=new URLSearchParams(location.hash.slice(1)).get('t');var $=function(i){return document.getElementById(i)};var M=[];var heute='';
+ function msg(t,ok){var m=$('msg');m.className='msg '+(ok?'ok':'err');m.textContent=t;if(ok)setTimeout(function(){if(m.textContent===t){m.textContent='';m.className='msg'}},3000)}
+ function senden(aktion,extra){return fetch(ZIEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({t:T,aktion:aktion},extra||{}))}).then(function(r){return r.json().catch(function(){return{ok:false}})})}
+ function ges(x){return Math.round(Math.cbrt((x.hot||5)*(x.sexy||5)*(x.mb||5))*10)/10}
+ function werktage(a,b){var n=0,d=new Date(a+'T12:00:00Z'),e=new Date(b+'T12:00:00Z');while(d<e){d.setUTCDate(d.getUTCDate()+1);var w=d.getUTCDay();if(w>0&&w<6)n++}return n}
+ function aufbereiten(r){heute=r.heute;var nach={};r.verlauf.forEach(function(v){(nach[v.deal_id]=nach[v.deal_id]||[]).push(v)});
+  M=Object.keys(nach).map(function(id){var h=nach[id].sort(function(a,b){return a.datum<b.datum?-1:1});var akt=h[h.length-1];if(akt.datum!==heute)return null;var vor=h.length>1?h[h.length-2]:null;
+   var x={deal_id:akt.deal_id,mandat:akt.mandat,hot:akt.hot,sexy:akt.sexy,mb:akt.mb,mb_ki:akt.mb,grund:akt.grund,empf:akt.empf,pipe:akt.pipe,vorg:akt.vorg,tabelle:akt.tabelle,rang_gestern:vor?vor.rang:null,mb_gestern:vor?vor.mb:null};
+   r.aenderungen.filter(function(a){return a.deal_id===x.deal_id}).forEach(function(a){if(a.feld==='Hot')x.hot=a.neu;if(a.feld==='Sexy')x.sexy=a.neu;if(a.feld==='Machbarkeit')x.mb=a.neu;x.heute_geaendert=true});
+   var seit=null;for(var i=h.length-1;i>0;i--){if(h[i].hot!==h[i-1].hot||h[i].sexy!==h[i-1].sexy){seit=h[i].datum;break}}if(!seit)seit=h[0].datum;x.unveraendert=x.heute_geaendert?0:werktage(seit,heute);
+   return x}).filter(Boolean)}
+ function sel(x,feld){var s=document.createElement('select');var o=document.createElement('option');o.value='';o.textContent='–';s.appendChild(o);for(var i=10;i>=1;i--){o=document.createElement('option');o.value=i;o.textContent=i;s.appendChild(o)}s.value=x[feld]||'';
+  s.addEventListener('change',function(){var neu=Number(s.value);if(!neu){s.value=x[feld]||'';return}var alt=x[feld];x[feld]=neu;x.heute_geaendert=true;x.unveraendert=0;var karte=s.closest('.m');var n=karte.querySelector('.notiz');n.classList.add('on');n.dataset.feld=feld;n.dataset.alt=alt||'';
+   senden('setzen',{deal_id:x.deal_id,feld:feld==='mb'?'machbarkeit':feld,wert:neu,alt:alt,mandat:x.mandat}).then(function(r){if(r.ok){msg('Gespeichert: '+x.mandat,true);zeichnen()}else{x[feld]=alt;zeichnen();msg(r.fehler||'Nicht gespeichert.',false)}}).catch(function(){x[feld]=alt;zeichnen();msg('Keine Verbindung.',false)})});return s}
+ function karte(x,rang){var d=document.createElement('div');d.className='m'+(x.flag?' flag':'');
+  var r=document.createElement('div');r.className='rang';r.textContent=rang;d.appendChild(r);
+  var t=document.createElement('div');var ti=document.createElement('div');ti.className='ti';var a=document.createElement('a');a.href='https://pycruitgmbh.pipedrive.com/deal/'+x.deal_id;a.target='_blank';a.rel='noopener';a.textContent=x.mandat;ti.appendChild(a);t.appendChild(ti);
+  var s2=document.createElement('div');s2.className='sub2';var bew=x.rang_gestern?(x.rang_gestern>rang?'▲ von Rang '+x.rang_gestern:x.rang_gestern<rang?'▼ von Rang '+x.rang_gestern:'Rang unverändert'):'neu in der Runde';s2.textContent=bew+'  ·  Pipeline '+x.pipe+', vorgestellt '+x.vorg+'  ·  ';var tl=document.createElement('a');tl.href=x.tabelle;tl.target='_blank';tl.rel='noopener';tl.textContent='Statustabelle';s2.appendChild(tl);t.appendChild(s2);d.appendChild(t);
+  var g=document.createElement('div');g.className='ges';g.innerHTML='';g.appendChild(document.createTextNode(String(ges(x)).replace('.',',')));var sm=document.createElement('small');sm.textContent='Gesamt';g.appendChild(sm);d.appendChild(g);
+  var fl=document.createElement('div');fl.className='flags';(x.gruende||[]).forEach(function(z){var s=document.createElement('span');s.className='tag';s.textContent=z;fl.appendChild(s)});if(fl.childNodes.length)d.appendChild(fl);
+  var w=document.createElement('div');w.className='werte';[['Hot','hot'],['Sexy','sexy'],['Machbarkeit','mb']].forEach(function(z){var b=document.createElement('label');b.className='w';b.appendChild(document.createTextNode(z[0]));b.appendChild(sel(x,z[1]==='mb'?'mb':z[1]));
+   if(z[1]==='mb'){var dd=document.createElement('span');dd.className='d';if(x.mb!==x.mb_ki)dd.textContent='KI: '+x.mb_ki;else if(x.mb_gestern!=null&&x.mb_gestern!==x.mb){dd.textContent=(x.mb>x.mb_gestern?'▲ ':'▼ ')+'gestern '+x.mb_gestern;dd.className='d '+(x.mb>x.mb_gestern?'up':'dn')}b.appendChild(dd)}w.appendChild(b)});d.appendChild(w);
+  var gr=document.createElement('div');gr.className='grund';gr.textContent=(x.grund?'KI: '+x.grund:'')+(x.empf?'  Nächster Schritt: '+x.empf:'');d.appendChild(gr);
+  var n=document.createElement('div');n.className='notiz';var ni=document.createElement('input');ni.type='text';ni.placeholder='Kurz warum? (optional, landet als Notiz am Deal)';ni.maxLength=500;var nb=document.createElement('button');nb.type='button';nb.className='btn';nb.style.padding='8px 16px';nb.textContent='Notiz speichern';
+  nb.addEventListener('click',function(){if(!ni.value.trim()){n.classList.remove('on');return}var feld=n.dataset.feld;senden('setzen',{deal_id:x.deal_id,feld:feld==='mb'?'machbarkeit':feld,wert:x[feld],alt:n.dataset.alt,mandat:x.mandat,notiz:ni.value.trim()}).then(function(r){if(r.ok){n.classList.remove('on');msg('Notiz gespeichert.',true)}else msg(r.fehler||'Nicht gespeichert.',false)})});
+  n.appendChild(ni);n.appendChild(nb);d.appendChild(n);return d}
+ function zeichnen(){M.forEach(function(x){x.gruende=[];if(x.mb_gestern!=null&&Math.abs(x.mb_ki-x.mb_gestern)>=2)x.gruende.push('Machbarkeit '+(x.mb_ki>x.mb_gestern?'+':'')+(x.mb_ki-x.mb_gestern)+' seit gestern');if(!x.hot||!x.sexy)x.gruende.push('Hot oder Sexy fehlt');if(x.unveraendert>=3)x.gruende.push('Hot und Sexy seit '+x.unveraendert+' Arbeitstagen unverändert');x.flag=x.gruende.length>0});
+  var L=M.slice().sort(function(a,b){return ges(b)-ges(a)||b.mb-a.mb});var box=$('liste');box.innerHTML='';var f=L.filter(function(x){return x.flag}),r=L.filter(function(x){return !x.flag});
+  var h=document.createElement('h2');h.className='grp';h.textContent=f.length?'Bitte kurz anschauen ('+f.length+')':'Heute gibt es nichts Auffälliges.';box.appendChild(h);
+  L.forEach(function(x,i){x._rang=i+1});f.forEach(function(x){box.appendChild(karte(x,x._rang))});
+  if(r.length){var det=document.createElement('details');if(!f.length)det.open=true;var su=document.createElement('summary');su.textContent='Alle übrigen Mandate ('+r.length+')';det.appendChild(su);r.forEach(function(x){det.appendChild(karte(x,x._rang))});box.appendChild(det)}}
+ if(!T){$('info').textContent='Der Link ist unvollständig. Bitte den Link aus der Mail nehmen.';return}
+ senden('laden').then(function(r){if(!r.ok){$('info').textContent=r.fehler||'Der Link ist ungültig.';return}aufbereiten(r);
+  $('info').textContent=heute?('Stand '+heute.split('-').reverse().join('.')+', '+M.length+' offene Mandate'):'Noch keine Runde berechnet.';zeichnen()}).catch(function(){$('info').textContent='Keine Verbindung.'});
+})();
+</script>
+</body></html>
