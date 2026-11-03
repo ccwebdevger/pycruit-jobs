@@ -38,7 +38,7 @@
  senden('laden').then(function(r){if(!r.ok){$('info').textContent=r.fehler||'Der Link ist ungültig.';return}
   $('info').textContent=(r.vorname?'Guten Tag '+r.vorname+', b':'B')+'itte bestätigen Sie, was wir mit Ihrem Profil tun dürfen.';
   $('t_kunde').textContent='Ja, stellen Sie mich mit meinem Namen und meinen Unterlagen bei '+r.firma+' für die Stelle '+r.stelle+' vor.';
-  $('z_kunde').checked=!!(r.stand&&r.stand.kunde);$('z_weitere').checked=!!(r.stand&&r.stand.weitere);
+  var W=h.get('w');if(W){$('z_kunde').checked=(W==='beide'||W==='kunde');$('z_weitere').checked=(W==='beide'||W==='weitere');$('senden').textContent='Auswahl bestätigen'}else{$('z_kunde').checked=!!(r.stand&&r.stand.kunde);$('z_weitere').checked=!!(r.stand&&r.stand.weitere)}
   $('inhalt').classList.remove('hide')}).catch(function(){$('info').textContent='Keine Verbindung. Bitte später noch einmal versuchen.'});
  $('senden').addEventListener('click',function(){var b=$('senden');b.disabled=true;
   senden('bestaetigen',{z_kunde:$('z_kunde').checked,z_weitere:$('z_weitere').checked}).then(function(r){b.disabled=false;
