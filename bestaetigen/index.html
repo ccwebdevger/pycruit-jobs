@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bestätigung | pycruit</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+.box{max-width:640px;margin:0 auto;padding:36px 20px 60px}
+.form{padding:26px}
+.chk{margin-top:18px}
+.chk span{font-size:15px;line-height:1.55}
+.hide{display:none}
+</style>
+</head><body>
+<header class="top"><div class="wrap"><a href="/" aria-label="Alle Stellen"><img src="/assets/logo.png" alt="pycruit" width="82" height="36"></a></div></header>
+<main class="box">
+<form class="form" id="f" onsubmit="return false">
+ <h1 style="font-size:clamp(24px,4vw,30px);margin:0 0 8px">Ihre Bestätigung</h1>
+ <p class="sub" id="info">Einen Moment …</p>
+ <div id="inhalt" class="hide">
+  <label class="chk"><input type="checkbox" id="z_kunde"><span id="t_kunde"></span></label>
+  <label class="chk"><input type="checkbox" id="z_weitere"><span>Ja, bieten Sie mein Profil auch anderen passenden Arbeitgebern an. Dafür erhalten Unternehmen ein anonymisiertes Kurzprofil ohne meinen Namen, meine Kontaktdaten und meine bisherigen Arbeitgeber. Meinen Namen und Lebenslauf geben Sie erst weiter, wenn ich für das jeweilige Unternehmen zugestimmt habe. Diese Einwilligung gilt zwölf Monate. Ich kann sie jederzeit per Mail an <a href="mailto:kontakt@pycruit.de">kontakt@pycruit.de</a> widerrufen.</span></label>
+  <p class="legal" style="margin-top:18px">Beide Punkte sind freiwillig. Sie können Ihre Auswahl hier jederzeit ändern oder per Mail an kontakt@pycruit.de widerrufen. Wie wir Ihre Daten verarbeiten, steht im <a href="/datenschutz/" target="_blank" rel="noopener">Datenschutzhinweis für Bewerberinnen und Bewerber</a>.</p>
+  <button class="btn" type="button" id="senden" style="margin-top:18px">Auswahl speichern</button>
+  <div class="msg" id="msg" role="status" aria-live="polite"></div>
+ </div>
+</form>
+</main>
+<footer class="foot"><a href="https://pycruit.de/" aria-label="pycruit Startseite"><img src="/assets/logo.png" alt="pycruit" width="110" height="48"></a><p>© 2026 pycruit GmbH</p><nav><a href="https://pycruit.de/impressum">Impressum</a><a href="/datenschutz/">Datenschutz für Bewerber</a></nav></footer>
+<script>
+(function(){
+ var ZIEL='https://ccpycruit.app.n8n.cloud/webhook/pycruit-bestaetigung';
+ var h=new URLSearchParams(location.hash.slice(1));var P={d:h.get('d'),k:h.get('k'),t:h.get('t')};var $=function(i){return document.getElementById(i)};
+ function msg(t,ok){var m=$('msg');m.className='msg '+(ok?'ok':'err');m.textContent=t}
+ function senden(aktion,extra){return fetch(ZIEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({aktion:aktion},P,extra||{}))}).then(function(r){return r.json().catch(function(){return{ok:false}})})}
+ if(!P.d||!P.k||!P.t){$('info').textContent='Der Link ist unvollständig. Bitte nehmen Sie den Link aus unserer Mail.';return}
+ senden('laden').then(function(r){if(!r.ok){$('info').textContent=r.fehler||'Der Link ist ungültig.';return}
+  $('info').textContent=(r.vorname?'Guten Tag '+r.vorname+', b':'B')+'itte bestätigen Sie, was wir mit Ihrem Profil tun dürfen.';
+  $('t_kunde').textContent='Ja, stellen Sie mich mit meinem Namen und meinen Unterlagen bei '+r.firma+' für die Stelle '+r.stelle+' vor.';
+  $('z_kunde').checked=!!(r.stand&&r.stand.kunde);$('z_weitere').checked=!!(r.stand&&r.stand.weitere);
+  $('inhalt').classList.remove('hide')}).catch(function(){$('info').textContent='Keine Verbindung. Bitte später noch einmal versuchen.'});
+ $('senden').addEventListener('click',function(){var b=$('senden');b.disabled=true;
+  senden('bestaetigen',{z_kunde:$('z_kunde').checked,z_weitere:$('z_weitere').checked}).then(function(r){b.disabled=false;
+   if(r.ok)msg($('z_kunde').checked||$('z_weitere').checked?'Danke, Ihre Auswahl ist gespeichert. Wir melden uns bei Ihnen.':'Gespeichert. Wir geben Ihr Profil nicht weiter.',true);else msg(r.fehler||'Das hat leider nicht geklappt. Bitte versuchen Sie es noch einmal.',false)}).catch(function(){b.disabled=false;msg('Keine Verbindung. Bitte versuchen Sie es noch einmal.',false)})});
+})();
+</script>
+</body></html>
