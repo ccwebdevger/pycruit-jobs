@@ -127,7 +127,7 @@
    anforderungen:a,staerken:$('staerken').value.trim(),bedenken:$('bedenken').value.trim(),status:$('status').value,sterne:st?st.value:'',z_kunde:$('z_kunde').checked,z_weitere:$('z_weitere').checked};
   if(!daten.sterne){msg('Bitte die Vermittelbarkeit wählen.',false);return}
   var b=$('senden');b.disabled=true;b.textContent=modus==='transkript'?'Die KI liest das Transkript …':'Einen Moment …';
-  senden('speichern',{daten:daten}).then(function(r){b.disabled=false;b.textContent='Speichern';if(r.ok){msg('Gespeichert. '+daten.k+' steht jetzt auf „'+daten.status+'“. Die Gesprächsnotiz ist am Deal in Pipedrive.',true)}else msg(r.fehler||'Das hat nicht geklappt. Bitte noch einmal versuchen.',false)}).catch(function(){b.disabled=false;b.textContent='Speichern';msg('Keine Verbindung oder Zeitüberschreitung. Bitte in Pipedrive prüfen, ob die Notiz angekommen ist.',false)})});
+  senden('speichern',{daten:daten}).then(function(r){b.disabled=false;b.textContent='Speichern';if(r.ok){msg('Gespeichert. '+daten.k+' steht jetzt auf „'+daten.status+'“. Die Gesprächsnotiz ist am Deal in Pipedrive.'+(r.link?(r.mail?' Der Kandidat hat eine Mail zur schriftlichen Bestätigung bekommen.':' In Pipedrive ist keine Mail-Adresse hinterlegt. Bitte schicken Sie ihm diesen Link zur Bestätigung, zum Beispiel über LinkedIn: '+r.link):''),true)}else msg(r.fehler||'Das hat nicht geklappt. Bitte noch einmal versuchen.',false)}).catch(function(){b.disabled=false;b.textContent='Speichern';msg('Keine Verbindung oder Zeitüberschreitung. Bitte in Pipedrive prüfen, ob die Notiz angekommen ist.',false)})});
 })();
 </script>
 </body></html>
