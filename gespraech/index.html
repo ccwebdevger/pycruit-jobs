@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Gesprächsbogen | pycruit</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+.box{max-width:780px;margin:0 auto;padding:28px 20px 60px}
+.form{padding:24px}
+.form h2{font-size:19px;margin:28px 0 4px}
+.form h2:first-of-type{margin-top:6px}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:640px){.row2{grid-template-columns:1fr}}
+.tabs{display:flex;gap:8px;margin:10px 0 4px}
+.tab{font:inherit;font-weight:600;font-size:14px;border:1px solid #CFCFCF;background:#fff;border-radius:999px;padding:9px 16px;cursor:pointer}
+.tab.on{border-color:var(--pk);background:var(--pkbg);color:var(--pk2)}
+.hint{font-size:13px;color:var(--tx3);margin:6px 0 0}
+.anf{display:grid;grid-template-columns:1fr 150px;gap:8px 12px;align-items:center;margin-top:10px}
+.anf div{font-size:15px}
+.stars{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap}
+.stars label{margin:0;display:flex;align-items:center;gap:6px;border:1px solid #CFCFCF;border-radius:999px;padding:8px 14px;cursor:pointer;font-weight:500}
+.stars input{margin:0}
+.dz{border:2px dashed #CFCFCF;border-radius:14px;padding:18px;text-align:center;color:var(--tx3);margin-top:8px}
+.dz b{color:var(--tx)}
+#transkriptInfo{font-size:14px;margin-top:8px}
+.hide{display:none}
+</style>
+</head><body>
+<header class="top"><div class="wrap"><img src="/assets/logo.png" alt="pycruit" width="82" height="36"><span class="opt" id="kopf">Gesprächsbogen</span></div></header>
+<main class="box">
+<form class="form" id="f" onsubmit="return false">
+ <span class="eyebrow">Intern</span>
+ <h1 style="font-size:clamp(24px,4vw,32px);margin:6px 0 4px">Gesprächsbogen</h1>
+ <p class="sub" id="info">Einen Moment …</p>
+
+ <div id="inhalt" class="hide">
+ <h2>Gespräch</h2>
+ <label for="kandidat">Kandidat</label><select id="kandidat"></select>
+ <div class="row2">
+  <div><label for="datum">Datum</label><input type="date" id="datum"></div>
+  <div><label for="art">Art</label><select id="art"><option>Telefon</option><option>MS Teams</option><option>Vor Ort</option></select></div>
+ </div>
+
+ <h2>Grundlage</h2>
+ <div class="tabs"><button type="button" class="tab on" data-m="transkript">Transkript hochladen</button><button type="button" class="tab" data-m="manuell">Nur von Hand</button></div>
+ <div id="m-transkript">
+  <div class="dz"><b>Transkript wählen</b><br>Plaud-Export oder Teams-Transkript als TXT, DOCX, SRT oder VTT<br><input type="file" id="datei" accept=".txt,.docx,.srt,.vtt,text/plain" style="margin-top:10px"></div>
+  <div id="transkriptInfo"></div>
+  <label class="chk" style="margin-top:14px"><input type="checkbox" id="aufzeichnung"><span>Der Kandidat hat der Aufzeichnung zu Beginn des Gesprächs zugestimmt.</span></label>
+  <p class="hint">Ohne diese Zustimmung darf das Gespräch nicht aufgezeichnet und das Transkript nicht verwendet werden. Die KI liest die Angaben aus dem Transkript. Was Sie unten eintragen, hat Vorrang.</p>
+ </div>
+
+ <h2>Angaben</h2>
+ <p class="hint" id="hinweisFelder">Felder, die Sie leer lassen, füllt die KI aus dem Transkript.</p>
+ <label for="motivation">Wechselmotivation</label><textarea id="motivation" maxlength="1500"></textarea>
+ <div class="row2">
+  <div><label for="verfuegbar">Kündigungsfrist / frühester Start</label><input type="text" id="verfuegbar" maxlength="120"></div>
+  <div><label for="wohnort">Wohnort</label><input type="text" id="wohnort" maxlength="120"></div>
+ </div>
+ <div class="row2">
+  <div><label for="gehalt_ist">Gehalt aktuell (brutto/Jahr)</label><input type="text" id="gehalt_ist" maxlength="60"></div>
+  <div><label for="gehalt_wunsch">Gehaltswunsch (brutto/Jahr)</label><input type="text" id="gehalt_wunsch" maxlength="60"></div>
+ </div>
+ <div class="row2">
+  <div><label for="mobilitaet">Mobilität / Pendeln</label><input type="text" id="mobilitaet" maxlength="160"></div>
+  <div><label for="homeoffice">Homeoffice-Wunsch</label><input type="text" id="homeoffice" maxlength="120"></div>
+ </div>
+
+ <div id="anfBlock">
+  <h2>Anforderungen</h2>
+  <p class="hint">Aus der Stellenanzeige. „KI entscheidet“ heißt: Die KI bewertet anhand des Transkripts.</p>
+  <div class="anf" id="anf"></div>
+ </div>
+
+ <h2>Einschätzung</h2>
+ <label for="staerken">Stärken</label><textarea id="staerken" maxlength="1500"></textarea>
+ <label for="bedenken">Bedenken / offene Punkte</label><textarea id="bedenken" maxlength="1500"></textarea>
+ <label for="status">Ergebnis</label>
+ <select id="status"><option>Vorgespräch</option><option>qualifiziert</option><option>kein Interesse</option><option>abgesagt</option></select>
+ <label>Vermittelbarkeit für weitere Stellen</label>
+ <div class="stars">
+  <label><input type="radio" name="sterne" value="★★★">★★★ sehr gut</label>
+  <label><input type="radio" name="sterne" value="★★">★★ gut</label>
+  <label><input type="radio" name="sterne" value="★">★ schwer</label>
+ </div>
+
+ <h2>Zustimmungen im Gespräch</h2>
+ <label class="chk"><input type="checkbox" id="z_kunde"><span>Der Kandidat möchte dem Unternehmen dieser Stelle vorgestellt werden. Er weiß, um welches Unternehmen es geht.</span></label>
+ <label class="chk"><input type="checkbox" id="z_weitere"><span>Wir dürfen sein Profil auch anderen passenden Arbeitgebern anbieten, zunächst anonymisiert, für zwölf Monate.</span></label>
+ <p class="hint">Der Kandidat bekommt danach eine Mail und bestätigt beide Punkte noch einmal schriftlich.</p>
+
+ <div class="bar" style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap"><button class="btn" type="button" id="senden">Speichern</button></div>
+ <div class="msg" id="msg" role="status" aria-live="polite"></div>
+ </div>
+</form>
+</main>
+<script src="/assets/mammoth.min.js" defer></script>
+<script>
+(function(){
+ var ZIEL='https://ccpycruit.app.n8n.cloud/webhook/pycruit-gespraech';
+ var h=new URLSearchParams(location.hash.slice(1));var D=h.get('d'),T=h.get('t'),K0=h.get('k');
+ var $=function(i){return document.getElementById(i)};var modus='transkript';var transkript='';var anf=[];
+ function msg(t,ok){var m=$('msg');m.className='msg '+(ok?'ok':'err');m.textContent=t}
+ function senden(aktion,extra){return fetch(ZIEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({d:D,t:T,aktion:aktion},extra||{}))}).then(function(r){return r.json().catch(function(){return{ok:false}})})}
+ function setModus(m){modus=m;document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b.dataset.m===m)});$('m-transkript').classList.toggle('hide',m!=='transkript');$('hinweisFelder').classList.toggle('hide',m!=='transkript');baueAnf()}
+ document.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){setModus(b.dataset.m)})});
+ function baueAnf(){var box=$('anf');var alt={};box.querySelectorAll('select').forEach(function(s){alt[s.dataset.i]=s.value});box.innerHTML='';$('anfBlock').classList.toggle('hide',!anf.length);anf.forEach(function(p,i){var d=document.createElement('div');d.textContent=p;var s=document.createElement('select');s.dataset.i=i;var o=(modus==='transkript'?['KI entscheidet']:[]).concat(['erfüllt','teilweise','offen']);o.forEach(function(v){var x=document.createElement('option');x.textContent=v;s.appendChild(x)});if(alt[i]&&o.indexOf(alt[i])>=0)s.value=alt[i];else if(modus!=='transkript')s.value='offen';box.appendChild(d);box.appendChild(s)})}
+ function srtText(t){return t.replace(/\r/g,'').split('\n').filter(function(l){return l.trim()&&!/^\d+$/.test(l.trim())&&!/-->/.test(l)&&!/^WEBVTT/.test(l)&&!/^NOTE\b/.test(l)}).map(function(l){return l.replace(/<v ([^>]+)>/g,'$1: ').replace(/<[^>]+>/g,'')}).join('\n')}
+ $('datei').addEventListener('change',function(){var f=this.files[0];transkript='';$('transkriptInfo').textContent='';if(!f)return;if(f.size>5*1024*1024){$('transkriptInfo').textContent='Die Datei ist größer als 5 MB.';return}
+  var name=f.name.toLowerCase();var fertig=function(t){transkript=String(t||'').trim().slice(0,120000);$('transkriptInfo').textContent=transkript?('Transkript gelesen: '+transkript.length.toLocaleString('de-DE')+' Zeichen.'):'In der Datei war kein Text.'};
+  if(/\.docx$/.test(name)){if(!window.mammoth){$('transkriptInfo').textContent='DOCX lässt sich gerade nicht lesen. Bitte als TXT exportieren.';return}f.arrayBuffer().then(function(b){return mammoth.extractRawText({arrayBuffer:b})}).then(function(r){fertig(r.value)}).catch(function(){$('transkriptInfo').textContent='Die DOCX-Datei ließ sich nicht lesen.'})}
+  else f.text().then(function(t){fertig(/\.(srt|vtt)$/.test(name)?srtText(t):t)})});
+ if(!D||!T){$('info').textContent='Der Link ist unvollständig. Bitte öffnen Sie ihn aus Pipedrive oder der Mail.';return}
+ $('datum').value=new Date().toISOString().slice(0,10);
+ senden('laden').then(function(r){if(!r.ok){$('info').textContent=r.fehler||'Der Link ist ungültig.';return}
+  $('info').textContent=r.titel;$('kopf').textContent=r.titel;anf=r.anforderungen||[];
+  var sel=$('kandidat');if(!r.kandidaten.length){$('info').textContent=r.titel+': In der Statustabelle steht noch kein Kandidat.';return}
+  r.kandidaten.forEach(function(k){var o=document.createElement('option');o.value=k.k;o.textContent=k.k+'  '+k.name+(k.status?'  ('+k.status+')':'');sel.appendChild(o)});if(K0)sel.value=K0;
+  $('inhalt').classList.remove('hide');baueAnf()}).catch(function(){$('info').textContent='Keine Verbindung.'});
+ $('senden').addEventListener('click',function(){
+  if(modus==='transkript'){if(!transkript){msg('Bitte ein Transkript wählen oder auf „Nur von Hand“ wechseln.',false);return}if(!$('aufzeichnung').checked){msg('Ohne Zustimmung zur Aufzeichnung dürfen wir das Transkript nicht verwenden.',false);return}}
+  var st=document.querySelector('input[name=sterne]:checked');
+  var a=[];$('anf').querySelectorAll('select').forEach(function(s){a.push({punkt:anf[Number(s.dataset.i)],bewertung:s.value})});
+  var daten={k:$('kandidat').value,datum:$('datum').value,art:$('art').value,modus:modus,transkript:modus==='transkript'?transkript:'',aufzeichnung:modus==='transkript'&&$('aufzeichnung').checked,
+   motivation:$('motivation').value.trim(),verfuegbar:$('verfuegbar').value.trim(),wohnort:$('wohnort').value.trim(),gehalt_ist:$('gehalt_ist').value.trim(),gehalt_wunsch:$('gehalt_wunsch').value.trim(),mobilitaet:$('mobilitaet').value.trim(),homeoffice:$('homeoffice').value.trim(),
+   anforderungen:a,staerken:$('staerken').value.trim(),bedenken:$('bedenken').value.trim(),status:$('status').value,sterne:st?st.value:'',z_kunde:$('z_kunde').checked,z_weitere:$('z_weitere').checked};
+  if(!daten.sterne){msg('Bitte die Vermittelbarkeit wählen.',false);return}
+  var b=$('senden');b.disabled=true;b.textContent=modus==='transkript'?'Die KI liest das Transkript …':'Einen Moment …';
+  senden('speichern',{daten:daten}).then(function(r){b.disabled=false;b.textContent='Speichern';if(r.ok){msg('Gespeichert. '+daten.k+' steht jetzt auf „'+daten.status+'“. Die Gesprächsnotiz ist am Deal in Pipedrive.',true)}else msg(r.fehler||'Das hat nicht geklappt. Bitte noch einmal versuchen.',false)}).catch(function(){b.disabled=false;b.textContent='Speichern';msg('Keine Verbindung oder Zeitüberschreitung. Bitte in Pipedrive prüfen, ob die Notiz angekommen ist.',false)})});
+})();
+</script>
+</body></html>
