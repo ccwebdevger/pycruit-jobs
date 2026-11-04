@@ -2,7 +2,7 @@
 var PROFIL_BASE = 'https://jobs.pycruit.de';
 var PROFIL_TEAM = {
   '24260132': { name: 'Christian Czepeczauer', tel: '+49 162 26 77 665', mail: 'cc@pycruit.de', foto: '/assets/christian.jpg' },
-  '24263740': { name: 'Tina Mater', tel: '+49 179 4239004', mail: 'tm@pycruit.de', foto: '' }
+  '24263740': { name: 'Tina Mater', tel: '+49 179 4239004', mail: 'tm@pycruit.de', foto: '/assets/tina.jpg' }
 };
 function profilHtml(p) {
   p = p || {};
