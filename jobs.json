@@ -1,1 +1,42 @@
-[]
+[
+ {
+  "slug": "projektleiter-tga-hamburg-0hho",
+  "titel": "Projektleiter TGA (m/w/d)",
+  "ort": "Hamburg",
+  "plz": "",
+  "region": "Hamburg",
+  "arbeitszeit": "Vollzeit",
+  "homeoffice": "1 Tag pro Woche",
+  "gehalt_von": 70000,
+  "gehalt_bis": 85000,
+  "gehalt_zeigen": true,
+  "einleitung": "Sie sind das Bindeglied zwischen Kunden und Technikern und steuern parallel mehrere Bauprojekte der technischen Gebäudeausrüstung. Sie sorgen dafür, dass Kunden gut informiert sind und die Technik auf der Baustelle sauber umgesetzt wird.",
+  "ueber_unternehmen": "Unser Auftraggeber ist ein wachsendes Unternehmen der Gebäudetechnik im Raum Hamburg. Es stattet Neubauten mit technischer Gebäudeausrüstung aus, darunter Lüftung, Rohrleitungen, Abwasser, Trinkwasser und Elektrik. Wegen des Wachstums wird die Projektleitung verstärkt.",
+  "aufgaben": [
+   "Sie betreuen gleichzeitig etwa fünf bis sechs Projekte bei verschiedenen Kunden.",
+   "Sie sind erste Ansprechperson für die Kunden, erklären Verzögerungen und lösen Eskalationen.",
+   "Sie vermitteln zwischen Kunden und Technikern und halten beide Seiten auf dem gleichen Stand.",
+   "Sie tragen die fachliche Verantwortung für ein großes Team an Technikern, ohne disziplinarische Führung.",
+   "Sie koordinieren und betreuen externe Dienstleister, wenn Leistungen an Dritte vergeben werden.",
+   "Sie berichten an die Geschäftsführung und den Abteilungsleiter Technik."
+  ],
+  "profil": [
+   "Sie haben mindestens 5 Jahre Erfahrung in der Projektleitung im Bereich HLS.",
+   "Sie kennen sich mit VOB und HOAI sicher aus.",
+   "Sie haben ein Studium der Versorgungstechnik oder der Technischen Gebäudeausrüstung abgeschlossen oder sind staatlich geprüfte Technikerin oder staatlich geprüfter Techniker.",
+   "Sie sprechen und schreiben sehr gutes Deutsch und verhandeln sicher mit Kunden.",
+   "Von Vorteil sind Kenntnisse in Lüftung und Kälte.",
+   "Von Vorteil ist ein Führerschein der Klasse B."
+  ],
+  "angebot": [
+   "Unbefristete Festanstellung in Vollzeit mit einem Jahresgehalt von 70.000 bis 85.000 Euro brutto.",
+   "Viel Gestaltungsfreiraum im Projektgeschäft.",
+   "Homeoffice an einem Tag pro Woche.",
+   "Fachliche Verantwortung für ein großes Technikteam in einem wachsenden Unternehmen.",
+   "Teamkultur mit festen gemeinsamen Terminen, zum Beispiel Angeln einmal im Monat."
+  ],
+  "datum": "2026-11-05",
+  "gueltig_bis": "2027-01-04",
+  "deal_id": 151
+ }
+]
