@@ -107,7 +107,7 @@
   sperren(true);msg('Wird gestartet …',true);
   senden('abrufen',werte()).then(function(x){
    if(!x||!x.ok){sperren(false);msg((x&&x.fehler)||'Der Abruf konnte nicht gestartet werden.',false);return}
-   $('ok_credits').checked=false;
+   $('ok_credits').checked=false;sperren(false);
    msg('Der Abruf läuft. Die Profile stehen in ein bis zwei Minuten in der internen Statustabelle, am Deal erscheint eine Notiz mit dem Ergebnis.',true);
   }).catch(function(){sperren(false);msg('Keine Verbindung. Bitte später noch einmal versuchen.',false)});
  });
