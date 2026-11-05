@@ -67,6 +67,10 @@
  <label class="chk" style="margin-top:12px"><input type="checkbox" id="ok_credits"> Ich möchte die Profile abrufen und die Credits verbrauchen.</label>
  <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap"><button class="btn" type="button" id="abrufen">Profile abrufen</button></div>
 
+ <h2>3. Xing per X-Ray</h2>
+ <p class="hint">Sucht über Google nach Xing-Profilen mit denselben Titeln und Orten. Eine KI prüft jeden Treffer streng gegen die Stelle. In die Tabelle kommen nur „passt“ und „möglich“, mit Begründung in der Notiz. Kostet Apify-Guthaben, keine Coresignal-Credits. Dauer etwa 3 bis 5 Minuten.</p>
+ <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap"><button class="btn" type="button" id="xray">Xing per X-Ray abrufen</button></div>
+
  <div class="msg" id="msg" role="status" aria-live="polite"></div>
  </div>
 </form>
@@ -79,7 +83,7 @@
  function msg(t,ok){var m=$('msg');m.className='msg '+(ok?'ok':'err');m.textContent=t}
  function senden(aktion,extra){return fetch(ZIEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({d:D,t:T,aktion:aktion},extra||{}))}).then(function(r){return r.json().catch(function(){return{ok:false}})})}
  function werte(){return{umkreis_km:Number($('umkreis_km').value)||30,berufserfahrung_jahre:Number($('berufserfahrung_jahre').value)||0,stufe:$('stufe').value,max_profile:Number($('max_profile').value)||20}}
- function sperren(b){['zaehlen','abrufen'].forEach(function(i){$(i).disabled=b})}
+ function sperren(b){['zaehlen','abrufen','xray'].forEach(function(i){$(i).disabled=b})}
  if(!D||!T){$('info').textContent='Dieser Link ist unvollständig. Bitte den Sourcing-Link am Deal in Pipedrive verwenden.';return}
  senden('laden').then(function(x){
   if(!x||!x.ok){$('info').textContent=(x&&x.fehler)||'Der Link ist ungültig oder abgelaufen.';return}
@@ -90,7 +94,7 @@
   $('v_tabelle').innerHTML='';
   if(x.tabelle){var a=document.createElement('a');a.href='https://docs.google.com/spreadsheets/d/'+x.tabelle;a.target='_blank';a.rel='noopener';a.textContent='interne Statustabelle öffnen';$('v_tabelle').appendChild(a)}else{$('v_tabelle').textContent='noch keine. Erst die Auftragsklärung mit „Auftrag erteilt am“ speichern.'}
   $('umkreis_km').value=x.umkreis_km||30;$('berufserfahrung_jahre').value=x.berufserfahrung_jahre||0;
-  if(!x.tabelle){$('abrufen').disabled=true}
+  if(!x.tabelle){$('abrufen').disabled=true;$('xray').disabled=true}
   $('inhalt').classList.remove('hide');
  });
  $('zaehlen').addEventListener('click',function(){
@@ -109,6 +113,14 @@
    if(!x||!x.ok){sperren(false);msg((x&&x.fehler)||'Der Abruf konnte nicht gestartet werden.',false);return}
    $('ok_credits').checked=false;sperren(false);
    msg('Der Abruf läuft. Die Profile stehen in ein bis zwei Minuten in der internen Statustabelle, am Deal erscheint eine Notiz mit dem Ergebnis.',true);
+  }).catch(function(){sperren(false);msg('Keine Verbindung. Bitte später noch einmal versuchen.',false)});
+ });
+ $('xray').addEventListener('click',function(){
+  sperren(true);msg('Wird gestartet …',true);
+  senden('xray',werte()).then(function(x){
+   sperren(false);
+   if(!x||!x.ok){msg((x&&x.fehler)||'Die X-Ray-Suche konnte nicht gestartet werden.',false);return}
+   msg('Die X-Ray-Suche läuft. In etwa 3 bis 5 Minuten stehen die geprüften Xing-Profile in der Statustabelle, am Deal erscheint eine Notiz „X-Ray Xing“ mit dem Ergebnis.',true);
   }).catch(function(){sperren(false);msg('Keine Verbindung. Bitte später noch einmal versuchen.',false)});
  });
 })();
