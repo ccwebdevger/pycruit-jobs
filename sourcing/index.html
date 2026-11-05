@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sourcing | pycruit</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+.box{max-width:820px;margin:0 auto;padding:28px 20px 60px}
+.form{padding:24px}
+.form h2{font-size:19px;margin:30px 0 2px;padding-top:18px;border-top:1px solid var(--ln)}
+.row3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:640px){.row3{grid-template-columns:1fr}}
+.hide{display:none}
+.fakt{display:grid;grid-template-columns:170px 1fr;gap:6px 14px;font-size:15px;margin-top:10px}
+.fakt dt{color:var(--tx2)}.fakt dd{margin:0}
+@media(max-width:640px){.fakt{grid-template-columns:1fr}}
+.stufen{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.stufe{border:1px solid var(--ln);border-radius:12px;padding:14px;background:var(--bg2)}
+.stufe b{display:block;font-size:26px;line-height:1.2}
+.stufe span{font-size:13px;color:var(--tx2)}
+.hint{font-size:14px;color:var(--tx2);margin-top:8px}
+.btn2{background:#fff;color:inherit;border:1px solid #CFCFCF}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap"><img src="/assets/logo.png" alt="pycruit" width="82" height="36"><span class="opt" id="kopf">Sourcing</span></div></header>
+<main class="box">
+<form class="form" id="f" onsubmit="return false">
+ <span class="eyebrow">Intern</span>
+ <h1 style="font-size:clamp(24px,4vw,32px);margin:6px 0 4px">Active Sourcing</h1>
+ <p class="sub" id="info">Einen Moment …</p>
+ <div id="inhalt" class="hide">
+
+ <h2 style="border:0;padding-top:0">Suche</h2>
+ <p class="hint">Aus der Auftragsklärung übernommen. Umkreis und Erfahrung könnt ihr für diesen Abruf ändern.</p>
+ <dl class="fakt">
+  <dt>Stelle</dt><dd id="v_titel"></dd>
+  <dt>Ort</dt><dd id="v_ort"></dd>
+  <dt>Muss</dt><dd id="v_muss"></dd>
+  <dt>Statustabelle</dt><dd id="v_tabelle"></dd>
+ </dl>
+ <div class="row3" style="margin-top:14px">
+  <div><label for="umkreis_km">Umkreis in km</label><input type="number" id="umkreis_km" min="5" max="150" step="5"></div>
+  <div><label for="berufserfahrung_jahre">Erfahrung ab Jahren</label><input type="number" id="berufserfahrung_jahre" min="0" max="25"></div>
+  <div></div>
+ </div>
+
+ <h2>1. Zählen</h2>
+ <p class="hint">Kostenlos. Zeigt, wie viele passende Profile es gibt.</p>
+ <div style="display:flex;gap:10px;margin-top:12px;flex-wrap:wrap"><button class="btn" type="button" id="zaehlen">Zählen</button></div>
+ <div id="ergebnis" class="hide">
+  <div class="stufen">
+   <div class="stufe"><span>Stufe A</span><b id="s_A">–</b><span>Titel passt, Erfahrung passt, 2 bis 5 Jahre in der Position</span></div>
+   <div class="stufe"><span>Stufe B</span><b id="s_B">–</b><span>Titel und Erfahrung passen, andere Dauer in der Position</span></div>
+   <div class="stufe"><span>Stufe C</span><b id="s_C">–</b><span>Titel passt, weniger Erfahrung</span></div>
+  </div>
+ </div>
+
+ <h2>2. Abrufen</h2>
+ <p class="hint">Kostet Coresignal-Credits: je 20 Profile etwa 10 Credits. Bereits abgerufene Profile werden übersprungen.</p>
+ <div class="row3" style="margin-top:10px">
+  <div><label for="stufe">Stufe</label><select id="stufe"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select></div>
+  <div><label for="max_profile">Höchstens neue Profile</label><select id="max_profile"><option value="20">20 (ca. 10 Credits)</option><option value="40">40 (ca. 20 Credits)</option><option value="60">60 (ca. 30 Credits)</option></select></div>
+  <div></div>
+ </div>
+ <label class="chk" style="margin-top:12px"><input type="checkbox" id="ok_credits"> Ich möchte die Profile abrufen und die Credits verbrauchen.</label>
+ <div style="display:flex;gap:10px;margin-top:14px;flex-wrap:wrap"><button class="btn" type="button" id="abrufen">Profile abrufen</button></div>
+
+ <div class="msg" id="msg" role="status" aria-live="polite"></div>
+ </div>
+</form>
+</main>
+<script>
+(function(){
+ var ZIEL='https://ccpycruit.app.n8n.cloud/webhook/pycruit-sourcing';
+ var h=new URLSearchParams(location.hash.slice(1));var D=h.get('d'),T=h.get('t');
+ var $=function(i){return document.getElementById(i)};
+ function msg(t,ok){var m=$('msg');m.className='msg '+(ok?'ok':'err');m.textContent=t}
+ function senden(aktion,extra){return fetch(ZIEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({d:D,t:T,aktion:aktion},extra||{}))}).then(function(r){return r.json().catch(function(){return{ok:false}})})}
+ function werte(){return{umkreis_km:Number($('umkreis_km').value)||30,berufserfahrung_jahre:Number($('berufserfahrung_jahre').value)||0,stufe:$('stufe').value,max_profile:Number($('max_profile').value)||20}}
+ function sperren(b){['zaehlen','abrufen'].forEach(function(i){$(i).disabled=b})}
+ if(!D||!T){$('info').textContent='Dieser Link ist unvollständig. Bitte den Sourcing-Link am Deal in Pipedrive verwenden.';return}
+ senden('laden').then(function(x){
+  if(!x||!x.ok){$('info').textContent=(x&&x.fehler)||'Der Link ist ungültig oder abgelaufen.';return}
+  $('kopf').textContent=x.firma||'Sourcing';
+  $('info').textContent=(x.firma?x.firma+' | ':'')+(x.titel||'');
+  $('v_titel').textContent=x.titel||'–';$('v_ort').textContent=x.ort||'–';
+  $('v_muss').textContent=x.muss||'–';
+  $('v_tabelle').innerHTML='';
+  if(x.tabelle){var a=document.createElement('a');a.href='https://docs.google.com/spreadsheets/d/'+x.tabelle;a.target='_blank';a.rel='noopener';a.textContent='interne Statustabelle öffnen';$('v_tabelle').appendChild(a)}else{$('v_tabelle').textContent='noch keine. Erst die Auftragsklärung mit „Auftrag erteilt am“ speichern.'}
+  $('umkreis_km').value=x.umkreis_km||30;$('berufserfahrung_jahre').value=x.berufserfahrung_jahre||0;
+  if(!x.tabelle){$('abrufen').disabled=true}
+  $('inhalt').classList.remove('hide');
+ });
+ $('zaehlen').addEventListener('click',function(){
+  sperren(true);msg('Zähle bei Coresignal, das dauert etwa 20 Sekunden …',true);
+  senden('zaehlen',werte()).then(function(x){
+   sperren(false);
+   if(!x||!x.ok){msg((x&&x.fehler)||'Das Zählen hat nicht geklappt. Bitte später noch einmal versuchen.',false);return}
+   (x.stufen||[]).forEach(function(s){if($('s_'+s.stufe))$('s_'+s.stufe).textContent=String(s.anzahl)});
+   $('ergebnis').classList.remove('hide');msg('Gezählt. Es wurde nichts abgerufen und kein Credit verbraucht.',true);
+  }).catch(function(){sperren(false);msg('Keine Verbindung. Bitte später noch einmal versuchen.',false)});
+ });
+ $('abrufen').addEventListener('click',function(){
+  if(!$('ok_credits').checked){msg('Bitte zuerst bestätigen, dass Credits verbraucht werden dürfen.',false);return}
+  sperren(true);msg('Wird gestartet …',true);
+  senden('abrufen',werte()).then(function(x){
+   if(!x||!x.ok){sperren(false);msg((x&&x.fehler)||'Der Abruf konnte nicht gestartet werden.',false);return}
+   $('ok_credits').checked=false;
+   msg('Der Abruf läuft. Die Profile stehen in ein bis zwei Minuten in der internen Statustabelle, am Deal erscheint eine Notiz mit dem Ergebnis.',true);
+  }).catch(function(){sperren(false);msg('Keine Verbindung. Bitte später noch einmal versuchen.',false)});
+ });
+})();
+</script>
+</body></html>
