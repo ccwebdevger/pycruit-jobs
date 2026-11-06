@@ -77,8 +77,10 @@
  <label for="staerken">Stärken</label><textarea id="staerken" maxlength="1500"></textarea>
  <label for="bedenken">Bedenken / offene Punkte</label><textarea id="bedenken" maxlength="1500"></textarea>
  <label for="status">Ergebnis</label>
- <select id="status"><option>Vorgespräch</option><option>qualifiziert</option><option>kein Interesse</option><option>abgesagt</option></select>
+ <select id="status"><option value="Vorgespräch">Vorgespräch geführt, Entscheidung noch offen</option><option value="Freigabe erteilt">Freigabe erteilt: beim Kunden vorstellen</option><option value="Absage Kandidat / pycruit">Absage: Kandidat will nicht oder passt nicht</option></select>
+ <p class="hint" id="statusFolge"></p>
  <label>Vermittelbarkeit für weitere Stellen</label>
+ <p class="hint" style="margin:0 0 6px">Nur intern, der Kunde sieht das nie. ★★★ zusammen mit der Zustimmung für weitere Arbeitgeber setzt den Kandidaten montags auf die Profilvertrieb-Liste mit passenden offenen Stellen.</p>
  <div class="stars">
   <label><input type="radio" name="sterne" value="★★★">★★★ sehr gut</label>
   <label><input type="radio" name="sterne" value="★★">★★ gut</label>
@@ -87,10 +89,13 @@
 
  <h2>Zustimmungen im Gespräch</h2>
  <label class="chk"><input type="checkbox" id="z_kunde"><span>Der Kandidat möchte dem Unternehmen dieser Stelle vorgestellt werden. Er weiß, um welches Unternehmen es geht.</span></label>
+ <p class="hint" style="margin:2px 0 0 30px">Folge: Der Kandidat bekommt eine Mail und bestätigt schriftlich. Erst danach (Spalte H = ja) sieht der Kunde Namen und Profil.</p>
  <label for="quelle" style="margin-top:10px">Wie hat er zugestimmt?</label>
  <select id="quelle"><option value="gespraech">Mündlich im Gespräch</option><option value="linkedin">CV im LinkedIn-Chat geschickt, nachdem wir nach dem Unternehmen gefragt haben</option><option value="xing">CV im Xing-Chat geschickt, nachdem wir nach dem Unternehmen gefragt haben</option></select>
  <label class="chk"><input type="checkbox" id="z_weitere"><span>Wir dürfen sein Profil auch anderen passenden Arbeitgebern anbieten, zunächst anonymisiert, für zwölf Monate.</span></label>
- <p class="hint">Der Kandidat bekommt danach eine Mail und bestätigt beide Punkte noch einmal schriftlich.</p>
+ <p class="hint" style="margin:2px 0 0 30px">Folge: In der Statustabelle steht in Spalte N das Datum in zwölf Monaten, der Pipedrive-Kontakt bekommt das Label „Talentpool“. Hakt er es bei der schriftlichen Bestätigung nicht an, wird es wieder entfernt.</p>
+ <p class="hint">Ist mindestens ein Häkchen gesetzt, bekommt der Kandidat nach dem Speichern eine Mail und bestätigt beide Punkte noch einmal schriftlich.</p>
+ <p class="hint"><b>Beim Speichern passiert:</b> Notiz „Gesprächsbogen“ am Deal in Pipedrive, Status, Sterne und Quelle der Zustimmung in der internen Statustabelle, bei Häkchen die Bestätigungsmail, bei „Freigabe erteilt“ mit Zustimmung der Profilentwurf.</p>
 
  <div class="bar" style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap"><button class="btn" type="button" id="senden">Speichern</button></div>
  <div class="msg" id="msg" role="status" aria-live="polite"></div>
@@ -130,6 +135,16 @@
   if(!daten.sterne){msg('Bitte die Vermittelbarkeit wählen.',false);return}
   var b=$('senden');b.disabled=true;b.textContent=modus==='transkript'?'Die KI liest das Transkript …':'Einen Moment …';
   senden('speichern',{daten:daten}).then(function(r){b.disabled=false;b.textContent='Speichern';if(r.ok){msg('Gespeichert. '+daten.k+' steht jetzt auf „'+daten.status+'“. Die Gesprächsnotiz ist am Deal in Pipedrive.'+(r.link?(r.mail?' Der Kandidat hat eine Mail zur schriftlichen Bestätigung bekommen.':' In Pipedrive ist keine Mail-Adresse hinterlegt. Bitte schicken Sie ihm diesen Link zur Bestätigung, zum Beispiel über LinkedIn: '+r.link):''),true)}else msg(r.fehler||'Das hat nicht geklappt. Bitte noch einmal versuchen.',false)}).catch(function(){b.disabled=false;b.textContent='Speichern';msg('Keine Verbindung oder Zeitüberschreitung. Bitte in Pipedrive prüfen, ob die Notiz angekommen ist.',false)})});
+})();
+</script>
+<script>
+(function(){
+ var T={'Vorgespräch':'Folge: Status „Vorgespräch“ in der Statustabelle und im Kandidatenprozess. Sonst passiert nichts. Wollen Sie ihn später vorstellen, stellen Sie den Status in der Statustabelle auf „Freigabe erteilt“.',
+  'Freigabe erteilt':'Folge: Status „Freigabe erteilt“. Mit dem Häkchen „vorstellen“ unten erstellt die KI innerhalb von 15 Minuten einen Profilentwurf, Sie bekommen den Prüflink per Mail. Der Kunde sieht Namen und Profil erst nach der schriftlichen Bestätigung des Kandidaten und Ihrer Freigabe des Profils.',
+  'Absage Kandidat / pycruit':'Folge: Status „Absage Kandidat / pycruit“. Die Karte im Kandidatenprozess wandert in diese Phase, der Kunde sieht „kein Interesse“. Es entsteht kein Profil.'};
+ function zeig(){var s=document.getElementById('status'),h=document.getElementById('statusFolge');if(s&&h)h.textContent=T[s.value]||''}
+ document.addEventListener('change',function(e){if(e.target&&e.target.id==='status')zeig()});
+ document.addEventListener('DOMContentLoaded',zeig);zeig();
 })();
 </script>
 </body></html>
