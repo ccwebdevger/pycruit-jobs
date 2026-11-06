@@ -88,8 +88,19 @@ function profilHtml(p) {
     + ".foot{position:absolute;left:16mm;right:16mm;bottom:7mm;display:flex;justify-content:space-between;font-size:7.5pt;color:#9A9A9A;border-top:1px solid #ECECEE;padding-top:2.5mm}";
   var werd = (p.werdegang || []).map(function (s) { return '<div class="st"><div class="z">' + e(s.zeit) + '</div><h3>' + e(s.titel) + '</h3>' + (s.firma ? '<div class="f">' + e(s.firma) + '</div>' : '') + ((s.punkte || []).length ? '<ul>' + s.punkte.map(function (x) { return '<li>' + e(x) + '</li>'; }).join('') + '</ul>' : '') + '</div>'; }).join('');
   var liste = function (l, a, b) { return (l || []).length ? '<ul class="list">' + l.map(function (x) { return '<li><b>' + e(x[a]) + '</b>' + (x[b] ? '<span>' + e(x[b]) + '</span>' : '') + '</li>'; }).join('') + '</ul>' : '<p style="color:#6B6B6B;margin:0">keine Angabe</p>'; };
-  return '<!doctype html><html lang="de"><head><meta charset="utf-8"><title>Kandidatenprofil ' + e(p.name) + '</title><style>' + css + '</style></head><body>'
-    + '<div class="page"><div class="band"></div><div class="head"><img src="' + B + '/assets/logo.png" alt="pycruit"><div class="tag"><b>Kandidatenprofil</b>vertraulich · ' + e(p.kuerzel) + (datum ? ' · ' + datum : '') + '</div></div>'
+  var IM = p.art === 'interim';
+  var TT = IM ? 'Kandidaten-Resümee' : 'Kandidatenprofil';
+  var absatz = function (s) { return String(s || '').split(/\n+/).filter(function (x) { return x.trim(); }).map(function (x) { return '<p>' + e(x) + '</p>'; }).join(''); };
+  var seite2 = IM
+    ? (p.zusatz ? '<div class="sec"><h2>Zusätzliche Informationen</h2><div class="box">' + absatz(p.zusatz) + '</div></div>' : '')
+      + '<div class="sec"><h2>Bewerbungsunterlagen</h2><div class="box"><p>Die vollständigen Bewerbungsunterlagen von ' + e(p.name) + ' liegen dieser E-Mail im Original bei.</p></div></div>'
+      + '<div class="sec"><h2>Nächster Schritt</h2><div class="box"><p>' + e(p.naechster_schritt || 'Wir stimmen gern einen Termin für ein Kennenlernen mit Ihnen ab.') + '</p><div class="sig">' + bild() + e(o.name) + ' · ' + e(o.tel) + ' · ' + e(o.mail) + '</div></div></div>'
+    : '<div class="sec"><h2>Beruflicher Werdegang</h2><div class="tl">' + (werd || '<p style="color:#6B6B6B">keine Angabe</p>') + '</div></div>'
+      + '<div class="sec two"><div><h2>Ausbildung</h2><div class="box">' + liste(p.ausbildung, 'abschluss', 'ort_jahr') + '</div></div><div><h2>Sprachen</h2><div class="box">' + liste(p.sprachen, 'sprache', 'niveau') + '</div></div></div>'
+      + ((p.kenntnisse || []).length ? '<div class="sec"><h2>Kenntnisse</h2><div class="chips">' + p.kenntnisse.map(function (k) { return '<span' + (k.top ? ' class="top"' : '') + '>' + e(k.name) + '</span>'; }).join('') + '</div></div>' : '')
+      + '<div class="sec"><h2>Nächster Schritt</h2><div class="box"><p>' + e(p.naechster_schritt || 'Wir stimmen gern einen Termin für ein Kennenlernen mit Ihnen ab.') + '</p><div class="sig">' + bild() + e(o.name) + ' · ' + e(o.tel) + ' · ' + e(o.mail) + '</div></div></div>';
+  return '<!doctype html><html lang="de"><head><meta charset="utf-8"><title>' + TT + ' ' + e(p.name) + '</title><style>' + css + '</style></head><body>'
+    + '<div class="page"><div class="band"></div><div class="head"><img src="' + B + '/assets/logo.png" alt="pycruit"><div class="tag"><b>' + TT + '</b>vertraulich · ' + e(p.kuerzel) + (datum ? ' · ' + datum : '') + '</div></div>'
     + '<div class="hero"><div class="ava">' + e(ini(p.name)) + '</div><div><h1>' + e(p.name) + '</h1><div class="role">' + e(p.rolle) + '</div><span class="for">für: ' + e(p.stelle) + '</span></div></div>'
     + '<div class="facts"><div class="fact"><span>Verfügbar</span><b>' + e(f.verfuegbar || 'offen') + '</b></div><div class="fact"><span>Gehaltswunsch</span><b>' + e(f.gehalt || 'offen') + '</b></div><div class="fact"><span>Wohnort</span><b>' + e(f.wohnort || 'offen') + '</b></div><div class="fact"><span>Arbeitsmodell</span><b>' + e(f.arbeitsmodell || 'offen') + '</b></div></div>'
     + '<div class="facts2"><span>Staatsangehörigkeit: <b>' + e(f.staatsangehoerigkeit || 'unbekannt') + '</b></span>' + (f.staatsangehoerigkeit && !/^deutsch/i.test(f.staatsangehoerigkeit) ? '<span>Arbeitserlaubnis Deutschland: <b>' + e(f.arbeitserlaubnis || 'unbekannt') + '</b></span>' : '') + '</div>'
@@ -98,11 +109,8 @@ function profilHtml(p) {
     + '<div class="sig">' + bild() + e(o.name) + ', pycruit' + (gdatum ? ' · Gespräch am ' + gdatum : '') + '</div></div></div>'
     + (pass.length ? '<div class="sec"><h2>Passung zur Stelle</h2><div class="box"><table class="fit">' + zeilen('muss', 'Muss-Kriterien') + zeilen('kann', 'Wünschenswert') + '</table></div></div>' : '')
     + foot(1) + '</div>'
-    + '<div class="page"><div class="band"></div><div class="head"><img src="' + B + '/assets/logo.png" alt="pycruit"><div class="tag"><b>Kandidatenprofil</b>' + e(p.name) + ' · ' + e(p.kuerzel) + '</div></div>'
-    + '<div class="sec"><h2>Beruflicher Werdegang</h2><div class="tl">' + (werd || '<p style="color:#6B6B6B">keine Angabe</p>') + '</div></div>'
-    + '<div class="sec two"><div><h2>Ausbildung</h2><div class="box">' + liste(p.ausbildung, 'abschluss', 'ort_jahr') + '</div></div><div><h2>Sprachen</h2><div class="box">' + liste(p.sprachen, 'sprache', 'niveau') + '</div></div></div>'
-    + ((p.kenntnisse || []).length ? '<div class="sec"><h2>Kenntnisse</h2><div class="chips">' + p.kenntnisse.map(function (k) { return '<span' + (k.top ? ' class="top"' : '') + '>' + e(k.name) + '</span>'; }).join('') + '</div></div>' : '')
-    + '<div class="sec"><h2>Nächster Schritt</h2><div class="box"><p>' + e(p.naechster_schritt || 'Wir stimmen gern einen Termin für ein Kennenlernen mit Ihnen ab.') + '</p><div class="sig">' + bild() + e(o.name) + ' · ' + e(o.tel) + ' · ' + e(o.mail) + '</div></div></div>'
+    + '<div class="page"><div class="band"></div><div class="head"><img src="' + B + '/assets/logo.png" alt="pycruit"><div class="tag"><b>' + TT + '</b>' + e(p.name) + ' · ' + e(p.kuerzel) + '</div></div>'
+    + seite2
     + foot(2) + '</div><script>var pp=' + PROFIL_PAGINATE.toString() + ';pp(document);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){pp(document)});</' + 'script></body></html>';
 }
 if (typeof module !== 'undefined') module.exports = { profilHtml: profilHtml, PROFIL_PAGINATE: PROFIL_PAGINATE };

@@ -34,6 +34,7 @@ textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px
   <label for="offen">Offen / im Gespräch klären</label><input type="text" id="offen" maxlength="300">
   <label for="passung">Passung</label><textarea id="passung" class="mono"></textarea>
   <p class="hint">Eine Zeile pro Kriterium: Kriterium | muss oder kann | erfüllt, teilweise oder offen | Beleg</p>
+  <div id="cv-box">
   <label for="werdegang">Werdegang</label><textarea id="werdegang" class="mono" style="min-height:200px"></textarea>
   <p class="hint">Pro Station: erste Zeile Zeit | Titel | Arbeitgeber, Ort. Darunter Punkte mit „- “. Leerzeile zwischen den Stationen.</p>
   <label for="ausbildung">Ausbildung</label><textarea id="ausbildung" class="mono" style="min-height:70px"></textarea>
@@ -42,6 +43,8 @@ textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px
   <p class="hint">Sprache | Niveau</p>
   <label for="kenntnisse">Kenntnisse</label><input type="text" id="kenntnisse">
   <p class="hint">Mit Komma getrennt. Ein * davor hebt die Kenntnis hervor.</p>
+  </div>
+  <div id="zusatz-box" style="display:none"><label for="zusatz">Zusätzliche Informationen für den Kunden</label><textarea id="zusatz" maxlength="1500" style="min-height:110px"></textarea><p class="hint">Interim-Kunde: Statt Werdegang gehen die Originalunterlagen des Kandidaten mit. Nach der Freigabe entsteht innerhalb von 15 Minuten ein Mail-Entwurf an den Kunden mit diesem Resümee und allen Dateien vom Pipedrive-Kontakt. Sie bekommen dazu eine Mail.</p></div>
   <label for="naechster_schritt">Nächster Schritt</label><textarea id="naechster_schritt" maxlength="400"></textarea>
   <div class="bar"><button class="btn" type="button" id="b-frei">Freigeben und PDF erstellen</button><button class="btn2" type="button" id="b-save">Nur speichern</button></div>
   <div class="msg" id="msg" role="status" aria-live="polite"></div>
@@ -56,7 +59,7 @@ textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px
  var h=new URLSearchParams(location.hash.slice(1));var P={d:h.get('d'),k:h.get('k'),t:h.get('t')};var $=function(i){return document.getElementById(i)};var prof=null;
  function msg(t,ok){var m=$('msg');m.className='msg '+(ok?'ok':'err');m.textContent=t}
  function senden(aktion,extra){return fetch(ZIEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({aktion:aktion},P,extra||{}))}).then(function(r){return r.json().catch(function(){return{ok:false}})})}
- var EIN=['rolle','einschaetzung','wechselmotivation','offen','naechster_schritt'],FA=['verfuegbar','gehalt','wohnort','arbeitsmodell','staatsangehoerigkeit','arbeitserlaubnis'];
+ var EIN=['rolle','einschaetzung','wechselmotivation','offen','naechster_schritt','zusatz'],FA=['verfuegbar','gehalt','wohnort','arbeitsmodell','staatsangehoerigkeit','arbeitserlaubnis'];
  function sp(l){return l.split('|').map(function(x){return x.trim()})}
  function fuellen(p){EIN.forEach(function(k){$(k).value=p[k]||''});FA.forEach(function(k){$(k).value=(p.fakten||{})[k]||''});
   $('passung').value=(p.passung||[]).map(function(x){return [x.kriterium,x.gruppe,x.bewertung,x.beleg].join(' | ')}).join('\n');
@@ -72,12 +75,12 @@ textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px
   p.kenntnisse=$('kenntnisse').value.split(',').map(function(x){x=x.trim();return x?{name:x.replace(/^\*\s*/,''),top:/^\*/.test(x)}:null}).filter(Boolean);return p}
  function vorschau(){try{var f=$('pv');f.onload=function(){try{PROFIL_PAGINATE(f.contentDocument);var d=f.contentDocument;if(d.fonts&&d.fonts.ready)d.fonts.ready.then(function(){PROFIL_PAGINATE(d)})}catch(e){}};f.srcdoc=profilHtml(lesen())}catch(e){}}
  if(!P.d||!P.k||!P.t){$('info').textContent='Der Link ist unvollständig.';return}
- senden('laden').then(function(r){if(!r.ok){$('info').textContent=r.fehler||'Der Link ist ungültig.';return}prof=r.profil;fuellen(prof);$('kopf').textContent=prof.kuerzel+' '+prof.name;
+ senden('laden').then(function(r){if(!r.ok){$('info').textContent=r.fehler||'Der Link ist ungültig.';return}prof=r.profil;fuellen(prof);if(prof.art==='interim'){$('zusatz-box').style.display='';$('cv-box').style.display='none';$('b-frei').textContent='Freigeben und Mail-Entwurf vorbereiten';document.querySelector('h2').textContent='Resümee prüfen'}$('kopf').textContent=prof.kuerzel+' '+prof.name;
   $('info').innerHTML='';$('info').appendChild(document.createTextNode((prof.stelle||'')+(prof.quelle?'. Grundlage: '+prof.quelle+'.':'')));if(prof.pdf){var a=document.createElement('a');a.href=prof.pdf;a.target='_blank';a.rel='noopener';a.textContent=' Freigegebenes PDF öffnen';$('info').appendChild(a)}
   $('inhalt').style.display='';vorschau()}).catch(function(){$('info').textContent='Keine Verbindung.'});
  document.querySelectorAll('#f input,#f textarea').forEach(function(el){el.addEventListener('input',vorschau)});
  function knopf(id,aktion,txt){$(id).addEventListener('click',function(){if(!prof)return;var b=$(id),a=b.textContent;b.disabled=true;b.textContent=aktion==='freigeben'?'PDF wird erstellt …':'Einen Moment …';
-  senden(aktion,{profil:lesen()}).then(function(r){b.disabled=false;b.textContent=a;if(r.ok){if(r.profil)prof=r.profil;msg(txt+(r.link?' Das PDF steht in der Statustabelle und ist für den Kunden sichtbar, sobald die Zustimmung vorliegt.':''),true)}else msg(r.fehler||'Das hat nicht geklappt.',false)}).catch(function(){b.disabled=false;b.textContent=a;msg('Keine Verbindung oder Zeitüberschreitung.',false)})})}
+  senden(aktion,{profil:lesen()}).then(function(r){b.disabled=false;b.textContent=a;if(r.ok){if(r.profil)prof=r.profil;msg(txt+(r.link?(prof&&prof.art==='interim'?' Der Mail-Entwurf mit Resümee und Unterlagen liegt in spätestens 15 Minuten in Outlook, sobald die Zustimmung (H, I, J) vorliegt. Sie bekommen dazu eine Mail.':' Das PDF steht in der Statustabelle und ist für den Kunden sichtbar, sobald die Zustimmung vorliegt.'):''),true)}else msg(r.fehler||'Das hat nicht geklappt.',false)}).catch(function(){b.disabled=false;b.textContent=a;msg('Keine Verbindung oder Zeitüberschreitung.',false)})})}
  knopf('b-save','speichern','Gespeichert.');knopf('b-frei','freigeben','Freigegeben.');
 })();
 </script>
