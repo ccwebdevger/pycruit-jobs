@@ -70,7 +70,7 @@ textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px
   p.ausbildung=$('ausbildung').value.split('\n').filter(function(l){return l.trim()}).map(function(l){var a=sp(l);return {abschluss:a[0],ort_jahr:a.slice(1).join(' | ')}});
   p.sprachen=$('sprachen').value.split('\n').filter(function(l){return l.trim()}).map(function(l){var a=sp(l);return {sprache:a[0],niveau:a.slice(1).join(' | ')}});
   p.kenntnisse=$('kenntnisse').value.split(',').map(function(x){x=x.trim();return x?{name:x.replace(/^\*\s*/,''),top:/^\*/.test(x)}:null}).filter(Boolean);return p}
- function vorschau(){try{$('pv').srcdoc=profilHtml(lesen())}catch(e){}}
+ function vorschau(){try{var f=$('pv');f.onload=function(){try{PROFIL_PAGINATE(f.contentDocument);var d=f.contentDocument;if(d.fonts&&d.fonts.ready)d.fonts.ready.then(function(){PROFIL_PAGINATE(d)})}catch(e){}};f.srcdoc=profilHtml(lesen())}catch(e){}}
  if(!P.d||!P.k||!P.t){$('info').textContent='Der Link ist unvollständig.';return}
  senden('laden').then(function(r){if(!r.ok){$('info').textContent=r.fehler||'Der Link ist ungültig.';return}prof=r.profil;fuellen(prof);$('kopf').textContent=prof.kuerzel+' '+prof.name;
   $('info').innerHTML='';$('info').appendChild(document.createTextNode((prof.stelle||'')+(prof.quelle?'. Grundlage: '+prof.quelle+'.':'')));if(prof.pdf){var a=document.createElement('a');a.href=prof.pdf;a.target='_blank';a.rel='noopener';a.textContent=' Freigegebenes PDF öffnen';$('info').appendChild(a)}

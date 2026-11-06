@@ -4,6 +4,53 @@ var PROFIL_TEAM = {
   '24260132': { name: 'Christian Czepeczauer', tel: '+49 162 26 77 665', mail: 'cc@pycruit.de', foto: '/assets/christian.jpg' },
   '24263740': { name: 'Tina Mater', tel: '+49 179 4239004', mail: 'tm@pycruit.de', foto: '/assets/tina.jpg' }
 };
+/* Verschiebt Abschnitte, die über den Seitenrand ragen, auf die nächste Seite (legt bei Bedarf weitere Seiten an). */
+var PROFIL_PAGINATE = function (doc) {
+  var mm = 96 / 25.4;
+  var pages = [].slice.call(doc.querySelectorAll('.page'));
+  if (pages.length < 2) return;
+  var muster = pages[1];
+  for (var i = 0; i < pages.length; i++) {
+    var pg = pages[i];
+    var grenze = pg.getBoundingClientRect().top + pg.offsetHeight - 20 * mm;
+    var secs = [].slice.call(pg.children).filter(function (c) { return c.classList.contains('sec'); });
+    var weg = [];
+    var istLbl = function (x) { return !!(x.querySelector && x.querySelector('.lbl')); };
+    while (secs.length) {
+      var last = secs[secs.length - 1];
+      if (last.getBoundingClientRect().bottom <= grenze) break;
+      var box = last.querySelector('.tl') || last.querySelector('table.fit tbody');
+      if (box) {
+        var teile = [].slice.call(box.children), mv = [];
+        while (teile.length && teile[teile.length - 1].getBoundingClientRect().bottom > grenze) mv.unshift(teile.pop());
+        while (teile.length && istLbl(teile[teile.length - 1])) mv.unshift(teile.pop());
+        if (mv.length && teile.some(function (x) { return !istLbl(x); })) {
+          var fort = last.cloneNode(false);
+          var h = doc.createElement('h2'); h.textContent = last.querySelector('h2').textContent.replace(/ \(Fortsetzung\)$/, '') + ' (Fortsetzung)'; fort.appendChild(h);
+          var kette = []; for (var n = box; n && n !== last; n = n.parentNode) kette.unshift(n);
+          var ziel = fort; kette.forEach(function (n) { var c = n.cloneNode(false); ziel.appendChild(c); ziel = c; });
+          mv.forEach(function (x) { ziel.appendChild(x); });
+          weg.unshift(fort);
+          break;
+        }
+      }
+      if (secs.length === 1) break;
+      weg.unshift(secs.pop());
+    }
+    if (!weg.length) continue;
+    var nx = pages[i + 1];
+    if (!nx) {
+      nx = muster.cloneNode(true);
+      [].slice.call(nx.children).filter(function (c) { return c.classList.contains('sec'); }).forEach(function (s) { nx.removeChild(s); });
+      pg.parentNode.insertBefore(nx, pg.nextSibling);
+      pages.splice(i + 1, 0, nx);
+    }
+    var ref = nx.querySelector('.head').nextSibling;
+    weg.forEach(function (s) { nx.insertBefore(s, ref); });
+  }
+  pages = [].slice.call(doc.querySelectorAll('.page'));
+  pages.forEach(function (pg, i) { var f = pg.querySelector('.foot span:last-child'); if (f) f.textContent = f.textContent.replace(/Seite \d+\/\d+/, 'Seite ' + (i + 1) + '/' + pages.length); });
+};
 function profilHtml(p) {
   p = p || {};
   var e = function (x) { return String(x == null ? '' : x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); };
@@ -23,11 +70,11 @@ function profilHtml(p) {
     + ".page{width:210mm;height:297mm;padding:0 0 14mm;position:relative;page-break-after:always;overflow:hidden;background:#fff}.page:last-child{page-break-after:auto}"
     + ".band{height:5mm;background:linear-gradient(90deg,#EE3934,#D2126C)}.head{display:flex;justify-content:space-between;align-items:center;padding:8mm 16mm 0}.head img{height:11mm}"
     + ".head .tag{font-size:8pt;font-weight:600;letter-spacing:.08em;color:#6B6B6B;text-transform:uppercase;text-align:right}.head .tag b{display:block;color:#D2126C;font-size:8.5pt}"
-    + "h1,h2,h3{font-family:'Inter Tight',Inter,sans-serif;font-weight:800;margin:0;letter-spacing:-.01em}.hero{margin:7mm 16mm 0;display:flex;gap:7mm;align-items:flex-start}"
+    + "h1,h2,h3{font-family:'Inter Tight',Inter,sans-serif;font-weight:800;margin:0;letter-spacing:-.01em}.hero{margin:6mm 16mm 0;display:flex;gap:7mm;align-items:flex-start}"
     + ".ava{flex:0 0 22mm;height:22mm;border-radius:50%;background:radial-gradient(100% 100% at 100% 0,#EE3934 0,#D2126C 100%);color:#fff;font-family:'Inter Tight';font-weight:800;font-size:20pt;display:flex;align-items:center;justify-content:center}"
     + ".hero h1{font-size:24pt;line-height:1.1}.hero .role{font-size:12pt;color:#3A3A3A;margin-top:1.5mm}.hero .for{display:inline-block;margin-top:3mm;font-size:8.5pt;font-weight:600;background:#FDE7F1;color:#A50E55;border-radius:999px;padding:1.2mm 3.5mm}"
-    + ".facts2{margin:3mm 16mm 0;font-size:9pt;color:#3A3A3A;display:flex;flex-wrap:wrap;gap:2mm 8mm}.facts{margin:6mm 16mm 0;display:grid;grid-template-columns:repeat(4,1fr);gap:3mm}.fact{border:1px solid #ECECEE;border-radius:3.5mm;padding:3mm 3.5mm}.fact span{display:block;font-size:7.5pt;font-weight:600;letter-spacing:.06em;color:#6B6B6B;text-transform:uppercase}.fact b{display:block;font-size:10pt;margin-top:.8mm;line-height:1.3}"
-    + ".sec{margin:6mm 16mm 0}.sec h2{font-size:12.5pt;margin-bottom:3mm;display:flex;align-items:center;gap:2.5mm}.sec h2::before{content:'';width:1.6mm;height:4.5mm;border-radius:1mm;background:#D2126C}"
+    + ".facts2{margin:3mm 16mm 0;font-size:9pt;color:#3A3A3A;display:flex;flex-wrap:wrap;gap:2mm 8mm}.facts{margin:5mm 16mm 0;display:grid;grid-template-columns:repeat(4,1fr);gap:3mm}.fact{border:1px solid #ECECEE;border-radius:3.5mm;padding:3mm 3.5mm}.fact span{display:block;font-size:7.5pt;font-weight:600;letter-spacing:.06em;color:#6B6B6B;text-transform:uppercase}.fact b{display:block;font-size:10pt;margin-top:.8mm;line-height:1.3}"
+    + ".sec{margin:5mm 16mm 0}.sec h2{font-size:12.5pt;margin-bottom:3mm;display:flex;align-items:center;gap:2.5mm}.sec h2::before{content:'';width:1.6mm;height:4.5mm;border-radius:1mm;background:#D2126C}"
     + ".box{background:#FAFAFA;border:1px solid #ECECEE;border-radius:4mm;padding:3.5mm 4.5mm}.box.pk{background:#FFF5FA;border-color:#F6C3DA}.box p{margin:0 0 2mm}.box p:last-child{margin:0}"
     + ".fit{width:100%;border-collapse:collapse}.fit td{padding:1.5mm 0;border-bottom:1px solid #F0F0F0;vertical-align:top}.fit tr:last-child td{border-bottom:0}.fit td.k{width:36%;font-weight:600;padding-right:3mm}.fit td.s{width:24mm}"
     + ".pill{display:inline-block;font-size:8pt;font-weight:600;border-radius:999px;padding:.8mm 2.8mm;white-space:nowrap}.ok{background:#E3F4EA;color:#1E8A50}.mid{background:#FBF0DA;color:#9A6400}.op{background:#F1EDF0;color:#6B6B6B}"
@@ -56,6 +103,6 @@ function profilHtml(p) {
     + '<div class="sec two"><div><h2>Ausbildung</h2><div class="box">' + liste(p.ausbildung, 'abschluss', 'ort_jahr') + '</div></div><div><h2>Sprachen</h2><div class="box">' + liste(p.sprachen, 'sprache', 'niveau') + '</div></div></div>'
     + ((p.kenntnisse || []).length ? '<div class="sec"><h2>Kenntnisse</h2><div class="chips">' + p.kenntnisse.map(function (k) { return '<span' + (k.top ? ' class="top"' : '') + '>' + e(k.name) + '</span>'; }).join('') + '</div></div>' : '')
     + '<div class="sec"><h2>Nächster Schritt</h2><div class="box"><p>' + e(p.naechster_schritt || 'Wir stimmen gern einen Termin für ein Kennenlernen mit Ihnen ab.') + '</p><div class="sig">' + bild() + e(o.name) + ' · ' + e(o.tel) + ' · ' + e(o.mail) + '</div></div></div>'
-    + foot(2) + '</div></body></html>';
+    + foot(2) + '</div><script>var pp=' + PROFIL_PAGINATE.toString() + ';pp(document);if(document.fonts&&document.fonts.ready)document.fonts.ready.then(function(){pp(document)});</' + 'script></body></html>';
 }
-if (typeof module !== 'undefined') module.exports = { profilHtml: profilHtml };
+if (typeof module !== 'undefined') module.exports = { profilHtml: profilHtml, PROFIL_PAGINATE: PROFIL_PAGINATE };
