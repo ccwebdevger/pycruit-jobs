@@ -28,6 +28,7 @@ textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px
   <label for="rolle">Zeile unter dem Namen</label><input type="text" id="rolle" maxlength="160">
   <div class="row2"><div><label for="verfuegbar">Verfügbar</label><input type="text" id="verfuegbar" maxlength="60"></div><div><label for="gehalt">Gehaltswunsch</label><input type="text" id="gehalt" maxlength="60"></div></div>
   <div class="row2"><div><label for="wohnort">Wohnort</label><input type="text" id="wohnort" maxlength="60"></div><div><label for="arbeitsmodell">Arbeitsmodell</label><input type="text" id="arbeitsmodell" maxlength="60"></div></div>
+  <div class="row2"><div><label for="staatsangehoerigkeit">Staatsangehörigkeit</label><input type="text" id="staatsangehoerigkeit" maxlength="40" placeholder="unbekannt"></div><div><label for="arbeitserlaubnis">Arbeitserlaubnis Deutschland</label><input type="text" id="arbeitserlaubnis" maxlength="60" placeholder="ja, nein oder unbekannt"></div></div>
   <label for="einschaetzung">Unsere Einschätzung</label><textarea id="einschaetzung" maxlength="900" style="min-height:120px"></textarea>
   <label for="wechselmotivation">Wechselmotivation</label><input type="text" id="wechselmotivation" maxlength="300">
   <label for="offen">Offen / im Gespräch klären</label><input type="text" id="offen" maxlength="300">
@@ -55,7 +56,7 @@ textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px
  var h=new URLSearchParams(location.hash.slice(1));var P={d:h.get('d'),k:h.get('k'),t:h.get('t')};var $=function(i){return document.getElementById(i)};var prof=null;
  function msg(t,ok){var m=$('msg');m.className='msg '+(ok?'ok':'err');m.textContent=t}
  function senden(aktion,extra){return fetch(ZIEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({aktion:aktion},P,extra||{}))}).then(function(r){return r.json().catch(function(){return{ok:false}})})}
- var EIN=['rolle','einschaetzung','wechselmotivation','offen','naechster_schritt'],FA=['verfuegbar','gehalt','wohnort','arbeitsmodell'];
+ var EIN=['rolle','einschaetzung','wechselmotivation','offen','naechster_schritt'],FA=['verfuegbar','gehalt','wohnort','arbeitsmodell','staatsangehoerigkeit','arbeitserlaubnis'];
  function sp(l){return l.split('|').map(function(x){return x.trim()})}
  function fuellen(p){EIN.forEach(function(k){$(k).value=p[k]||''});FA.forEach(function(k){$(k).value=(p.fakten||{})[k]||''});
   $('passung').value=(p.passung||[]).map(function(x){return [x.kriterium,x.gruppe,x.bewertung,x.beleg].join(' | ')}).join('\n');
