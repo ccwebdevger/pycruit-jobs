@@ -157,7 +157,7 @@ var zOffen=Number(h.get('z'))||0;
 function laden(){api('laden').then(function(r){if(!r.ok){$('app').innerHTML='<div class="msg">'+e(r.fehler||'Der Link ist ungültig.')+'</div>';return}D=r;render();if(zOffen&&find(zOffen)){oeffnen(zOffen)}zOffen=0}).catch(function(){$('app').innerHTML='<div class="msg">Keine Verbindung.</div>'})}
 // ---------- Cockpit: alle Suchaufträge (Link #c=<persönlicher Schlüssel>) ----------
 var OWN={24260132:'CC',24263740:'TM'};var C=null;var cf={art:'alle',meine:false};
-function cockpit(){document.title='pycruit Cockpit';$('l-intern').style.display='none';$('l-deal').style.display='none';var bn=$('b-neu');bn.textContent='Aktualisieren';bn.className='btn g';bn.onclick=cLaden;cLaden()}
+function cockpit(){try{localStorage.setItem('pycruit-cockpit',h.get('c'))}catch(x){}document.title='pycruit Cockpit';$('l-intern').style.display='none';$('l-deal').style.display='none';var bn=$('b-neu');bn.textContent='Aktualisieren';bn.className='btn g';bn.onclick=cLaden;cLaden()}
 function cLaden(){$('app').innerHTML='<div class="msg">Cockpit wird geladen …</div>';fetch('https://ccpycruit.app.n8n.cloud/webhook/pycruit-cockpit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({c:h.get('c')})}).then(function(r){return r.json()}).then(function(r){if(!r.ok){$('app').innerHTML='<div class="msg">'+e(r.fehler||'Der Link ist ungültig.')+'</div>';return}C=r;cRender()}).catch(function(){$('app').innerHTML='<div class="msg">Keine Verbindung.</div>'})}
 function zaehl(ks,ids){var s=[];SPALTEN.forEach(function(x){if(ids.indexOf(x.id)>=0)s=s.concat(x.st)});return ks.filter(function(k){return s.indexOf(k.status.toLowerCase())>=0}).length}
 function cRender(){var A=C.auftraege;$('crumb').innerHTML='Cockpit · <b>'+e(C.user)+'</b> · Stand '+e(C.stand);
@@ -192,6 +192,8 @@ function cRender(){var A=C.auftraege;$('crumb').innerHTML='Cockpit · <b>'+e(C.u
  $('app').innerHTML=html;
  document.querySelectorAll('[data-art]').forEach(function(b){b.onclick=function(){cf.art=b.getAttribute('data-art');cRender()}});
  $('c-meine').onclick=function(){cf.meine=!cf.meine;cRender()}}
+window.addEventListener('hashchange',function(){location.reload()});
+if(!h.get('c')){var ck='';try{ck=localStorage.getItem('pycruit-cockpit')||''}catch(x){}if(/^[a-f0-9]{32}$/.test(ck)){var cb=document.createElement('a');cb.className='btn g';cb.textContent='Cockpit';cb.href='/board/#c='+ck;$('l-intern').parentNode.insertBefore(cb,$('l-intern'))}}
 if(h.get('c')){cockpit()}else if(!P.d||!P.t){$('app').innerHTML='<div class="msg">Der Link ist unvollständig. Den Board-Link findet ihr am Deal in Pipedrive.</div>'}else laden();
 })();
 </script></body></html>
