@@ -119,7 +119,7 @@ function render(){var A=D.auftrag,K=D.kandidaten;
    if(!k||s.st.indexOf(k.status.toLowerCase())>=0)return;var alt=k.status;k.status=s.ziel;render();
    speichern(k,{status:s.ziel},function(ok){if(!ok){k.status=alt;render()}else if(s.id==='vg'&&D.auftrag.links.gespraech){toast('Status gesetzt. Nach dem Gespräch: Gesprächsbogen ausfüllen.')}})}})}
 function find(z){return D.kandidaten.filter(function(k){return k.z===z})[0]}
-function speichern(k,felder,cb){api('speichern',{z:k.z,k:k.k,felder:felder}).then(function(r){if(r.ok){toast('Gespeichert. Pipedrive wird sofort abgeglichen, die Kundentabelle zur nächsten vollen Stunde (werktags 7 bis 19 Uhr).');cb&&cb(true)}else{toast(r.fehler||'Speichern fehlgeschlagen.',true);cb&&cb(false)}}).catch(function(){toast('Keine Verbindung.',true);cb&&cb(false)})}
+function speichern(k,felder,cb){api('speichern',{z:k.z,k:k.k,felder:felder}).then(function(r){if(r.ok){toast('Gespeichert. Pipedrive und Kundentabelle werden sofort abgeglichen, ein Kundenmail-Entwurf entsteht zur nächsten vollen Stunde.');cb&&cb(true)}else{toast(r.fehler||'Speichern fehlgeschlagen.',true);cb&&cb(false)}}).catch(function(){toast('Keine Verbindung.',true);cb&&cb(false)})}
 function opt(list,val,leer){return (leer?'<option value="">–</option>':'')+list.map(function(x){return '<option'+(x===val?' selected':'')+'>'+e(x)+'</option>'}).join('')}
 function feld(id,lab,val,typ){return '<label for="f-'+id+'">'+lab+'</label><input type="text" id="f-'+id+'" value="'+e(val)+'">'}
 function oeffnen(z){var k=z?find(z):{z:0,k:'',name:'',link:'',kurzprofil:'',runde:'',status:'noch nicht angeschrieben',notiz:'',zust:'',zust_am:'',zust_quelle:'',sterne:'',pool_bis:'',vertrieb:'',profil_status:'',nat:'',erlaubnis:''};aktiv=k;var A=D.auftrag;
