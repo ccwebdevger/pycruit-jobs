@@ -127,6 +127,8 @@ function oeffnen(z){var k=z?find(z):{z:0,k:'',name:'',link:'',kurzprofil:'',rund
  var si=['interessiert','vorgespräch','freigabe erteilt','vorgestellt','interview beim kunden','platziert'].indexOf(k.status.toLowerCase());var w=z?hinweise(k).filter(function(x){return x[0]!=='ok'}):[];
  var b=(z?'<div class="steps">'+[0,1,2,3,4,5].map(function(i){return '<div class="st'+(i<=si?' d':'')+'"></div>'}).join('')+'</div>':'')
   +(w.length?'<div class="warn">'+w.map(function(x){return e(x[1])}).join(' · ')+'</div>':'')
+  +'<div class="sec"><h5>Aus Lebenslauf oder Profil füllen</h5><input type="file" id="cv-datei" accept="application/pdf,.pdf" style="max-width:100%"><textarea id="cv-text" placeholder="oder Profiltext einfügen (z. B. aus LinkedIn, Xing oder einer Mail kopiert)" style="min-height:46px;margin-top:6px"></textarea>'
+  +'<button class="btn g" id="cv-los" type="button" style="margin-top:6px">Auslesen und Felder füllen</button><div class="hint">(Folge: Die KI liest PDF oder Text einmal aus und füllt Name, Link, Kurzprofil und Notiz'+(z?', aber nur leere Felder, die Notiz wird ergänzt':'')+'. Gespeichert wird erst mit „'+(z?'Speichern':'Kandidat anlegen')+'“. Die Datei wird nicht abgelegt. LinkedIn-Profil als PDF: auf dem Profil „Mehr“ und dann „Als PDF speichern“. Den Lebenslauf selbst erst am Pipedrive-Kontakt hochladen, wenn der Kandidat ihn geschickt hat.)</div></div>'
   +'<div class="sec"><h5>Kandidat</h5><div class="g2"><div>'+feld('name','Name (nur intern)',k.name)+'</div><div><label for="f-status">Status</label><select id="f-status">'+opt(D.stati,k.status)+'</select></div></div>'
   +feld('link','LinkedIn-, Xing- oder Pipedrive-Link (nur intern)',k.link)+feld('kurzprofil','Kurzprofil (sieht der Kunde)',k.kurzprofil)
   +'<div class="g2"><div><label for="f-runde">Ansprache-Runde / Quelle</label><select id="f-runde">'+opt(D.runden,k.runde,true)+'</select></div><div>'+feld('angeschrieben','Angeschrieben am',k.angeschrieben||'')+'</div></div>'
@@ -144,6 +146,15 @@ function oeffnen(z){var k=z?find(z):{z:0,k:'',name:'',link:'',kurzprofil:'',rund
    +'<a class="act'+(k.projekt?'':' off')+'" target="_blank" rel="noopener" href="https://pycruitgmbh.pipedrive.com/projects/'+e(k.projekt)+'">Karte im Kandidatenprozess<small>Pipedrive-Board</small></a>'
    +'<a class="act'+(/^https/.test(k.link)?'':' off')+'" target="_blank" rel="noopener" href="'+e(k.link)+'">Profil im Netzwerk<small>LinkedIn, Xing</small></a></div></div>':'');
  $('dr-b').innerHTML=b;$('dr-save').textContent=z?'Speichern':'Kandidat anlegen';$('dr').classList.add('on');$('dim').classList.add('on');
+ $('cv-los').onclick=function(){var btn=this,f=$('cv-datei').files[0],txt=$('cv-text').value.trim();if(!f&&txt.length<40){toast('Bitte eine PDF wählen oder Profiltext einfügen.',true);return}
+  if(f&&f.size>5200000){toast('Die PDF ist zu groß (max. etwa 5 MB).',true);return}
+  btn.disabled=true;btn.textContent='Wird ausgelesen …';
+  var los=function(pdf){fetch('https://ccpycruit.app.n8n.cloud/webhook/pycruit-board-cv',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({d:P.d,t:P.t,pdf:pdf||'',text:txt})}).then(function(r){return r.json()}).then(function(r){btn.disabled=false;btn.textContent='Auslesen und Felder füllen';
+   if(!r.ok){toast(r.fehler||'Auslesen fehlgeschlagen.',true);return}var n=0;
+   ['name','link','kurzprofil','nat','erlaubnis'].forEach(function(k){var el=$('f-'+k),v=r.felder[k];if(el&&v&&(!z||!el.value.trim())){el.value=v;n++}});
+   var no=$('f-notiz');if(r.felder.notiz&&no.value.indexOf(r.felder.notiz)<0){no.value=(no.value.trim()?no.value.trim()+'\n\nAus Lebenslauf/Profil:\n':'')+r.felder.notiz;n++}
+   toast(n?'Felder gefüllt. Bitte prüfen und dann speichern.':'Keine neuen Angaben gefunden.')}).catch(function(){btn.disabled=false;btn.textContent='Auslesen und Felder füllen';toast('Keine Verbindung.',true)})};
+  if(f){var fr=new FileReader();fr.onload=function(){los(String(fr.result))};fr.readAsDataURL(f)}else los('')};
  var bs=$('b-schriftlich');if(bs)bs.onclick=function(){var d=new Date();$('f-zust').value='ja';$('f-zust_am').value=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();if(!$('f-zust_quelle').value||/offen/i.test($('f-zust_quelle').value))$('f-zust_quelle').value='schriftlich bestätigt am '+$('f-zust_am').value}}
 function zu(){$('dr').classList.remove('on');$('dim').classList.remove('on');aktiv=null}
 $('dr-x').onclick=zu;$('dim').onclick=zu;document.addEventListener('keydown',function(ev){if(ev.key==='Escape')zu()});
