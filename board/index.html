@@ -1,0 +1,145 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow">
+<title>pycruit Board</title>
+<style>
+@font-face{font-family:Inter;font-weight:400;src:url(/assets/fonts/inter-400.woff2)}@font-face{font-family:Inter;font-weight:600;src:url(/assets/fonts/inter-600.woff2)}@font-face{font-family:'Inter Tight';font-weight:800;src:url(/assets/fonts/inter-tight-800.woff2)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;background:#F6F6F8;color:#191919;font-size:13px}
+button,input,select,textarea{font:inherit}
+.top{height:58px;background:#fff;border-bottom:1px solid #ECECEE;display:flex;align-items:center;padding:0 20px;gap:16px;position:sticky;top:0;z-index:5}
+.top img{height:26px}.crumb{color:#6B6B6B;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.crumb b{color:#191919}
+.sp{flex:1}.btn{border:0;border-radius:9px;padding:8px 13px;font-weight:600;background:#191919;color:#fff;cursor:pointer;white-space:nowrap}.btn.p{background:linear-gradient(90deg,#EE3934,#D2126C)}.btn.g{background:#fff;color:#191919;border:1px solid #E2E2E6}.btn:disabled{opacity:.5}
+.badge{font-size:11px;font-weight:700;border-radius:999px;padding:3px 9px;background:#F1F1F4;color:#555}.badge.im{background:#E8F0FE;color:#1A56C4}.badge.vm{background:#FDE7F1;color:#A50E55}
+.bar{display:flex;align-items:center;gap:8px;padding:12px 20px;flex-wrap:wrap}
+.chip{background:#fff;border:1px solid #E2E2E6;border-radius:999px;padding:6px 12px;font-weight:600;color:#444;cursor:pointer}.chip.on{border-color:#D2126C;color:#A50E55;background:#FFF5FA}
+.search{background:#fff;border:1px solid #E2E2E6;border-radius:9px;padding:8px 12px;width:240px}
+.kpis{display:flex;gap:10px;padding:0 20px 12px;flex-wrap:wrap}.kpi{background:#fff;border:1px solid #ECECEE;border-radius:12px;padding:9px 15px;min-width:130px}.kpi span{display:block;font-size:10.5px;color:#777;font-weight:600;text-transform:uppercase;letter-spacing:.05em}.kpi b{font-size:21px;font-family:'Inter Tight',Inter}
+.board{display:flex;gap:12px;padding:0 20px 24px;overflow-x:auto;align-items:flex-start}
+.col{flex:1 0 230px;background:#EFEFF3;border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:8px;min-height:120px}
+.col.over{outline:2px dashed #D2126C;background:#FFF5FA}
+.ch{display:flex;justify-content:space-between;align-items:center;font-weight:700;padding:2px 4px 4px}.ch i{font-style:normal;background:#fff;border-radius:999px;padding:1px 8px;font-size:11px;color:#666}
+.ch small{display:block;font-weight:400;color:#888;font-size:10.5px}
+.card{background:#fff;border-radius:11px;padding:9px 11px;box-shadow:0 1px 2px rgba(0,0,0,.06);border:1px solid #ECECEE;cursor:pointer}
+.card:hover{border-color:#F3B6D2}.card.drag{opacity:.4}
+.card h4{margin:0 0 2px;font-size:13px}.card .r{color:#666;font-size:12px;margin-bottom:6px}
+.tags{display:flex;flex-wrap:wrap;gap:4px}.t{font-size:10.5px;font-weight:600;border-radius:999px;padding:2px 7px;background:#F1F1F4;color:#555}
+.ok{background:#E3F4EA;color:#1E8A50}.wa{background:#FBF0DA;color:#9A6400}.er{background:#FDE3E3;color:#B42318}.pk{background:#FDE7F1;color:#A50E55}
+.dim{position:fixed;inset:0;background:rgba(20,20,30,.3);z-index:9;display:none}.dim.on{display:block}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:min(560px,100%);background:#fff;z-index:10;box-shadow:-12px 0 30px rgba(0,0,0,.14);transform:translateX(105%);transition:transform .2s;display:flex;flex-direction:column}
+.drawer.on{transform:none}.dh{padding:18px 22px 10px;border-bottom:1px solid #F0F0F2}.dh h2{margin:0;font-size:20px;font-family:'Inter Tight',Inter}.dh .sub{color:#666;margin-top:3px}
+.db{padding:14px 22px;overflow-y:auto;flex:1}.df{padding:12px 22px;border-top:1px solid #F0F0F2;display:flex;gap:8px;align-items:center}
+.x{position:absolute;right:16px;top:14px;border:0;background:#F1F1F4;border-radius:8px;width:30px;height:30px;cursor:pointer;font-size:16px}
+.sec{border:1px solid #ECECEE;border-radius:12px;padding:11px 13px;margin-bottom:10px}.sec h5{margin:0 0 8px;font-size:10.5px;text-transform:uppercase;letter-spacing:.06em;color:#777}
+label{display:block;font-size:11.5px;font-weight:600;color:#555;margin:7px 0 3px}
+input[type=text],input[type=date],select,textarea{width:100%;border:1px solid #DCDCE2;border-radius:8px;padding:7px 9px;background:#fff}textarea{min-height:70px;resize:vertical}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:8px}.hint{font-size:11px;color:#888;margin-top:4px}
+.warn{background:#FFF8EC;border:1px solid #F5D9A6;border-radius:10px;padding:8px 11px;color:#7A4E00;margin-bottom:10px}
+.acts{display:grid;grid-template-columns:1fr 1fr;gap:7px}.act{border:1px solid #E2E2E6;border-radius:10px;padding:8px 10px;font-weight:600;text-decoration:none;color:#191919;display:block}.act small{display:block;font-weight:400;color:#888;font-size:11px}.act.off{opacity:.45;pointer-events:none}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);background:#191919;color:#fff;border-radius:10px;padding:10px 16px;font-weight:600;z-index:20;display:none;max-width:90%}.toast.on{display:block}.toast.err{background:#B42318}
+.msg{padding:60px 20px;text-align:center;color:#666}
+.steps{display:flex;gap:4px;margin:10px 0 4px}.st{flex:1;height:5px;border-radius:3px;background:#ECECEE}.st.d{background:#D2126C}
+@media(max-width:700px){.crumb{display:none}.search{width:100%}}
+</style></head><body>
+<div class="top"><img src="/assets/logo.png" alt="pycruit"><div class="crumb" id="crumb">Board</div><span class="badge" id="art" style="display:none"></span><div class="sp"></div>
+ <a class="btn g" id="l-intern" target="_blank" rel="noopener">Tabelle</a><a class="btn g" id="l-deal" target="_blank" rel="noopener">Pipedrive</a><button class="btn p" id="b-neu">+ Kandidat</button></div>
+<div id="app"><div class="msg" id="lade">Board wird geladen …</div></div>
+<div class="dim" id="dim"></div>
+<div class="drawer" id="dr"><button class="x" id="dr-x" aria-label="Schließen">×</button><div class="dh"><h2 id="dr-t"></h2><div class="sub" id="dr-s"></div></div><div class="db" id="dr-b"></div><div class="df"><button class="btn p" id="dr-save">Speichern</button><span class="hint" id="dr-hint">Wird in die Statustabelle geschrieben und sofort mit Pipedrive abgeglichen.</span></div></div>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+var ZIEL='https://ccpycruit.app.n8n.cloud/webhook/pycruit-board';
+var h=new URLSearchParams(location.hash.slice(1));var P={d:h.get('d'),t:h.get('t')};
+var $=function(i){return document.getElementById(i)};var D=null;var aktiv=null;var filter={q:'',runde:'',bedarf:false,pool:false,absage:false};
+function e(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function toast(t,err){var x=$('toast');x.textContent=t;x.className='toast on'+(err?' err':'');clearTimeout(x._t);x._t=setTimeout(function(){x.className='toast'},4500)}
+function api(aktion,extra){return fetch(ZIEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({aktion:aktion,d:P.d,t:P.t},extra||{}))}).then(function(r){return r.json()})}
+var SPALTEN=[
+ {id:'pool',t:'Noch nicht angeschrieben',st:['noch nicht angeschrieben'],ziel:'noch nicht angeschrieben',opt:'pool'},
+ {id:'ang',t:'Angeschrieben',st:['angeschrieben','keine antwort'],ziel:'angeschrieben'},
+ {id:'int',t:'Interessiert',st:['interessiert'],ziel:'Interessiert'},
+ {id:'vg',t:'Vorgespräch',st:['vorgespräch'],ziel:'Vorgespräch',info:'Danach Gesprächsbogen ausfüllen'},
+ {id:'fr',t:'Freigabe erteilt',st:['freigabe erteilt','qualifiziert'],ziel:'Freigabe erteilt',info:'Mit Zustimmung: Profil entsteht automatisch'},
+ {id:'ku',t:'Beim Kunden',st:['vorgestellt','interview beim kunden','angebot','platziert'],ziel:'Vorgestellt',info:'Vorgestellt, Interview, Angebot, Platziert'},
+ {id:'ab',t:'Absagen',st:['absage kunde (schutzfrist)','absage kandidat / pycruit','kein interesse','abgesagt'],ziel:'Absage Kandidat / pycruit',opt:'absage'}];
+var INTER=['interessiert','vorgespräch','freigabe erteilt','qualifiziert','vorgestellt','interview beim kunden','angebot','platziert'];
+function sichtbar(k){return /^ja$/i.test(k.zust)&&k.zust_am&&k.zust_quelle&&INTER.indexOf(k.status.toLowerCase())>=0}
+function tage(d){var m=String(d||'').match(/^(\d{4})-(\d{2})-(\d{2})/)||String(d||'').match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})/);if(!m)return null;var dt=m[1].length===4?new Date(m[1],m[2]-1,m[3]):new Date(m[3],m[2]-1,m[1]);return Math.floor((Date.now()-dt)/864e5)}
+function hinweise(k){var s=k.status.toLowerCase(),a=[];
+ if(s==='angeschrieben'&&tage(k.angeschrieben)>=5)a.push(['wa','Nachfassen fällig']);
+ if(/schriftlich offen/i.test(k.zust_quelle)||(/^ja$/i.test(k.zust)&&(!k.zust_am||!k.zust_quelle)))a.push(['er','Zustimmung unvollständig']);
+ if(k.profil_status==='in Prüfung')a.push(['wa','Profil in Prüfung']);
+ if(s==='freigabe erteilt'&&/^ja$/i.test(k.zust)&&!k.profil_status)a.push(['wa','Profil fehlt']);
+ if(sichtbar(k)&&/^https/.test(k.profil_link))a.push(['ok',k.mail?'Mail-Entwurf erstellt':'Kunde sieht Profil']);
+ else if(/^https/.test(k.profil_link)&&INTER.indexOf(s)>=0)a.push(['er','Profil für Kunden unsichtbar']);
+ if(s!=='noch nicht angeschrieben'&&!k.kurzprofil)a.push(['er','Kurzprofil fehlt']);
+ return a}
+function passt(k){var f=filter;if(f.q){var q=f.q.toLowerCase();if((k.k+' '+k.name+' '+k.kurzprofil+' '+k.notiz).toLowerCase().indexOf(q)<0)return false}
+ if(f.runde&&k.runde!==f.runde)return false;if(f.bedarf&&!hinweise(k).some(function(x){return x[0]!=='ok'}))return false;return true}
+function render(){var A=D.auftrag,K=D.kandidaten;
+ $('crumb').innerHTML=e(A.kunde||'')+' · <b>'+e(A.stelle)+'</b>';var ar=$('art');ar.style.display='';ar.className='badge '+(A.interim?'im':'vm');ar.textContent=A.interim?'Interim':'Erfolgsbasiert';
+ $('l-intern').href=A.links.intern||'#';$('l-deal').href=A.links.deal;
+ var anz=function(f){return K.filter(f).length};var lc=function(k){return k.status.toLowerCase()};
+ var kontakt=anz(function(k){return lc(k)&&lc(k)!=='noch nicht angeschrieben'});var antw=anz(function(k){var s=lc(k);return s&&['noch nicht angeschrieben','angeschrieben','keine antwort'].indexOf(s)<0});
+ var runden={};K.forEach(function(k){if(k.runde)runden[k.runde]=1});
+ var html='<div class="bar"><input class="search" id="q" placeholder="Name, Kürzel, Profil suchen …" value="'+e(filter.q)+'">'
+  +'<span class="chip'+(!filter.runde?' on':'')+'" data-r="">Alle Quellen</span>'+Object.keys(runden).map(function(r){return '<span class="chip'+(filter.runde===r?' on':'')+'" data-r="'+e(r)+'">'+e(r)+'</span>'}).join('')
+  +'<span class="chip'+(filter.bedarf?' on':'')+'" data-f="bedarf">nur mit Handlungsbedarf</span><div class="sp"></div>'
+  +'<span class="chip'+(filter.pool?' on':'')+'" data-f="pool">Noch nicht angeschrieben</span><span class="chip'+(filter.absage?' on':'')+'" data-f="absage">Absagen</span></div>'
+  +'<div class="kpis"><div class="kpi"><span>Im Kontakt</span><b>'+kontakt+'</b></div><div class="kpi"><span>Antwortquote</span><b>'+(kontakt?Math.round(antw/kontakt*100):0)+' %</b></div>'
+  +'<div class="kpi"><span>Interessiert und weiter</span><b>'+anz(function(k){return INTER.indexOf(lc(k))>=0})+'</b></div><div class="kpi"><span>Beim Kunden</span><b>'+anz(function(k){return ['vorgestellt','interview beim kunden','angebot','platziert'].indexOf(lc(k))>=0})+'</b></div>'
+  +'<div class="kpi"><span>Handlungsbedarf</span><b>'+anz(function(k){return hinweise(k).some(function(x){return x[0]!=='ok'})})+'</b></div></div><div class="board">';
+ SPALTEN.forEach(function(s){if(s.opt&&!filter[s.opt])return;var ks=K.filter(function(k){return s.st.indexOf(lc(k))>=0&&passt(k)});
+  html+='<div class="col" data-col="'+s.id+'"><div class="ch"><div>'+s.t+(s.info?'<small>'+e(s.info)+'</small>':'')+'</div><i>'+ks.length+'</i></div>';
+  ks.forEach(function(k){var tg=hinweise(k);var st=lc(k);
+   html+='<div class="card" draggable="true" data-z="'+k.z+'"><h4>'+e(k.k)+' · '+e(k.name||'(ohne Namen)')+'</h4><div class="r">'+e(k.kurzprofil||'kein Kurzprofil')+'</div><div class="tags">'
+    +(s.id==='ku'||s.id==='ang'?'<span class="t pk">'+e(k.status)+'</span>':'')+(k.runde?'<span class="t">'+e(k.runde)+'</span>':'')+(k.sterne?'<span class="t pk">'+e(k.sterne)+'</span>':'')
+    +tg.map(function(x){return '<span class="t '+x[0]+'">'+e(x[1])+'</span>'}).join('')+'</div></div>'});
+  html+='</div>'});
+ html+='</div>';$('app').innerHTML=html;
+ $('q').addEventListener('input',function(){filter.q=this.value;var pos=this.selectionStart;render();var n=$('q');n.focus();n.setSelectionRange(pos,pos)});
+ document.querySelectorAll('[data-r]').forEach(function(c){c.onclick=function(){filter.runde=c.getAttribute('data-r');render()}});
+ document.querySelectorAll('[data-f]').forEach(function(c){c.onclick=function(){var f=c.getAttribute('data-f');filter[f]=!filter[f];render()}});
+ document.querySelectorAll('.card').forEach(function(c){c.onclick=function(){oeffnen(Number(c.getAttribute('data-z')))};
+  c.ondragstart=function(ev){ev.dataTransfer.setData('text/plain',c.getAttribute('data-z'));c.classList.add('drag')};c.ondragend=function(){c.classList.remove('drag')}});
+ document.querySelectorAll('.col').forEach(function(col){col.ondragover=function(ev){ev.preventDefault();col.classList.add('over')};col.ondragleave=function(){col.classList.remove('over')};
+  col.ondrop=function(ev){ev.preventDefault();col.classList.remove('over');var z=Number(ev.dataTransfer.getData('text/plain'));var s=SPALTEN.filter(function(x){return x.id===col.getAttribute('data-col')})[0];var k=find(z);
+   if(!k||s.st.indexOf(k.status.toLowerCase())>=0)return;var alt=k.status;k.status=s.ziel;render();
+   speichern(k,{status:s.ziel},function(ok){if(!ok){k.status=alt;render()}else if(s.id==='vg'&&D.auftrag.links.gespraech){toast('Status gesetzt. Nach dem Gespräch: Gesprächsbogen ausfüllen.')}})}})}
+function find(z){return D.kandidaten.filter(function(k){return k.z===z})[0]}
+function speichern(k,felder,cb){api('speichern',{z:k.z,k:k.k,felder:felder}).then(function(r){if(r.ok){toast('Gespeichert. Pipedrive und Kundentabelle werden abgeglichen.');cb&&cb(true)}else{toast(r.fehler||'Speichern fehlgeschlagen.',true);cb&&cb(false)}}).catch(function(){toast('Keine Verbindung.',true);cb&&cb(false)})}
+function opt(list,val,leer){return (leer?'<option value="">–</option>':'')+list.map(function(x){return '<option'+(x===val?' selected':'')+'>'+e(x)+'</option>'}).join('')}
+function feld(id,lab,val,typ){return '<label for="f-'+id+'">'+lab+'</label><input type="text" id="f-'+id+'" value="'+e(val)+'">'}
+function oeffnen(z){var k=z?find(z):{z:0,k:'',name:'',link:'',kurzprofil:'',runde:'',status:'noch nicht angeschrieben',notiz:'',zust:'',zust_am:'',zust_quelle:'',sterne:'',pool_bis:'',vertrieb:'',profil_status:'',nat:'',erlaubnis:''};aktiv=k;var A=D.auftrag;
+ $('dr-t').textContent=z?(k.k+' · '+(k.name||'(ohne Namen)')):'Neuer Kandidat';$('dr-s').textContent=z?((k.kurzprofil||'')+(k.runde?' · Quelle: '+k.runde:'')):'Bekommt automatisch das nächste freie Kürzel.';
+ var si=['interessiert','vorgespräch','freigabe erteilt','vorgestellt','interview beim kunden','platziert'].indexOf(k.status.toLowerCase());var w=z?hinweise(k).filter(function(x){return x[0]!=='ok'}):[];
+ var b=(z?'<div class="steps">'+[0,1,2,3,4,5].map(function(i){return '<div class="st'+(i<=si?' d':'')+'"></div>'}).join('')+'</div>':'')
+  +(w.length?'<div class="warn">'+w.map(function(x){return e(x[1])}).join(' · ')+'</div>':'')
+  +'<div class="sec"><h5>Kandidat</h5><div class="g2"><div>'+feld('name','Name (nur intern)',k.name)+'</div><div><label for="f-status">Status</label><select id="f-status">'+opt(D.stati,k.status)+'</select></div></div>'
+  +feld('link','LinkedIn-, Xing- oder Pipedrive-Link (nur intern)',k.link)+feld('kurzprofil','Kurzprofil (sieht der Kunde)',k.kurzprofil)
+  +'<div class="g2"><div><label for="f-runde">Ansprache-Runde / Quelle</label><select id="f-runde">'+opt(D.runden,k.runde,true)+'</select></div><div>'+feld('angeschrieben','Angeschrieben am',k.angeschrieben||'')+'</div></div>'
+  +'<label for="f-notiz">Notiz (nur intern)</label><textarea id="f-notiz">'+e(k.notiz)+'</textarea></div>'
+  +'<div class="sec"><h5>Zustimmung Vorstellung bei diesem Kunden</h5><div class="g2"><div><label for="f-zust">Zustimmung</label><select id="f-zust">'+opt(['ja','nein'],k.zust.toLowerCase(),true)+'</select></div><div>'+feld('zust_am','Zugestimmt am',k.zust_am)+'</div></div>'+feld('zust_quelle','Quelle der Zustimmung',k.zust_quelle)
+  +(z?'<button class="btn g" id="b-schriftlich" type="button" style="margin-top:8px">Schriftlich bestätigt ✓ (heute)</button>':'')+'<div class="hint">(Folge: Erst wenn Zustimmung = ja, Datum und Quelle gefüllt sind, sieht der Kunde Name und Profil'+(A.interim?' und es entsteht der Mail-Entwurf mit Unterlagen':'')+'.)</div></div>'
+  +'<div class="sec"><h5>Weitere Angaben</h5><div class="g2"><div><label for="f-sterne">Vermittelbarkeit</label><select id="f-sterne">'+opt(['★','★★','★★★'],k.sterne,true)+'</select></div><div>'+feld('pool_bis','Talentpool erlaubt bis',k.pool_bis)+'</div>'
+  +'<div><label for="f-vertrieb">Profilvertrieb</label><select id="f-vertrieb">'+opt(['ja','nein'],k.vertrieb,true)+'</select></div><div><label for="f-profil_status">'+(A.interim?'Resümee':'Profil')+'-Status</label><select id="f-profil_status">'+opt(['erstellen','in Prüfung','freigegeben'],k.profil_status,true)+'</select></div>'
+  +'<div>'+feld('nat','Staatsangehörigkeit',k.nat)+'</div><div>'+feld('erlaubnis','Arbeitserlaubnis Deutschland',k.erlaubnis)+'</div></div><div class="hint">(Profil-Status „erstellen“: Die KI erstellt innerhalb von 15 Minuten einen Entwurf, den Prüflink gibt es per Mail. ★★★ mit Talentpool-Datum: Kandidat erscheint im Profilvertrieb.)</div></div>'
+  +(z?'<div class="sec"><h5>Aktionen</h5><div class="acts">'
+   +'<a class="act'+(A.links.gespraech?'':' off')+'" target="_blank" rel="noopener" href="'+e(A.links.gespraech)+'">Gesprächsbogen<small>Vorgespräch erfassen</small></a>'
+   +'<a class="act'+(k.pruef_link?'':' off')+'" target="_blank" rel="noopener" href="'+e(k.pruef_link)+'">'+(A.interim?'Resümee':'Profil')+' prüfen<small>'+(k.pruef_link?e(k.profil_status||'Entwurf'):'noch kein Entwurf')+'</small></a>'
+   +'<a class="act'+(/^https/.test(k.profil_link)?'':' off')+'" target="_blank" rel="noopener" href="'+e(k.profil_link)+'">PDF für den Kunden<small>'+(sichtbar(k)?'Kunde sieht es':'noch nicht sichtbar')+'</small></a>'
+   +'<a class="act'+(k.kontakt?'':' off')+'" target="_blank" rel="noopener" href="https://pycruitgmbh.pipedrive.com/person/'+e(k.kontakt)+'">Pipedrive-Kontakt<small>'+(k.kontakt?'Lebenslauf hier hochladen':'wird beim Abgleich angelegt')+'</small></a>'
+   +'<a class="act'+(k.projekt?'':' off')+'" target="_blank" rel="noopener" href="https://pycruitgmbh.pipedrive.com/projects/'+e(k.projekt)+'">Karte im Kandidatenprozess<small>Pipedrive-Board</small></a>'
+   +'<a class="act'+(/^https/.test(k.link)?'':' off')+'" target="_blank" rel="noopener" href="'+e(k.link)+'">Profil im Netzwerk<small>LinkedIn, Xing</small></a></div></div>':'');
+ $('dr-b').innerHTML=b;$('dr-save').textContent=z?'Speichern':'Kandidat anlegen';$('dr').classList.add('on');$('dim').classList.add('on');
+ var bs=$('b-schriftlich');if(bs)bs.onclick=function(){var d=new Date();$('f-zust').value='ja';$('f-zust_am').value=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();if(!$('f-zust_quelle').value||/offen/i.test($('f-zust_quelle').value))$('f-zust_quelle').value='schriftlich bestätigt am '+$('f-zust_am').value}}
+function zu(){$('dr').classList.remove('on');$('dim').classList.remove('on');aktiv=null}
+$('dr-x').onclick=zu;$('dim').onclick=zu;document.addEventListener('keydown',function(ev){if(ev.key==='Escape')zu()});
+$('b-neu').onclick=function(){if(D)oeffnen(0)};
+var FELDER=['name','status','link','kurzprofil','runde','angeschrieben','notiz','zust','zust_am','zust_quelle','sterne','pool_bis','vertrieb','profil_status','nat','erlaubnis'];
+$('dr-save').onclick=function(){var k=aktiv;if(!k)return;var f={};FELDER.forEach(function(n){var el=$('f-'+n);if(!el)return;var v=el.value.trim();var alt=String(k[n]||'');if(n==='zust')alt=alt.toLowerCase();if(!k.z||v!==alt)f[n]=v});
+ if(k.z&&!Object.keys(f).length){toast('Nichts geändert.');return}var btn=$('dr-save');btn.disabled=true;
+ if(!k.z){api('neu',{felder:f}).then(function(r){btn.disabled=false;if(r.ok){toast(r.k+' angelegt. Pipedrive wird abgeglichen.');zu();laden()}else toast(r.fehler||'Anlegen fehlgeschlagen.',true)}).catch(function(){btn.disabled=false;toast('Keine Verbindung.',true)});return}
+ speichern(k,f,function(ok){btn.disabled=false;if(ok){Object.keys(f).forEach(function(n){k[n]=f[n]});zu();render()}})};
+function laden(){api('laden').then(function(r){if(!r.ok){$('app').innerHTML='<div class="msg">'+e(r.fehler||'Der Link ist ungültig.')+'</div>';return}D=r;render()}).catch(function(){$('app').innerHTML='<div class="msg">Keine Verbindung.</div>'})}
+if(!P.d||!P.t){$('app').innerHTML='<div class="msg">Der Link ist unvollständig. Den Board-Link findet ihr am Deal in Pipedrive.</div>'}else laden();
+})();
+</script></body></html>
