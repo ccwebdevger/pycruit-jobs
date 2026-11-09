@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Interview-Leitfaden | pycruit</title>
+<meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+.box{max-width:1080px;margin:0 auto;padding:22px 16px 60px}
+.kopf{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:14px}
+.kopf h1{font-size:clamp(22px,3.4vw,30px);margin:2px 0}
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.chip{font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;background:#F1F1F3;color:#333}
+.chip.rot{background:#FDE2E2;color:#A40E0E}.chip.gr{background:#E3F4E8;color:#17663A}.chip.pk{background:#FDE7F1;color:#A50E55}
+.lay{display:grid;grid-template-columns:1fr 300px;gap:16px;align-items:start}
+@media(max-width:860px){.lay{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid #ECECEE;border-radius:14px;padding:16px 18px;margin-bottom:12px}
+.step{display:flex;gap:12px}.nr{flex:none;width:28px;height:28px;border-radius:50%;background:linear-gradient(135deg,#EE3934,#D2126C);color:#fff;font-weight:800;display:flex;align-items:center;justify-content:center;font-size:13px;margin-top:2px}
+.step h2{font-size:16px;margin:2px 0 6px}.step .in{flex:1;min-width:0}
+.say{background:#FAF7FB;border-left:3px solid #D2126C;border-radius:8px;padding:9px 12px;margin:6px 0;font-size:15px}
+.say small{display:block;color:#888;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;margin-bottom:2px}
+ul.p{margin:6px 0 0 18px;padding:0}ul.p li{margin:3px 0}
+.side{position:sticky;top:12px}
+.warn{background:#FFF4E5;border:1px solid #F5C77E;border-radius:12px;padding:12px 14px;margin-bottom:12px;font-size:14px}
+.warn b{display:block;margin-bottom:4px}
+.rot{border-color:#F3A6A6;background:#FFF1F1}
+.seg{display:inline-flex;border:1px solid #DDD;border-radius:9px;overflow:hidden}.seg button{border:0;background:#fff;padding:6px 11px;font:inherit;font-size:13px;cursor:pointer}.seg button.on{background:#191919;color:#fff}
+.tb{display:flex;gap:10px;flex-wrap:wrap;align-items:center;font-size:13px;color:#555}
+.lnk{display:flex;flex-direction:column;gap:6px}.lnk a{display:block;padding:9px 12px;border:1px solid #ECECEE;border-radius:10px;text-decoration:none;color:#191919;font-weight:600;font-size:14px;background:#fff}
+.lnk a.haupt{background:linear-gradient(90deg,#EE3934,#D2126C);color:#fff;border:0}
+.pf{display:flex;gap:8px;align-items:flex-start;margin:6px 0}.pf input{margin-top:4px}.pf small{display:block;color:#666}
+.msg{text-align:center;color:#555;padding:40px 10px}.hint{color:#777;font-size:12px}
+.btn2{border:1px solid #CFCFCF;background:#fff;border-radius:9px;padding:6px 10px;font:inherit;font-size:13px;cursor:pointer}
+</style></head><body>
+<header class="top"><div class="wrap"><img src="/assets/logo.png" alt="pycruit" width="82" height="36"><span class="opt">Interview-Leitfaden</span></div></header>
+<main class="box" id="app"><div class="msg">Leitfaden wird geladen …</div></main>
+<script>
+(function(){
+var ZIEL='https://ccpycruit.app.n8n.cloud/webhook/pycruit-leitfaden';
+var h=new URLSearchParams(location.hash.slice(1));var D=h.get('d'),T=h.get('t');var app=document.getElementById('app');
+var TEAM={24260132:{name:'Christian Czepeczauer',vor:'Christian',erf:'seit über 10 Jahren im Recruiting',rolle:'Geschäftsführer'},24263740:{name:'Tina Mater',vor:'Tina',erf:'seit 5 Jahren im Recruiting',rolle:'Geschäftsführerin'}};
+var X=null,ich=null,du=false;
+function e(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function li(a){return (a&&a.length)?'<ul class="p">'+a.map(function(x){return '<li>'+e(x)+'</li>'}).join('')+'</ul>':''}
+function ls(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(x){return null}}
+function laden(neu){app.innerHTML='<div class="msg">'+(neu?'Leitfaden wird neu erstellt, etwa 30 Sekunden …':'Leitfaden wird geladen …')+'</div>';
+ fetch(ZIEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({d:D,t:T,neu:!!neu})}).then(function(r){return r.json()}).then(function(r){
+  if(!r||!r.ok){app.innerHTML='<div class="msg">'+e((r&&r.fehler)||'Der Link ist ungültig.')+'</div>';return}
+  X=r;var gesp=ls('lf-ich');ich=TEAM[gesp]?Number(gesp):(TEAM[r.owner]?r.owner:24260132);du=ls('lf-du-'+D)==='1';render()}).catch(function(){app.innerHTML='<div class="msg">Keine Verbindung.</div>'})}
+function step(n,titel,inhalt){return '<div class="card step"><div class="nr">'+n+'</div><div class="in"><h2>'+titel+'</h2>'+inhalt+'</div></div>'}
+function say(t,lab){return '<div class="say"><small>'+(lab||'Sagen')+'</small>'+t+'</div>'}
+function render(){var r=X,k=r.ki||{},b=r.basis||{},p=TEAM[ich],nennen=String(r.name_zeigen).toLowerCase()==='ja';
+ var firmaSag=(r.interim||nennen)?e(r.firma):e(k.umschreibung||'ein Unternehmen aus der Region');
+ var S=du?{sie:'du',ihr:'dein',dir:'dir',hast:'hast du',nimmst:'nimmst du',kannst:'kannst du',hallo:'Hallo'}:{sie:'Sie',ihr:'Ihr',dir:'Ihnen',hast:'haben Sie',nimmst:'nehmen Sie',kannst:'können Sie',hallo:'Guten Tag'};
+ var wer=r.interim?'Interim Recruiter'+(ich===24263740?'in':'')+' bei '+e(r.firma):p.rolle.replace('Geschäftsführer','Personalberater')+' bei pycruit';
+ var achtung=(k.achtung||[]).slice();if(!nennen&&!r.interim)achtung.unshift('Firmennamen NICHT nennen. Umschreiben: '+(k.umschreibung||'neutral, Branche und Region'));
+ var h='<div class="kopf"><div><span class="eyebrow">Vorgespräch Kandidat</span><h1>'+e(r.stelle||'')+'</h1><div class="chips"><span class="chip">'+e(r.firma)+'</span>'+(r.interim?'<span class="chip pk">Interim: wir sprechen als Recruiting des Kunden</span>':'<span class="chip">Wir sprechen als pycruit</span>')+(nennen||r.interim?'<span class="chip gr">Firmenname nennen: ja</span>':'<span class="chip rot">Firmenname nennen: nein</span>')+'</div></div>'
+  +'<div class="tb">Ich bin <span class="seg" id="s-ich"><button data-v="24260132" class="'+(ich===24260132?'on':'')+'">Christian</button><button data-v="24263740" class="'+(ich===24263740?'on':'')+'">Tina</button></span> Ansprache <span class="seg" id="s-du"><button data-v="0" class="'+(!du?'on':'')+'">Sie</button><button data-v="1" class="'+(du?'on':'')+'">Du</button></span></div></div>';
+ if(r.ki_fehler)h+='<div class="warn"><b>Hinweis</b>'+e(r.ki_fehler)+'</div>';
+ h+='<div class="lay"><div>';
+ h+=step(1,'Begrüßung',say(S.hallo+' …, hier ist '+e(p.vor)+(r.interim?' aus dem Recruiting von '+e(r.firma):' von pycruit')+'. Schön, dass es klappt. '+(du?'Passt es dir gerade?':'Passt es Ihnen gerade?'))+'<div class="hint">Bezug nennen: Woher kommt der Kontakt (LinkedIn, Xing, Bewerbung, Empfehlung)?</div>');
+ h+=step(2,'Mich vorstellen',say('Kurz zu mir: Ich bin '+e(p.erf)+' und aktuell '+wer+'. '+(r.interim?'Ich unterstütze '+e(r.firma)+' dabei, passende Leute aktiv anzusprechen.':'Wir unterstützen '+firmaSag+' bei der Besetzung dieser Stelle.')));
+ h+=step(3,'Ziel des Gesprächs',say('Das Gespräch heute ist ein erstes Orientierungsgespräch. '+(du?'Du lernst':'Sie lernen')+' den Arbeitgeber und die Position kennen, und wir schauen gemeinsam, ob das passt. Ich bin nicht der fachliche Experte und kann nicht jede Fachfrage bis ins Detail beantworten. Wenn '+(du?'du':'Sie')+' Interesse '+(du?'hast':'haben')+', gibt es im nächsten Schritt ein Gespräch mit dem Fachbereich, da ist dann genug Raum dafür.')+say('Mein Vorschlag: Ich gebe '+S.dir+' gleich ein paar Infos zum Unternehmen und zur Position. Vorher interessiert mich aber '+S.ihr+' Hintergrund.','Überleitung'));
+ h+=step(4,'Wechselmotivation',say('Was mich am Anfang immer interessiert: Warum '+S.nimmst+' '+(du?'dir':'sich')+' heute Zeit für das Gespräch?','Fragen')+'<div class="hint">Zuhören: Was fehlt im aktuellen Job? Was soll besser werden?</div>');
+ h+=step(5,'Aktuelles Tagesgeschäft',say((du?'Nimm':'Nehmen Sie')+' mich doch mal an die Hand: Wie sieht '+S.ihr+' Daily Business aus? Wofür '+(du?'bist du':'sind Sie')+' verantwortlich, wofür vielleicht auch nicht?','Fragen')+(k.pruefen&&k.pruefen.length?'<div class="hint">Dabei schon die Muss-Kriterien rechts im Blick behalten.</div>':''));
+ h+=step(6,'Unternehmen vorstellen',(k.kunde_pitch?say(e(k.kunde_pitch),'Pitch'):'')+li(k.kunde_punkte)+(!k.kunde_pitch&&b.firma_text?'<div class="hint">Rohdaten:</div><div style="white-space:pre-wrap;font-size:14px">'+e(b.firma_text)+'</div>':'')+(b.team?'<div class="hint" style="margin-top:6px">Team: '+e(b.team)+'</div>':''));
+ h+=step(7,'Stelle vorstellen',(k.stelle_pitch?say(e(k.stelle_pitch),'Pitch'):'')+li(k.aufgaben||b.aufgaben)+((k.verkaufsargumente||[]).length?'<div style="margin-top:8px;font-weight:700;font-size:13px">Stärkste Argumente</div>'+li(k.verkaufsargumente):'')+((k.rahmen||[]).length?'<div style="margin-top:8px;font-weight:700;font-size:13px">Rahmen</div>'+li(k.rahmen):''));
+ h+=step(8,'Was ist wichtig?',say('Was wäre '+S.dir+' bei einem neuen Arbeitgeber wichtig? Es gibt ja meistens Punkte, die einen mehr oder weniger motivieren.','Fragen')+(b.benefits&&b.benefits.length?'<div class="hint">Passende Benefits zum Nachlegen:</div>'+li(b.benefits.slice(0,8)):''));
+ h+=step(9,'Weiterer Ablauf',say(e(k.ablauf||('Wenn '+(du?'du':'Sie')+' Interesse '+(du?'hast':'haben')+', stelle ich '+(du?'dein':'Ihr')+' Profil vor und melde mich mit einer Rückmeldung. Danach folgt das Gespräch mit dem Fachbereich.'))));
+ h+=step(10,'Kündigungsfrist und Gehalt',say('Wie sieht '+S.ihr+' Kündigungsfrist aus? Und was wäre '+S.ihr+' Gehaltsvorstellung?','Fragen')+(k.gehalt_intern||b.gehalt_von?'<div class="hint">Intern, nicht aktiv nennen: '+e(k.gehalt_intern||(b.gehalt_von+' bis '+b.gehalt_bis+' €'))+'</div>':''));
+ h+=step(11,'Offene Fragen und Abschluss',say((du?'Hast du':'Haben Sie')+' noch Fragen an mich? … Dann fasse ich kurz zusammen, wie es weitergeht.')+'<div class="hint">Danach: Gesprächsbogen ausfüllen (Link rechts). Zustimmung zur Vorstellung abfragen.</div>');
+ h+='</div><div class="side">';
+ if(achtung.length)h+='<div class="warn rot"><b>Achtung</b>'+li(achtung)+'</div>';
+ if(k.pruefen&&k.pruefen.length)h+='<div class="card"><b>Muss-Kriterien prüfen</b>'+k.pruefen.map(function(x,i){return '<label class="pf"><input type="checkbox"><span>'+e(x.kriterium)+'<small>'+e(x.frage)+'</small></span></label>'}).join('')+'</div>';
+ var L=r.links||{};h+='<div class="lnk"><a class="haupt" href="'+e(L.gespraech)+'" target="_blank" rel="noopener">Gesprächsbogen öffnen</a><a href="'+e(L.board)+'" target="_blank" rel="noopener">Board</a><a href="'+e(L.auftrag)+'" target="_blank" rel="noopener">Auftragsklärung</a></div>';
+ h+='<div class="hint" style="margin-top:10px">Stand: '+e(r.erstellt||'')+'. Erstellt aus der Auftragsklärung.<br><button class="btn2" id="b-neu" style="margin-top:6px">Neu erstellen</button><br>(Folge: Die KI liest die aktuelle Auftragsklärung neu ein. Das passiert sonst automatisch, sobald sich die Auftragsklärung ändert.)</div>';
+ h+='</div></div>';
+ app.innerHTML=h;
+ document.querySelectorAll('#s-ich button').forEach(function(b){b.onclick=function(){ich=Number(b.getAttribute('data-v'));ls('lf-ich',String(ich));render()}});
+ document.querySelectorAll('#s-du button').forEach(function(b){b.onclick=function(){du=b.getAttribute('data-v')==='1';ls('lf-du-'+D,du?'1':'0');render()}});
+ document.getElementById('b-neu').onclick=function(){laden(true)};
+}
+if(!D||!T){app.innerHTML='<div class="msg">Der Link ist unvollständig. Bitte den Link aus Pipedrive oder dem Board verwenden.</div>';return}
+laden(false);
+})();
+</script></body></html>
