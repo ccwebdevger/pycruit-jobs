@@ -43,7 +43,10 @@ input[type=text],input[type=date],select,textarea{width:100%;border:1px solid #D
 .ac h3{margin:0;font-size:14.5px;line-height:1.3}.ac .k{color:#6B6B6B;font-size:12px}.ac .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .fun{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.fun div{background:#F6F6F8;border-radius:8px;padding:5px 4px;text-align:center}.fun b{display:block;font-size:16px;font-family:'Inter Tight',Inter}.fun span{font-size:9.5px;color:#777;font-weight:600}
 .fun div.hot{background:#FFF5FA}.fun div.hot b{color:#A50E55}
-.ab{display:flex;gap:6px;flex-wrap:wrap}.ab a{font-size:12px;padding:6px 10px;text-decoration:none}.top a.btn{text-decoration:none}.btn.ckb{background:#FFF5FA;color:#A50E55;border:1.5px solid #D2126C;padding:7px 13px}.btn.ckb:hover{background:#FDE7F1}
+.ab{display:flex;gap:6px;flex-wrap:wrap}.ab a{font-size:12px;padding:6px 10px;text-decoration:none}.top a.btn{text-decoration:none}
+.answ{display:inline-flex;align-items:center;gap:6px;background:#FFF5FA;border:1.5px solid #D2126C;border-radius:999px;padding:3px 4px 3px 11px;font-weight:700;color:#A50E55;font-size:12px;white-space:nowrap}.answ.off{opacity:.5}
+.seg{display:inline-flex;background:#fff;border-radius:999px;overflow:hidden;border:1px solid #F3B6D2}.seg button{border:0;background:none;padding:4px 11px;font-weight:700;color:#A50E55;cursor:pointer;font-size:12px}.seg button.on{background:#D2126C;color:#fff}
+.ansbar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#FFF5FA;border:1.5px solid #D2126C;border-radius:12px;padding:9px 12px;margin:4px 0 12px}.ansbar b{color:#A50E55}.ansbar .hint{flex-basis:100%;margin:0}.btn.ckb{background:#FFF5FA;color:#A50E55;border:1.5px solid #D2126C;padding:7px 13px}.btn.ckb:hover{background:#FDE7F1}
 @media(max-width:700px){.btn.ckb{padding:7px 9px;font-size:12px}}
 .prep{background:#F6F6F8;border-radius:9px;padding:8px 10px;color:#666;font-size:12px}
 .todo{background:#fff;border:1px solid #ECECEE;border-radius:14px;padding:12px 14px;position:sticky;top:72px;max-height:calc(100vh - 90px);overflow-y:auto}
@@ -53,7 +56,7 @@ input[type=text],input[type=date],select,textarea{width:100%;border:1px solid #D
 @media(max-width:1000px){.cgrid{grid-template-columns:1fr}.todo{position:static;max-height:none}}
 @media(max-width:700px){.crumb{display:none}.search{width:100%}.alist{grid-template-columns:1fr}}
 </style></head><body>
-<div class="top"><img src="/assets/logo.png" alt="pycruit"><div class="crumb" id="crumb">Board</div><span class="badge" id="art" style="display:none"></span><div class="sp"></div>
+<div class="top"><img src="/assets/logo.png" alt="pycruit"><div class="crumb" id="crumb">Board</div><span class="badge" id="art" style="display:none"></span><span class="answ" id="ans-k" style="display:none" title="Ansprache des Ansprechpartners beim Kunden">Kunde:<span class="seg"><button type="button" data-w="Sie">Sie</button><button type="button" data-w="Du">Du</button></span></span><div class="sp"></div>
  <a class="btn g" id="l-intern" target="_blank" rel="noopener">Tabelle</a><a class="btn g" id="l-deal" target="_blank" rel="noopener">Pipedrive</a><button class="btn p" id="b-neu">+ Kandidat</button></div>
 <div id="app"><div class="msg" id="lade">Board wird geladen …</div></div>
 <div class="dim" id="dim"></div>
@@ -130,7 +133,7 @@ function feld(id,lab,val,typ){return '<label for="f-'+id+'">'+lab+'</label><inpu
 function oeffnen(z){var k=z?find(z):{z:0,k:'',name:'',link:'',kurzprofil:'',runde:'',status:'noch nicht angeschrieben',notiz:'',zust:'',zust_am:'',zust_quelle:'',sterne:'',pool_bis:'',vertrieb:'',profil_status:'',nat:'',erlaubnis:'',profil_am:'',interview_am:'',feedback_am:'',vermerk:''};aktiv=k;var A=D.auftrag;
  $('dr-t').textContent=z?(k.k+' · '+(k.name||'(ohne Namen)')):'Neuer Kandidat';$('dr-s').textContent=z?((k.kurzprofil||'')+(k.runde?' · Quelle: '+k.runde:'')):'Bekommt automatisch das nächste freie Kürzel.';
  var si=['interessiert','vorgespräch','freigabe erteilt','vorgestellt','interview beim kunden','platziert'].indexOf(k.status.toLowerCase());var w=z?hinweise(k).filter(function(x){return x[0]!=='ok'}):[];
- var b=(z?'<div class="steps">'+[0,1,2,3,4,5].map(function(i){return '<div class="st'+(i<=si?' d':'')+'"></div>'}).join('')+'</div>':'')
+ var b=(z?'<div class="ansbar"><b>Ansprache Kandidat</b><span class="seg" id="ans-c"><button type="button" data-w="Sie">Sie</button><button type="button" data-w="Du">Du</button></span><span class="hint" id="ans-c-h">(Folge: Interview-Vorbereitung, Absage und alle weiteren Entwürfe an diesen Kandidaten kommen in dieser Form.)</span></div>':'')+(z?'<div class="steps">'+[0,1,2,3,4,5].map(function(i){return '<div class="st'+(i<=si?' d':'')+'"></div>'}).join('')+'</div>':'')
   +(w.length?'<div class="warn">'+w.map(function(x){return e(x[1])}).join(' · ')+'</div>':'')
   +'<div class="sec"><h5>Aus Lebenslauf oder Profil füllen</h5><input type="file" id="cv-datei" accept="application/pdf,.pdf" style="max-width:100%"><textarea id="cv-text" placeholder="oder Profiltext einfügen (z. B. aus LinkedIn, Xing oder einer Mail kopiert)" style="min-height:46px;margin-top:6px"></textarea>'
   +'<button class="btn g" id="cv-los" type="button" style="margin-top:6px">Auslesen und Felder füllen</button><div class="hint">(Folge: Die KI liest PDF oder Text einmal aus und füllt Name, Link, Kurzprofil und Notiz'+(z?', aber nur leere Felder, die Notiz wird ergänzt':'')+'. Gespeichert wird erst mit „'+(z?'Speichern':'Kandidat anlegen')+'“. Die Datei wird nicht abgelegt. LinkedIn-Profil als PDF: auf dem Profil „Mehr“ und dann „Als PDF speichern“. Den Lebenslauf selbst erst am Pipedrive-Kontakt hochladen, wenn der Kandidat ihn geschickt hat.)</div></div>'
@@ -166,6 +169,7 @@ function oeffnen(z){var k=z?find(z):{z:0,k:'',name:'',link:'',kurzprofil:'',rund
   if(f){var fr=new FileReader();fr.onload=function(){los(String(fr.result))};fr.readAsDataURL(f)}else los('')};
  var bf=$('b-feedback');if(bf)bf.onclick=function(){var d=new Date(),dd=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();var fb=$('f-fb').value.trim();var no=(k.notiz||'').trim();var neu=fb?(no?no+'\n\n':'')+'Interview-Feedback '+dd+': '+fb:no;var f={feedback_am:dd};if(neu!==no)f.notiz=neu;bf.disabled=true;
   speichern(k,f,function(ok){bf.disabled=false;if(ok){k.feedback_am=dd;k.notiz=neu;zu();render()}})};
+ if(z)kandAns(z);
  var bs=$('b-schriftlich');if(bs)bs.onclick=function(){var d=new Date();$('f-zust').value='ja';$('f-zust_am').value=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();if(!$('f-zust_quelle').value||/offen/i.test($('f-zust_quelle').value))$('f-zust_quelle').value='schriftlich bestätigt am '+$('f-zust_am').value}}
 function zu(){$('dr').classList.remove('on');$('dim').classList.remove('on');aktiv=null}
 $('dr-x').onclick=zu;$('dim').onclick=zu;document.addEventListener('keydown',function(ev){if(ev.key==='Escape')zu()});
@@ -176,7 +180,13 @@ $('dr-save').onclick=function(){var k=aktiv;if(!k)return;var f={};FELDER.forEach
  if(!k.z){api('neu',{felder:f}).then(function(r){btn.disabled=false;if(r.ok){toast(r.k+' angelegt. Pipedrive wird abgeglichen.');zu();laden()}else toast(r.fehler||'Anlegen fehlgeschlagen.',true)}).catch(function(){btn.disabled=false;toast('Keine Verbindung.',true)});return}
  speichern(k,f,function(ok){btn.disabled=false;if(ok){Object.keys(f).forEach(function(n){k[n]=f[n]});zu();render()}})};
 var zOffen=Number(h.get('z'))||0;
-function laden(){api('laden').then(function(r){if(!r.ok){$('app').innerHTML='<div class="msg">'+e(r.fehler||'Der Link ist ungültig.')+'</div>';return}D=r;render();if(zOffen&&find(zOffen)){oeffnen(zOffen)}zOffen=0}).catch(function(){$('app').innerHTML='<div class="msg">Keine Verbindung.</div>'})}
+var AZ='https://ccpycruit.app.n8n.cloud/webhook/pycruit-board-ansprache';
+function ans(ziel,z,wert){return fetch(AZ,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({d:P.d,t:P.t,ziel:ziel,z:z||0,wert:wert||''})}).then(function(r){return r.json()})}
+function segSet(el,r){el.querySelectorAll('button').forEach(function(b){b.classList.toggle('on',!!(r&&r.ok&&b.getAttribute('data-w')===r.wert))})}
+function segBind(el,ziel,z,wer){el.querySelectorAll('button').forEach(function(b){b.onclick=function(){var w=b.getAttribute('data-w');el.style.opacity='.5';ans(ziel,z,w).then(function(r){el.style.opacity='';segSet(el,r);toast(r.ok?(r.name+' wird ab jetzt '+(w==='Du'?'geduzt':'gesiezt')+'. Künftige Entwürfe kommen in '+w+'-Form.'):(r.fehler||'Speichern fehlgeschlagen.'),!r.ok)}).catch(function(){el.style.opacity='';toast('Keine Verbindung.',true)})}})}
+var kundeGeladen=false;function kundeAns(){if(kundeGeladen)return;kundeGeladen=true;var ak=$('ans-k');ak.style.display='';var sg=ak.querySelector('.seg');segBind(sg,'kunde',0);ans('kunde').then(function(r){if(!r.ok){ak.classList.add('off');ak.title=r.fehler||'';return}segSet(sg,r);ak.title='Ansprechpartner: '+r.name+(r.gesetzt?'':' (noch nicht festgelegt, Standard Sie)')+'. Folge: alle Entwürfe an den Kunden kommen in dieser Form.'})}
+function kandAns(z){var el=$('ans-c');if(!el)return;segBind(el,'kandidat',z);ans('kandidat',z).then(function(r){if(!r.ok){$('ans-c-h').textContent=r.fehler||'';el.style.opacity='.5';el.querySelectorAll('button').forEach(function(b){b.disabled=true});return}segSet(el,r)})}
+function laden(){api('laden').then(function(r){if(!r.ok){$('app').innerHTML='<div class="msg">'+e(r.fehler||'Der Link ist ungültig.')+'</div>';return}D=r;render();kundeAns();if(zOffen&&find(zOffen)){oeffnen(zOffen)}zOffen=0}).catch(function(){$('app').innerHTML='<div class="msg">Keine Verbindung.</div>'})}
 // ---------- Cockpit: alle Suchaufträge (Link #c=<persönlicher Schlüssel> oder aus dem Board #c=board&d=..&t=..) ----------
 var OWN={24260132:'CC',24263740:'TM'};var NAMEN={24260132:'Christian',24263740:'Tina'};var C=null;var cf={art:'alle',meine:false,wahl:false};
 var ICH=0;try{ICH=Number(localStorage.getItem('pycruit-ich'))||0}catch(x){}
