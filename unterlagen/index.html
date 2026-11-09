@@ -1,0 +1,43 @@
+<!doctype html><html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="referrer" content="no-referrer">
+<title>Originalunterlagen | pycruit</title>
+<style>
+@font-face{font-family:Inter;font-weight:400;src:url(/assets/fonts/inter-400.woff2)}@font-face{font-family:Inter;font-weight:600;src:url(/assets/fonts/inter-600.woff2)}@font-face{font-family:'Inter Tight';font-weight:800;src:url(/assets/fonts/inter-tight-800.woff2)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,"Segoe UI",Arial,sans-serif;background:#F6F6F8;color:#191919;font-size:15px;line-height:1.5}
+.top{height:62px;background:#fff;border-bottom:1px solid #ECECEE;display:flex;align-items:center;padding:0 20px}.top img{height:28px}
+.wrap{max-width:720px;margin:32px auto;padding:0 16px}
+.card{background:#fff;border:1px solid #ECECEE;border-radius:16px;padding:24px}
+h1{font-family:'Inter Tight',Inter;font-size:26px;margin:0 0 4px;line-height:1.2}.sub{color:#666;margin-bottom:18px}
+.file{display:flex;align-items:center;gap:12px;border:1px solid #ECECEE;border-radius:12px;padding:12px 14px;margin-bottom:8px}
+.file .n{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-weight:600}.file .g{color:#888;font-size:13px;white-space:nowrap}
+.btn{border:0;border-radius:10px;padding:9px 14px;font:inherit;font-weight:600;cursor:pointer;color:#fff;background:linear-gradient(90deg,#EE3934,#D2126C);white-space:nowrap}.btn:disabled{opacity:.5}
+.hint{color:#777;font-size:13px;margin-top:16px}.msg{text-align:center;color:#555;padding:40px 10px}
+.ic{width:34px;height:34px;border-radius:9px;background:#FDE7F1;color:#A50E55;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none}
+@media(max-width:520px){.file{flex-wrap:wrap}.file .n{white-space:normal}}
+</style></head><body>
+<div class="top"><img src="/assets/logo.png" alt="pycruit"></div>
+<div class="wrap"><div class="card" id="app"><div class="msg">Unterlagen werden geladen …</div></div></div>
+<script>
+(function(){
+var ZIEL='https://ccpycruit.app.n8n.cloud/webhook/pycruit-unterlagen';
+var h=new URLSearchParams(location.hash.slice(1));var P={d:h.get('d')||'',k:h.get('k')||'',s:h.get('s')||''};
+var app=document.getElementById('app');
+function e(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function gr(b){return b>1048576?(b/1048576).toFixed(1).replace('.',',')+' MB':Math.max(1,Math.round(b/1024))+' KB'}
+function post(extra){return fetch(ZIEL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({d:P.d,k:P.k,s:P.s},extra||{}))})}
+function fehler(t){app.innerHTML='<div class="msg">'+e(t)+'</div>'}
+if(!P.d||!P.k||!P.s){fehler('Der Link ist unvollständig. Bitte verwenden Sie den Link aus unserer E-Mail.');return}
+post().then(function(r){return r.json()}).then(function(r){
+ if(!r.ok){fehler(r.fehler||'Der Link ist ungültig.');return}
+ var html='<h1>Originalunterlagen</h1><div class="sub">'+e(r.kandidat||r.kuerzel)+(r.stelle?' · '+e(r.stelle):'')+'</div>';
+ if(!r.dateien.length)html+='<div class="msg">Zu diesem Kandidaten liegen aktuell keine Unterlagen vor. Wir melden uns, sobald sie da sind.</div>';
+ r.dateien.forEach(function(f){var ext=(String(f.name).match(/\.([a-z0-9]+)$/i)||['',''])[1].toUpperCase().slice(0,4);
+  html+='<div class="file"><div class="ic">'+e(ext||'DOC')+'</div><div class="n" title="'+e(f.name)+'">'+e(f.name)+'</div><div class="g">'+gr(f.groesse)+'</div><button class="btn" data-id="'+f.id+'" data-n="'+e(f.name)+'">Herunterladen</button></div>'});
+ html+='<div class="hint">Diese Unterlagen sind vertraulich und nur für Ihr Auswahlverfahren bestimmt. Bitte geben Sie sie nicht an Dritte weiter.'+(r.gueltig_bis?' Der Link ist gültig bis '+e(r.gueltig_bis)+'.':'')+'</div>';
+ app.innerHTML=html;
+ app.querySelectorAll('button[data-id]').forEach(function(b){b.onclick=function(){var t=b.textContent;b.disabled=true;b.textContent='Wird geladen …';
+  post({f:b.getAttribute('data-id')}).then(function(res){var ct=res.headers.get('content-type')||'';if(ct.indexOf('application/json')===0)return res.json().then(function(j){throw new Error(j.fehler||'Download fehlgeschlagen.')});if(!res.ok)throw new Error('Download fehlgeschlagen.');return res.blob()})
+  .then(function(bl){var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=b.getAttribute('data-n');document.body.appendChild(a);a.click();setTimeout(function(){URL.revokeObjectURL(a.href);a.remove()},2000);b.disabled=false;b.textContent=t})
+  .catch(function(x){b.disabled=false;b.textContent=t;alert(x.message)})}});
+}).catch(function(){fehler('Keine Verbindung. Bitte versuchen Sie es später noch einmal.')});
+})();
+</script></body></html>
