@@ -1,5 +1,46 @@
 [
  {
+  "slug": "bauphysiker-fuer-thermische-bauphysik-und-energiebera-hamburg-plh4",
+  "titel": "Bauphysiker (m/w/d) für thermische Bauphysik und Energieberatung",
+  "ort": "Hamburg",
+  "plz": "",
+  "region": "Hamburg",
+  "arbeitszeit": "Vollzeit",
+  "homeoffice": "2 Tage pro Woche",
+  "gehalt_von": 60000,
+  "gehalt_bis": 80000,
+  "gehalt_zeigen": true,
+  "einleitung": "Sie planen und berechnen energieeffiziente Gebäude und beraten Bauherren und Architekten zu Energie und Bauphysik. Sie arbeiten an Projekten jeder Größe und wickeln diese eigenständig im Team ab.",
+  "ueber_unternehmen": "Das Unternehmen ist ein Ingenieurbüro für komplexe Bauvorhaben mit mehreren hundert Mitarbeitenden und Standorten in ganz Deutschland. Es ist seit Jahrzehnten am Markt und Teil einer größeren Beratungs- und Engineeringgruppe. Der Fachbereich Bauphysik in Hamburg arbeitet vielseitig und tauscht sich eng mit anderen Fachbereichen aus, etwa Brandschutz, Nachhaltigkeit, Tragwerks- und Verkehrsplanung.",
+  "aufgaben": [
+   "Sie bearbeiten Themen der thermischen Bauphysik, Energiebilanzierung, Energieberatung und Energiesimulation.",
+   "Sie planen energieeffiziente Gebäude, unter anderem nach BEG, BAFA, QNG und DGNB.",
+   "Sie erstellen Konzepte und führen Berechnungen, Nachweise und Simulationen durch.",
+   "Sie beraten Bauherren und Architekten fachlich.",
+   "Sie führen bauphysikalische Messungen durch, zum Beispiel Feuchte- und Temperaturmessungen und Wärmebilder.",
+   "Sie wirken in Projektteams mit und wickeln Projekte eigenständig ab."
+  ],
+  "profil": [
+   "Sie haben ein abgeschlossenes Studium in Ingenieurwesen, Architektur, Energieeffizientem Bauen, Umweltwissenschaft oder einem vergleichbaren Fach.",
+   "Sie bringen mindestens 4 Jahre Berufserfahrung in der Bauphysik oder einem verwandten Feld mit.",
+   "Sie kennen die gängigen Nachweisverfahren und Förderprogramme im energieeffizienten Bauen.",
+   "Sie arbeiten selbstständig und strukturiert und schätzen den Austausch im Team.",
+   "Sie sind bereit, gelegentlich tageweise auf Baustellen und bei Messungen vor Ort zu sein.",
+   "Sie sprechen sehr gutes Deutsch."
+  ],
+  "angebot": [
+   "Unbefristete Festanstellung in Vollzeit mit einer 40-Stunden-Woche, 30 Tagen Urlaub und einem Überstundenkonto.",
+   "Jahresgehalt von 65.000 bis 80.000 Euro brutto je nach Erfahrung, bei 12,5 Gehältern plus Prämie.",
+   "Homeoffice an 2 Tagen pro Woche, bei Bedarf auch flexibler.",
+   "Jobticket, Jobrad und Parkplatz.",
+   "Weiterbildungen und Zertifizierungen werden gefördert, dazu gibt es eine hauseigene Akademie für Fach- und Führungsthemen. Eine Teamführungsrolle ist möglich.",
+   "Gründliche Einarbeitung durch erfahrene Kolleginnen und Kollegen in einem Team mit offener Atmosphäre."
+  ],
+  "datum": "2026-11-09",
+  "gueltig_bis": "2027-01-08",
+  "deal_id": 155
+ },
+ {
   "slug": "projektleiter-tga-hamburg-0hho",
   "titel": "Projektleiter TGA (m/w/d)",
   "ort": "Hamburg",
