@@ -43,7 +43,8 @@ input[type=text],input[type=date],select,textarea{width:100%;border:1px solid #D
 .ac h3{margin:0;font-size:14.5px;line-height:1.3}.ac .k{color:#6B6B6B;font-size:12px}.ac .row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
 .fun{display:grid;grid-template-columns:repeat(5,1fr);gap:4px}.fun div{background:#F6F6F8;border-radius:8px;padding:5px 4px;text-align:center}.fun b{display:block;font-size:16px;font-family:'Inter Tight',Inter}.fun span{font-size:9.5px;color:#777;font-weight:600}
 .fun div.hot{background:#FFF5FA}.fun div.hot b{color:#A50E55}
-.ab{display:flex;gap:6px;flex-wrap:wrap}.ab a{font-size:12px;padding:6px 10px;text-decoration:none}.top a.btn{text-decoration:none}
+.ab{display:flex;gap:6px;flex-wrap:wrap}.ab a{font-size:12px;padding:6px 10px;text-decoration:none}.top a.btn{text-decoration:none}.btn.ckb{background:#FFF5FA;color:#A50E55;border:1.5px solid #D2126C;padding:7px 13px}.btn.ckb:hover{background:#FDE7F1}
+@media(max-width:700px){.btn.ckb{padding:7px 9px;font-size:12px}}
 .prep{background:#F6F6F8;border-radius:9px;padding:8px 10px;color:#666;font-size:12px}
 .todo{background:#fff;border:1px solid #ECECEE;border-radius:14px;padding:12px 14px;position:sticky;top:72px;max-height:calc(100vh - 90px);overflow-y:auto}
 .todo h3{margin:0 0 8px;font-size:14px}.ti{display:block;text-decoration:none;color:#191919;border-top:1px solid #F2F2F4;padding:8px 2px}.ti:first-of-type{border-top:0}.ti:hover{background:#FAFAFB}
@@ -204,7 +205,9 @@ function cRender(){var A=C.auftraege;$('crumb').innerHTML='Cockpit · <b>'+e(C.u
  document.querySelectorAll('[data-art]').forEach(function(b){b.onclick=function(){cf.art=b.getAttribute('data-art');cRender()}});
  $('c-meine').onclick=function(){cf.meine=!cf.meine;cRender()}}
 window.addEventListener('hashchange',function(){location.reload()});
-if(!h.get('c')){var ck='';try{ck=localStorage.getItem('pycruit-cockpit')||''}catch(x){}if(/^[a-f0-9]{32}$/.test(ck)){var cb=document.createElement('a');cb.className='btn g';cb.textContent='Cockpit';cb.href='/board/#c='+ck;$('l-intern').parentNode.insertBefore(cb,$('l-intern'))}}
+if(!h.get('c')){var ck='';try{ck=localStorage.getItem('pycruit-cockpit')||''}catch(x){}var cb=document.createElement('a');cb.className='btn ckb';cb.innerHTML='&#8592; Alle Suchaufträge';cb.title='Cockpit mit allen Suchaufträgen';
+ if(/^[a-f0-9]{32}$/.test(ck)){cb.href='/board/#c='+ck}else{cb.href='#';cb.onclick=function(ev){ev.preventDefault();toast('Bitte einmal deinen persönlichen Cockpit-Link öffnen (steht in der Tagesmeldung). Danach führt dieser Button immer ins Cockpit.')}}
+ var tp=document.querySelector('.top');tp.insertBefore(cb,$('crumb'))}
 if(h.get('c')){cockpit()}else if(!P.d||!P.t){$('app').innerHTML='<div class="msg">Der Link ist unvollständig. Den Board-Link findet ihr am Deal in Pipedrive.</div>'}else laden();
 })();
 </script></body></html>
