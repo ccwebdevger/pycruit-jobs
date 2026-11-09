@@ -68,7 +68,7 @@ input[type=text],input[type=date],select,textarea{width:100%;border:1px solid #D
 @media(max-width:700px){.crumb{display:none}.search{width:100%}.alist{grid-template-columns:1fr}}
 </style></head><body>
 <div class="top"><img src="/assets/logo.png" alt="pycruit"><div class="crumb" id="crumb">Board</div><span class="badge" id="art" style="display:none"></span><span class="answ" id="ans-k" style="display:none" title="Ansprache des Ansprechpartners beim Kunden">Kunde:<span class="seg"><button type="button" data-w="Sie">Sie</button><button type="button" data-w="Du">Du</button></span></span><div class="sp"></div>
- <button class="btn g" id="b-src" type="button" title="Active Sourcing für diesen Job: Coresignal und X-Ray Xing">Sourcing</button><a class="btn g" id="l-intern" target="_blank" rel="noopener">Tabelle</a><a class="btn g" id="l-deal" target="_blank" rel="noopener">Pipedrive</a><button class="btn p" id="b-neu">+ Kandidat</button></div>
+ <a class="btn g" id="l-leit" target="_blank" rel="noopener" title="Spickzettel fürs Vorgespräch: Kunde, Stelle, Muss-Kriterien, Gesprächsablauf">Leitfaden</a><button class="btn g" id="b-src" type="button" title="Active Sourcing für diesen Job: Coresignal und X-Ray Xing">Sourcing</button><a class="btn g" id="l-intern" target="_blank" rel="noopener">Tabelle</a><a class="btn g" id="l-deal" target="_blank" rel="noopener">Pipedrive</a><button class="btn p" id="b-neu">+ Kandidat</button></div>
 <div id="bew" class="bew" style="display:none"></div>
 <div id="src" class="bew srcp" style="display:none"></div>
 <div id="app"><div class="msg" id="lade">Board wird geladen …</div></div>
@@ -189,7 +189,7 @@ function oeffnen(z){var k=z?find(z):{z:0,k:'',name:'',link:'',kurzprofil:'',rund
  var bs=$('b-schriftlich');if(bs)bs.onclick=function(){var d=new Date();$('f-zust').value='ja';$('f-zust_am').value=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();if(!$('f-zust_quelle').value||/offen/i.test($('f-zust_quelle').value))$('f-zust_quelle').value='schriftlich bestätigt am '+$('f-zust_am').value}}
 function zu(){$('dr').classList.remove('on');$('dim').classList.remove('on');aktiv=null}
 $('dr-x').onclick=zu;$('dim').onclick=zu;document.addEventListener('keydown',function(ev){if(ev.key==='Escape')zu()});
-$('b-src').onclick=function(){if(!SR){toast('Sourcing wird noch geladen …');return}if(!srcBereit())toast('Erst die Auftragsklärung speichern, dann lässt sich das Sourcing starten.',true);srcOffen=true;srcRender();$('src').scrollIntoView({behavior:'smooth',block:'start'})};$('b-neu').onclick=function(){if(D)oeffnen(0)};
+$('l-leit').href='/leitfaden/#d='+encodeURIComponent(P.d)+'&t='+encodeURIComponent(P.t);$('b-src').onclick=function(){if(!SR){toast('Sourcing wird noch geladen …');return}if(!srcBereit())toast('Erst die Auftragsklärung speichern, dann lässt sich das Sourcing starten.',true);srcOffen=true;srcRender();$('src').scrollIntoView({behavior:'smooth',block:'start'})};$('b-neu').onclick=function(){if(D)oeffnen(0)};
 var FELDER=['name','status','link','kurzprofil','runde','angeschrieben','notiz','zust','zust_am','zust_quelle','sterne','pool_bis','vertrieb','profil_status','nat','erlaubnis','interview_am'];
 $('dr-save').onclick=function(){var k=aktiv;if(!k)return;var f={};FELDER.forEach(function(n){var el=$('f-'+n);if(!el)return;var v=el.value.trim();var alt=String(k[n]||'');if(n==='zust')alt=alt.toLowerCase();if(!k.z||v!==alt)f[n]=v});
  if(k.z&&!Object.keys(f).length){toast('Nichts geändert.');return}var btn=$('dr-save');btn.disabled=true;
