@@ -167,19 +167,20 @@ $('dr-save').onclick=function(){var k=aktiv;if(!k)return;var f={};FELDER.forEach
  speichern(k,f,function(ok){btn.disabled=false;if(ok){Object.keys(f).forEach(function(n){k[n]=f[n]});zu();render()}})};
 var zOffen=Number(h.get('z'))||0;
 function laden(){api('laden').then(function(r){if(!r.ok){$('app').innerHTML='<div class="msg">'+e(r.fehler||'Der Link ist ungültig.')+'</div>';return}D=r;render();if(zOffen&&find(zOffen)){oeffnen(zOffen)}zOffen=0}).catch(function(){$('app').innerHTML='<div class="msg">Keine Verbindung.</div>'})}
-// ---------- Cockpit: alle Suchaufträge (Link #c=<persönlicher Schlüssel>) ----------
-var OWN={24260132:'CC',24263740:'TM'};var C=null;var cf={art:'alle',meine:false};
-function cockpit(){try{localStorage.setItem('pycruit-cockpit',h.get('c'))}catch(x){}document.title='pycruit Cockpit';$('l-intern').style.display='none';$('l-deal').style.display='none';var bn=$('b-neu');bn.textContent='Aktualisieren';bn.className='btn g';bn.onclick=cLaden;cLaden()}
-function cLaden(){$('app').innerHTML='<div class="msg">Cockpit wird geladen …</div>';fetch('https://ccpycruit.app.n8n.cloud/webhook/pycruit-cockpit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({c:h.get('c')})}).then(function(r){return r.json()}).then(function(r){if(!r.ok){$('app').innerHTML='<div class="msg">'+e(r.fehler||'Der Link ist ungültig.')+'</div>';return}C=r;cRender()}).catch(function(){$('app').innerHTML='<div class="msg">Keine Verbindung.</div>'})}
+// ---------- Cockpit: alle Suchaufträge (Link #c=<persönlicher Schlüssel> oder aus dem Board #c=board&d=..&t=..) ----------
+var OWN={24260132:'CC',24263740:'TM'};var NAMEN={24260132:'Christian',24263740:'Tina'};var C=null;var cf={art:'alle',meine:false,wahl:false};
+var ICH=0;try{ICH=Number(localStorage.getItem('pycruit-ich'))||0}catch(x){}
+function cockpit(){if(/^[a-f0-9]{32}$/.test(h.get('c'))){try{localStorage.setItem('pycruit-cockpit',h.get('c'))}catch(x){}}document.title='pycruit Cockpit';$('l-intern').style.display='none';$('l-deal').style.display='none';var bn=$('b-neu');bn.textContent='Aktualisieren';bn.className='btn g';bn.onclick=cLaden;cLaden()}
+function cLaden(){$('app').innerHTML='<div class="msg">Cockpit wird geladen …</div>';fetch('https://ccpycruit.app.n8n.cloud/webhook/pycruit-cockpit',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({c:h.get('c'),d:h.get('d')||'',t:h.get('t')||''})}).then(function(r){return r.json()}).then(function(r){if(!r.ok){$('app').innerHTML='<div class="msg">'+e(r.fehler||'Der Link ist ungültig.')+'</div>';return}C=r;cRender()}).catch(function(){$('app').innerHTML='<div class="msg">Keine Verbindung.</div>'})}
 function zaehl(ks,ids){var s=[];SPALTEN.forEach(function(x){if(ids.indexOf(x.id)>=0)s=s.concat(x.st)});return ks.filter(function(k){return s.indexOf(k.status.toLowerCase())>=0}).length}
-function cRender(){var A=C.auftraege;$('crumb').innerHTML='Cockpit · <b>'+e(C.user)+'</b> · Stand '+e(C.stand);
- var sicht=A.filter(function(a){return !cf.meine||a.owner===C.user_id});
+function cRender(){var A=C.auftraege;var me=C.user_id||ICH;$('crumb').innerHTML='Cockpit · <b>'+e(C.user||NAMEN[me]||'Team')+'</b> · Stand '+e(C.stand);
+ var sicht=A.filter(function(a){return !cf.meine||a.owner===me});
  var n={alle:sicht.length,erfolg:sicht.filter(function(a){return !a.interim}).length,interim:sicht.filter(function(a){return a.interim}).length};
  var L=sicht.filter(function(a){return cf.art==='alle'||(cf.art==='interim')===a.interim});
  var todo=[],alle=[];L.forEach(function(a){a.kandidaten.forEach(function(k){alle.push(k);hinweise(k).forEach(function(x){if(x[0]!=='ok')todo.push({a:a,k:k,x:x})})})});
  var neu=C.meldungen.reduce(function(m,x){return x['Zuletzt gesehen']>m?x['Zuletzt gesehen']:m},'');var meld=C.meldungen.filter(function(x){return x['Zuletzt gesehen']===neu});
  var html='<div class="bar"><div class="tabs">'+[['alle','Alle'],['erfolg','Erfolgsbasiert'],['interim','Interim']].map(function(t){return '<button class="tab'+(cf.art===t[0]?' on':'')+'" data-art="'+t[0]+'">'+t[1]+'<i>'+n[t[0]]+'</i></button>'}).join('')+'</div>'
-  +'<span class="chip'+(cf.meine?' on':'')+'" id="c-meine">Nur meine</span><div class="sp"></div></div>'
+  +(cf.wahl?'<span class="hint">Wer bist du?</span><span class="chip" data-ich="24260132">Christian</span><span class="chip" data-ich="24263740">Tina</span>':'<span class="chip'+(cf.meine?' on':'')+'" id="c-meine">Nur meine</span>')+(!C.user_id&&ICH&&!cf.wahl?'<span class="hint" style="cursor:pointer" id="c-wechsel">(nicht '+e(NAMEN[ICH])+'?)</span>':'')+'<div class="sp"></div></div>'
   +'<div class="kpis"><div class="kpi"><span>Offene Suchaufträge</span><b>'+L.length+'</b></div><div class="kpi"><span>Im Kontakt</span><b>'+alle.filter(function(k){var s=k.status.toLowerCase();return s&&s!=='noch nicht angeschrieben'}).length+'</b></div>'
   +'<div class="kpi"><span>Interessiert und weiter</span><b>'+alle.filter(function(k){return INTER.indexOf(k.status.toLowerCase())>=0}).length+'</b></div><div class="kpi"><span>Beim Kunden</span><b>'+zaehl(alle,['ku'])+'</b></div>'
   +'<div class="kpi"><span>Heute zu tun</span><b>'+(todo.length+meld.length)+'</b></div></div><div class="cgrid"><div class="alist">';
@@ -203,10 +204,12 @@ function cRender(){var A=C.auftraege;$('crumb').innerHTML='Cockpit · <b>'+e(C.u
  html+='<div class="hint" style="margin-top:10px">Gleiche Hinweise wie im Board. Erledigt ist ein Punkt, sobald der Status im Board oder in der Tabelle passt.</div></div></div>';
  $('app').innerHTML=html;
  document.querySelectorAll('[data-art]').forEach(function(b){b.onclick=function(){cf.art=b.getAttribute('data-art');cRender()}});
- $('c-meine').onclick=function(){cf.meine=!cf.meine;cRender()}}
+ var cm=$('c-meine');if(cm)cm.onclick=function(){if(!C.user_id&&!ICH){cf.wahl=true}else{cf.meine=!cf.meine}cRender()};
+ var cw=$('c-wechsel');if(cw)cw.onclick=function(){cf.wahl=true;cRender()};
+ document.querySelectorAll('[data-ich]').forEach(function(b){b.onclick=function(){ICH=Number(b.getAttribute('data-ich'));try{localStorage.setItem('pycruit-ich',String(ICH))}catch(x){}cf.wahl=false;cf.meine=true;cRender()}})}
 window.addEventListener('hashchange',function(){location.reload()});
 if(!h.get('c')){var ck='';try{ck=localStorage.getItem('pycruit-cockpit')||''}catch(x){}var cb=document.createElement('a');cb.className='btn ckb';cb.innerHTML='&#8592; Alle Suchaufträge';cb.title='Cockpit mit allen Suchaufträgen';
- if(/^[a-f0-9]{32}$/.test(ck)){cb.href='/board/#c='+ck}else{cb.href='#';cb.onclick=function(ev){ev.preventDefault();toast('Bitte einmal deinen persönlichen Cockpit-Link öffnen (steht in der Tagesmeldung). Danach führt dieser Button immer ins Cockpit.')}}
+ cb.href=/^[a-f0-9]{32}$/.test(ck)?'/board/#c='+ck:'/board/#c=board&d='+encodeURIComponent(P.d||'')+'&t='+encodeURIComponent(P.t||'');
  var tp=document.querySelector('.top');tp.insertBefore(cb,$('crumb'))}
 if(h.get('c')){cockpit()}else if(!P.d||!P.t){$('app').innerHTML='<div class="msg">Der Link ist unvollständig. Den Board-Link findet ihr am Deal in Pipedrive.</div>'}else laden();
 })();
