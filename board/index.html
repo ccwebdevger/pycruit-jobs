@@ -78,7 +78,11 @@ var SPALTEN=[
 var INTER=['interessiert','vorgespräch','freigabe erteilt','qualifiziert','vorgestellt','interview beim kunden','angebot','platziert'];
 function sichtbar(k){return /^ja$/i.test(k.zust)&&k.zust_am&&k.zust_quelle&&INTER.indexOf(k.status.toLowerCase())>=0}
 function tage(d){var m=String(d||'').match(/^(\d{4})-(\d{2})-(\d{2})/)||String(d||'').match(/^(\d{1,2})\.(\d{1,2})\.(\d{4})/);if(!m)return null;var dt=m[1].length===4?new Date(m[1],m[2]-1,m[3]):new Date(m[3],m[2]-1,m[1]);return Math.floor((Date.now()-dt)/864e5)}
+function werktage(d){var n=tage(d);if(n==null)return null;var c=0,dt=new Date();for(var i=0;i<n;i++){dt.setDate(dt.getDate()-1);var w=dt.getDay();if(w>0&&w<6)c++}return c}
 function hinweise(k){var s=k.status.toLowerCase(),a=[];
+ if(s==='interview beim kunden'&&!k.feedback_am&&tage(k.interview_am)>=1)a.push(['er','Interview-Feedback einholen']);
+ if(s==='interview beim kunden'&&!k.interview_am)a.push(['wa','Interview-Termin fehlt']);
+ if(s==='vorgestellt'&&k.profil_am){var nf=/Nachfass-Entwurf/.test(k.vermerk||''),wt=werktage(k.profil_am);if(nf&&wt>=6)a.push(['er','Kunde anrufen (keine Rückmeldung)']);else if(nf)a.push(['ok','Nachfass-Entwurf erstellt']);else if(wt>=3)a.push(['wa','Kunde nachfassen'])}
  if(s==='angeschrieben'&&tage(k.angeschrieben)>=5)a.push(['wa','Nachfassen fällig']);
  if(/schriftlich offen/i.test(k.zust_quelle)||(/^ja$/i.test(k.zust)&&(!k.zust_am||!k.zust_quelle)))a.push(['er','Zustimmung unvollständig']);
  if(k.profil_status==='in Prüfung')a.push(['wa','Profil in Prüfung']);
@@ -123,7 +127,7 @@ function find(z){return D.kandidaten.filter(function(k){return k.z===z})[0]}
 function speichern(k,felder,cb){api('speichern',{z:k.z,k:k.k,felder:felder}).then(function(r){if(r.ok){toast('Gespeichert. Pipedrive und Kundentabelle werden sofort abgeglichen, ein Kundenmail-Entwurf entsteht zur nächsten vollen Stunde.');cb&&cb(true)}else{toast(r.fehler||'Speichern fehlgeschlagen.',true);cb&&cb(false)}}).catch(function(){toast('Keine Verbindung.',true);cb&&cb(false)})}
 function opt(list,val,leer){return (leer?'<option value="">–</option>':'')+list.map(function(x){return '<option'+(x===val?' selected':'')+'>'+e(x)+'</option>'}).join('')}
 function feld(id,lab,val,typ){return '<label for="f-'+id+'">'+lab+'</label><input type="text" id="f-'+id+'" value="'+e(val)+'">'}
-function oeffnen(z){var k=z?find(z):{z:0,k:'',name:'',link:'',kurzprofil:'',runde:'',status:'noch nicht angeschrieben',notiz:'',zust:'',zust_am:'',zust_quelle:'',sterne:'',pool_bis:'',vertrieb:'',profil_status:'',nat:'',erlaubnis:''};aktiv=k;var A=D.auftrag;
+function oeffnen(z){var k=z?find(z):{z:0,k:'',name:'',link:'',kurzprofil:'',runde:'',status:'noch nicht angeschrieben',notiz:'',zust:'',zust_am:'',zust_quelle:'',sterne:'',pool_bis:'',vertrieb:'',profil_status:'',nat:'',erlaubnis:'',profil_am:'',interview_am:'',feedback_am:'',vermerk:''};aktiv=k;var A=D.auftrag;
  $('dr-t').textContent=z?(k.k+' · '+(k.name||'(ohne Namen)')):'Neuer Kandidat';$('dr-s').textContent=z?((k.kurzprofil||'')+(k.runde?' · Quelle: '+k.runde:'')):'Bekommt automatisch das nächste freie Kürzel.';
  var si=['interessiert','vorgespräch','freigabe erteilt','vorgestellt','interview beim kunden','platziert'].indexOf(k.status.toLowerCase());var w=z?hinweise(k).filter(function(x){return x[0]!=='ok'}):[];
  var b=(z?'<div class="steps">'+[0,1,2,3,4,5].map(function(i){return '<div class="st'+(i<=si?' d':'')+'"></div>'}).join('')+'</div>':'')
@@ -134,6 +138,10 @@ function oeffnen(z){var k=z?find(z):{z:0,k:'',name:'',link:'',kurzprofil:'',rund
   +feld('link','LinkedIn-, Xing- oder Pipedrive-Link (nur intern)',k.link)+feld('kurzprofil','Kurzprofil (sieht der Kunde)',k.kurzprofil)
   +'<div class="g2"><div><label for="f-runde">Ansprache-Runde / Quelle</label><select id="f-runde">'+opt(D.runden,k.runde,true)+'</select></div><div>'+feld('angeschrieben','Angeschrieben am',k.angeschrieben||'')+'</div></div>'
   +'<label for="f-notiz">Notiz (nur intern)</label><textarea id="f-notiz">'+e(k.notiz)+'</textarea></div>'
+  +'<div class="sec"><h5>Beim Kunden</h5><div class="g2"><div><label>Profil an Kunden am</label><input type="text" disabled value="'+e(k.profil_am||'wird automatisch gesetzt')+'"></div><div>'+feld('interview_am','Interview am (z. B. 14.11.2026 10:00)',k.interview_am)+'</div></div>'
+  +'<div class="hint">(Folge: Steht der Kandidat 3 Werktage auf „Vorgestellt“ ohne Rückmeldung, entsteht ein Nachfass-Entwurf an den Kunden. Am Werktag nach dem Interview erinnert euch die Tagesmeldung, Feedback bei Kunde und Kandidat einzuholen.)</div>'
+  +(z&&(k.interview_am||k.status.toLowerCase()==='interview beim kunden')?'<label for="f-fb">Interview-Feedback (nur intern)</label><textarea id="f-fb" placeholder="Was sagen Kunde und Kandidat?"></textarea><button class="btn g" id="b-feedback" type="button" style="margin-top:6px">Feedback eingeholt ✓</button>'+(k.feedback_am?'<div class="hint">Feedback eingeholt am '+e(k.feedback_am)+'</div>':'')+'<div class="hint">(Folge: Der Hinweis „Feedback einholen“ verschwindet, die Notiz wird mit Datum an die interne Notiz angehängt.)</div>':'')
+  +(k.vermerk?'<div class="hint">Automatik: '+e(k.vermerk)+'</div>':'')+'</div>'
   +'<div class="sec"><h5>Zustimmung Vorstellung bei diesem Kunden</h5><div class="g2"><div><label for="f-zust">Zustimmung</label><select id="f-zust">'+opt(['ja','nein'],k.zust.toLowerCase(),true)+'</select></div><div>'+feld('zust_am','Zugestimmt am',k.zust_am)+'</div></div>'+feld('zust_quelle','Quelle der Zustimmung',k.zust_quelle)
   +(z?'<button class="btn g" id="b-schriftlich" type="button" style="margin-top:8px">Schriftlich bestätigt ✓ (heute)</button>':'')+'<div class="hint">(Folge: Erst wenn Zustimmung = ja, Datum und Quelle gefüllt sind, sieht der Kunde Name und Profil'+(A.interim?' und es entsteht der Mail-Entwurf mit Unterlagen':'')+'.)</div></div>'
   +'<div class="sec"><h5>Weitere Angaben</h5><div class="g2"><div><label for="f-sterne">Vermittelbarkeit</label><select id="f-sterne">'+opt(['★','★★','★★★'],k.sterne,true)+'</select></div><div>'+feld('pool_bis','Talentpool erlaubt bis',k.pool_bis)+'</div>'
@@ -156,11 +164,13 @@ function oeffnen(z){var k=z?find(z):{z:0,k:'',name:'',link:'',kurzprofil:'',rund
    var no=$('f-notiz');if(r.felder.notiz&&no.value.indexOf(r.felder.notiz)<0){no.value=(no.value.trim()?no.value.trim()+'\n\nAus Lebenslauf/Profil:\n':'')+r.felder.notiz;n++}
    toast(n?'Felder gefüllt. Bitte prüfen und dann speichern.':'Keine neuen Angaben gefunden.')}).catch(function(){btn.disabled=false;btn.textContent='Auslesen und Felder füllen';toast('Keine Verbindung.',true)})};
   if(f){var fr=new FileReader();fr.onload=function(){los(String(fr.result))};fr.readAsDataURL(f)}else los('')};
+ var bf=$('b-feedback');if(bf)bf.onclick=function(){var d=new Date(),dd=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();var fb=$('f-fb').value.trim();var no=(k.notiz||'').trim();var neu=fb?(no?no+'\n\n':'')+'Interview-Feedback '+dd+': '+fb:no;var f={feedback_am:dd};if(neu!==no)f.notiz=neu;bf.disabled=true;
+  speichern(k,f,function(ok){bf.disabled=false;if(ok){k.feedback_am=dd;k.notiz=neu;zu();render()}})};
  var bs=$('b-schriftlich');if(bs)bs.onclick=function(){var d=new Date();$('f-zust').value='ja';$('f-zust_am').value=('0'+d.getDate()).slice(-2)+'.'+('0'+(d.getMonth()+1)).slice(-2)+'.'+d.getFullYear();if(!$('f-zust_quelle').value||/offen/i.test($('f-zust_quelle').value))$('f-zust_quelle').value='schriftlich bestätigt am '+$('f-zust_am').value}}
 function zu(){$('dr').classList.remove('on');$('dim').classList.remove('on');aktiv=null}
 $('dr-x').onclick=zu;$('dim').onclick=zu;document.addEventListener('keydown',function(ev){if(ev.key==='Escape')zu()});
 $('b-neu').onclick=function(){if(D)oeffnen(0)};
-var FELDER=['name','status','link','kurzprofil','runde','angeschrieben','notiz','zust','zust_am','zust_quelle','sterne','pool_bis','vertrieb','profil_status','nat','erlaubnis'];
+var FELDER=['name','status','link','kurzprofil','runde','angeschrieben','notiz','zust','zust_am','zust_quelle','sterne','pool_bis','vertrieb','profil_status','nat','erlaubnis','interview_am'];
 $('dr-save').onclick=function(){var k=aktiv;if(!k)return;var f={};FELDER.forEach(function(n){var el=$('f-'+n);if(!el)return;var v=el.value.trim();var alt=String(k[n]||'');if(n==='zust')alt=alt.toLowerCase();if(!k.z||v!==alt)f[n]=v});
  if(k.z&&!Object.keys(f).length){toast('Nichts geändert.');return}var btn=$('dr-save');btn.disabled=true;
  if(!k.z){api('neu',{felder:f}).then(function(r){btn.disabled=false;if(r.ok){toast(r.k+' angelegt. Pipedrive wird abgeglichen.');zu();laden()}else toast(r.fehler||'Anlegen fehlgeschlagen.',true)}).catch(function(){btn.disabled=false;toast('Keine Verbindung.',true)});return}
