@@ -1,5 +1,45 @@
 [
  {
+  "slug": "tragwerksplaner-dresden-rovf",
+  "titel": "Tragwerksplaner (m/w/d)",
+  "ort": "Dresden",
+  "plz": "",
+  "region": "Sachsen",
+  "arbeitszeit": "Vollzeit",
+  "homeoffice": "2 Tage pro Woche",
+  "gehalt_von": 50000,
+  "gehalt_bis": 65000,
+  "gehalt_zeigen": true,
+  "einleitung": "Sie planen Tragwerke für komplexe Bauvorhaben und begleiten Ihre Projekte fachlich von der Planung bis zur Ausführung. Die Stelle ist in Dresden angesiedelt und mit zwei Tagen Homeoffice pro Woche kombinierbar.",
+  "ueber_unternehmen": "Unser Auftraggeber ist ein etabliertes Ingenieurbüro für komplexe Bauvorhaben mit langer Markterfahrung. Das Unternehmen ist deutschlandweit mit mehreren Standorten vertreten und Teil einer größeren Unternehmensgruppe im Consulting und Engineering. Der Standort in Dresden arbeitet in einer überschaubaren Teamgröße.",
+  "aufgaben": [
+   "Sie erstellen statische Berechnungen und Nachweise für Tragwerke.",
+   "Sie bemessen Bauteile in den gängigen Bauweisen und erarbeiten die zugehörigen Planunterlagen.",
+   "Sie stimmen sich mit Architekten, Fachplanern und Bauherren ab.",
+   "Sie prüfen Pläne und Unterlagen auf fachliche Richtigkeit.",
+   "Sie begleiten Ihre Projekte fachlich bis zur Ausführung und klären technische Fragen mit den Beteiligten.",
+   "Sie dokumentieren Ihre Arbeitsergebnisse nachvollziehbar."
+  ],
+  "profil": [
+   "Abgeschlossenes Studium im Bauingenieurwesen oder in einer vergleichbaren Fachrichtung",
+   "Berufserfahrung in der Tragwerksplanung",
+   "Sicherer Umgang mit den einschlägigen Normen und Regelwerken, insbesondere den Eurocodes",
+   "Erfahrung mit gängiger Statik- und CAD-Software",
+   "Sehr gutes Deutsch in Wort und Schrift",
+   "Strukturierte, eigenverantwortliche Arbeitsweise und Freude an der Abstimmung mit Projektbeteiligten"
+  ],
+  "angebot": [
+   "Festanstellung in Vollzeit mit 40 Wochenstunden und einem Jahresgehalt von 50.000 bis 65.000 Euro brutto",
+   "30 Tage Urlaub und ein Überstundenkonto",
+   "Homeoffice an 2 Tagen pro Woche",
+   "Jobticket, Jobrad und Parkplatz",
+   "Weiterbildung über eine hauseigene Akademie"
+  ],
+  "datum": "2026-11-10",
+  "gueltig_bis": "2027-01-09",
+  "deal_id": 160
+ },
+ {
   "slug": "bauphysiker-fuer-thermische-bauphysik-und-energiebera-hamburg-plh4",
   "titel": "Bauphysiker (m/w/d) für thermische Bauphysik und Energieberatung",
   "ort": "Hamburg",
