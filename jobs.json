@@ -197,6 +197,45 @@
   "deal_id": 157
  },
  {
+  "slug": "lead-sps-programmierer-denp",
+  "titel": "Lead SPS-Programmierer (m/w/d)",
+  "ort": "Bad Salzuflen",
+  "plz": "",
+  "region": "",
+  "arbeitszeit": "Vollzeit",
+  "homeoffice": "",
+  "gehalt_von": 60000,
+  "gehalt_bis": 75000,
+  "gehalt_zeigen": true,
+  "einleitung": "Sie übernehmen die technische Leitung bei der SPS-Programmierung und Inbetriebnahme von Automatisierungsprojekten. Sie arbeiten dabei eng mit einem kleinen Team und direkt mit den Kunden zusammen.",
+  "ueber_unternehmen": "Unser Auftraggeber ist ein kleiner Dienstleister der Automatisierungstechnik. Das Unternehmen programmiert und nimmt Anlagen in Betrieb, für Industriekunden und für wissenschaftliche Einrichtungen - diese schätzen die pragmatischen und innovativen Lösungen.",
+  "aufgaben": [
+   "Sie programmieren SPS-Steuerungen für Maschinen und Anlagen.",
+   "Sie führen Inbetriebnahmen durch, meist direkt beim Kunden.",
+   "Sie unterstützen Kundenprojekte mit Robotern gemeinsam mit Ihrem Team.",
+   "Sie geben dem Team fachliche Orientierung und treffen technische Entscheidungen.",
+   "Sie entwickeln pragmatische Lösungen für Aufgaben, die nicht von der Stange sind.",
+   "Sie sprechen die Projekte direkt mit den Ansprechpartnern der Kunden ab."
+  ],
+  "profil": [
+   "Sie haben mehrjährige Berufserfahrung in der SPS-Programmierung und in der Inbetriebnahme von Anlagen.",
+   "Sie haben eine Ausbildung, ein Studium oder eine vergleichbare Qualifikation in der Automatisierungstechnik.",
+   "Sie haben bereits fachlich angeleitet oder Verantwortung in Projekten getragen.",
+   "Sie arbeiten pragmatisch und selbstständig und behalten Termine im Blick.",
+   "Sie sprechen sehr gutes Deutsch.",
+   "Erfahrung mit Robotik ist von Vorteil."
+  ],
+  "angebot": [
+   "Eine Festanstellung in Vollzeit mit einem Jahresgehalt von 60.000 bis 75.000 Euro brutto.",
+   "Weiterbildung hat einen hohen Stellenwert. Das Unternehmen investiert mindestens so viel wie Ihre Kunden in ihre eigenen Mitarbeitenden.",
+   "Sie arbeiten in einem kleinen Team und haben Raum für eigene technische Ideen.",
+   "Sie arbeiten an abwechslungsreichen Projekten für Industrie und Forschung, unter anderem mit Robotern."
+  ],
+  "datum": "2026-11-10",
+  "gueltig_bis": "2027-01-09",
+  "deal_id": 158
+ },
+ {
   "slug": "bauphysiker-fuer-thermische-bauphysik-und-energiebera-hamburg-plh4",
   "titel": "Bauphysiker (m/w/d) für thermische Bauphysik und Energieberatung",
   "ort": "Hamburg",
