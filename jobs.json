@@ -119,6 +119,45 @@
   "deal_id": 164
  },
  {
+  "slug": "tragwerksplaner-hochbau-hamburg-p2x1",
+  "titel": "Tragwerksplaner (m/w/d) Hochbau",
+  "ort": "Hamburg",
+  "plz": "",
+  "region": "Hamburg",
+  "arbeitszeit": "Vollzeit",
+  "homeoffice": "2 Tage pro Woche",
+  "gehalt_von": 55000,
+  "gehalt_bis": 65000,
+  "gehalt_zeigen": false,
+  "einleitung": "Sie planen Tragwerke für komplexe Hochbauprojekte im Bestand und im Neubau. Dabei erstellen Sie eigenverantwortlich prüffähige statische Berechnungen und arbeiten eng mit Projektleitung und anderen Fachdisziplinen zusammen.",
+  "ueber_unternehmen": "Unser Auftraggeber ist ein großes, seit vielen Jahrzehnten etabliertes Ingenieurbüro für komplexe Bauvorhaben. Das Unternehmen ist bundesweit tätig und wächst. Dafür verstärkt es sein Team in Hamburg.",
+  "aufgaben": [
+   "Mitwirken bei der Bearbeitung komplexer Hochbauprojekte im Bestand und im Neubau",
+   "Eigenverantwortliches Anfertigen prüffähiger statischer Berechnungen über alle Leistungsphasen",
+   "Mitwirken beim Entwurf nachhaltiger und ressourcenschonender Tragwerkslösungen",
+   "Unterstützen der Projektleitung in der Projektorganisation",
+   "Interdisziplinäre Zusammenarbeit in der Projektbearbeitung"
+  ],
+  "profil": [
+   "Abgeschlossenes Studium im Bauingenieurwesen",
+   "Mindestens 3 Jahre Berufserfahrung in der Tragwerksplanung im Hochbau",
+   "Kompetente Anwendung von Konstruktionsregeln und Normen",
+   "Schnelle Auffassungsgabe und pragmatisches, interdisziplinäres Denken",
+   "Lösungsorientierte Arbeitsweise und Verständnis für die Ausführung der geplanten Maßnahmen",
+   "Freundliches und überzeugendes Auftreten"
+  ],
+  "angebot": [
+   "Unbefristete Festanstellung in Vollzeit mit 40 Wochenstunden und 30 Tagen Urlaub",
+   "Mobiles Arbeiten an 2 Tagen pro Woche, flexible Arbeitszeiten und ein Überstundenkonto",
+   "Jobticket, Jobrad, Mobilitätszuschuss und Parkplatz",
+   "Weiterbildung in der hauseigenen Akademie sowie ein Angebot für Gesundheit und Fitness",
+   "Faire Vergütung"
+  ],
+  "datum": "2026-11-10",
+  "gueltig_bis": "2027-01-09",
+  "deal_id": 156
+ },
+ {
   "slug": "bauphysiker-fuer-thermische-bauphysik-und-energiebera-hamburg-plh4",
   "titel": "Bauphysiker (m/w/d) für thermische Bauphysik und Energieberatung",
   "ort": "Hamburg",
