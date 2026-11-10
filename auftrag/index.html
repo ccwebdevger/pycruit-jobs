@@ -35,7 +35,7 @@
  <h2 style="border:0;padding-top:0">Grundlage</h2>
  <div class="tabs"><button type="button" class="tab on" data-m="manuell">Von Hand</button><button type="button" class="tab" data-m="transkript">Mit Transkript</button></div>
  <div id="m-transkript" class="hide">
-  <div class="dz"><b>Transkript des Kundengesprächs</b><br>Plaud-Export oder Teams-Transkript als TXT, DOCX, SRT oder VTT<br><input type="file" id="datei" accept=".txt,.docx,.srt,.vtt,text/plain" style="margin-top:10px"></div>
+  <div class="dz"><b>Transkript des Kundengesprächs</b><br>Plaud-Export oder Teams-Transkript als TXT, DOCX, PDF, SRT oder VTT<br><input type="file" id="datei" accept=".txt,.docx,.pdf,.srt,.vtt,text/plain,application/pdf" style="margin-top:10px"></div>
   <div id="transkriptInfo" class="hint"></div>
   <label class="chk" style="margin-top:12px"><input type="checkbox" id="aufzeichnung"><span>Der Kunde hat der Aufzeichnung zu Beginn des Gesprächs zugestimmt.</span></label>
   <p class="hint">Die KI füllt leere Felder aus dem Transkript. Was Sie eintragen, hat Vorrang.</p>
@@ -109,7 +109,8 @@
  <p class="hint">Leer lassen heißt: Die KI macht einen Vorschlag mit Begründung. Den können Sie danach ändern.</p>
  <div id="kiBox" class="score hide"></div>
 
- <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap"><button class="btn" type="button" id="senden">Speichern</button></div>
+ <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap"><button class="btn" type="button" id="senden">Speichern</button><button class="btn" type="button" id="b-ab" style="background:#fff;color:#191919;border:1px solid #CFCFCF">Auftragsbestätigung vorbereiten</button></div>
+ <p class="hint">(Folge von „Auftragsbestätigung vorbereiten“: Die Auftragsklärung wird gespeichert, danach liegt im Postfach des Jobverantwortlichen ein Entwurf an den Ansprechpartner mit Zusammenfassung, Konditionen, AGB-Link und dem Button „Suchauftrag verbindlich erteilen“. Der Deal rückt auf „Auftrag angeboten“. Nichts wird automatisch gesendet. Klickt der Kunde den Button, wird der Auftrag mit Zeitpunkt und AGB-Fassung protokolliert, und Statustabellen und Board entstehen automatisch.)</p>
  <div class="msg" id="msg" role="status" aria-live="polite"></div>
  </div>
 </form>
@@ -133,7 +134,13 @@
  $('datei').addEventListener('change',function(){var f=this.files[0];transkript='';$('transkriptInfo').textContent='';if(!f)return;if(f.size>5*1024*1024){$('transkriptInfo').textContent='Die Datei ist größer als 5 MB.';return}
   var name=f.name.toLowerCase();var fertig=function(t){transkript=String(t||'').trim().slice(0,120000);$('transkriptInfo').textContent=transkript?('Transkript gelesen: '+transkript.length.toLocaleString('de-DE')+' Zeichen.'):'In der Datei war kein Text.'};
   if(/\.docx$/.test(name)){if(!window.mammoth){$('transkriptInfo').textContent='DOCX lässt sich gerade nicht lesen. Bitte als TXT exportieren.';return}f.arrayBuffer().then(function(b){return mammoth.extractRawText({arrayBuffer:b})}).then(function(r){fertig(r.value)}).catch(function(){$('transkriptInfo').textContent='Die DOCX-Datei ließ sich nicht lesen.'})}
+  else if(/\.pdf$/.test(name)){$('transkriptInfo').textContent='PDF wird gelesen …';var lade=function(){return new Promise(function(ok,nein){if(window.pdfjsLib)return ok();var sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';sc.onload=function(){window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';ok()};sc.onerror=nein;document.head.appendChild(sc)})};
+   lade().then(function(){return f.arrayBuffer()}).then(function(b){return window.pdfjsLib.getDocument({data:b}).promise}).then(function(pdf){var seiten=[];for(var i=1;i<=pdf.numPages;i++)seiten.push(pdf.getPage(i).then(function(pg){return pg.getTextContent()}).then(function(tc){var z='',y=null;tc.items.forEach(function(it){var yy=it.transform?Math.round(it.transform[5]):null;if(y!==null&&yy!==y)z+='\n';z+=it.str+(it.hasEOL?'\n':'');y=yy});return z}));return Promise.all(seiten)}).then(function(t){var txt=t.join('\n\n').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n');if(txt.replace(/\s/g,'').length<30){$('transkriptInfo').textContent='In der PDF wurde kein Text gefunden (vermutlich ein Scan). Bitte als TXT oder DOCX exportieren.';return}fertig(txt)}).catch(function(){$('transkriptInfo').textContent='Die PDF ließ sich nicht lesen. Bitte als TXT oder DOCX exportieren.'})}
   else f.text().then(function(t){fertig(/\.(srt|vtt)$/.test(name)?srtText(t):t)})});
+ $('b-ab').addEventListener('click',function(){var b=this;if($('auftrag_am').value){msg('Bei „Auftrag erteilt am“ steht schon ein Datum. Eine Auftragsbestätigung ist dann nicht mehr nötig.',false);return}
+  b.disabled=true;b.textContent='Wird vorbereitet …';
+  window._abNach=function(){fetch('https://ccpycruit.app.n8n.cloud/webhook/pycruit-auftragsbestaetigung',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({aktion:'vorbereiten',d:D,t:T})}).then(function(r){return r.json()}).then(function(r){b.disabled=false;b.textContent='Auftragsbestätigung vorbereiten';msg(r.ok?('Entwurf an '+r.an+' liegt im Postfach '+r.postfach+'. Bitte prüfen und senden. Der Deal steht jetzt auf „Auftrag angeboten“.'+(r.version>1?' (Version '+r.version+', ältere Links sind ungültig.)':'')):(r.fehler||'Das hat nicht geklappt.'),!!r.ok)}).catch(function(){b.disabled=false;b.textContent='Auftragsbestätigung vorbereiten';msg('Keine Verbindung.',false)})};
+  $('senden').click();setTimeout(function(){if(window._abNach&&$('senden').disabled===false){window._abNach=null;b.disabled=false;b.textContent='Auftragsbestätigung vorbereiten'}},1500)});
  if(!D||!T){$('info').textContent='Der Link ist unvollständig. Bitte öffnen Sie ihn aus Pipedrive.';return}
  senden('laden').then(function(r){if(!r.ok){$('info').textContent=r.fehler||'Der Link ist ungültig.';return}
   $('info').textContent=r.titel;$('kopf').textContent=r.titel;fuellen(r.daten||{});ki(r.daten||{});$('inhalt').classList.remove('hide')}).catch(function(){$('info').textContent='Keine Verbindung.'});
@@ -142,7 +149,8 @@
   var x=lesen();x.modus=modus;x.transkript=modus==='transkript'?transkript:'';x.aufzeichnung=modus==='transkript'&&$('aufzeichnung').checked;
   if(!x.titel){msg('Den Stellentitel brauchen wir mindestens.',false);return}
   var b=$('senden');b.disabled=true;b.textContent=(modus==='transkript'||!x.hot||!x.sexy)?'Die KI arbeitet …':'Einen Moment …';
-  senden('speichern',{daten:x}).then(function(r){b.disabled=false;b.textContent='Speichern';if(r.ok){if(r.daten){fuellen(r.daten);ki(r.daten)}msg('Gespeichert.'+(r.erteilt?' Der Deal steht auf „Auftrag erteilt“.':'')+(r.tabellen?' Die Statustabellen sind angelegt, die Links stehen als Notiz am Deal.':''),true)}else msg(r.fehler||'Das hat nicht geklappt. Bitte noch einmal versuchen.',false)}).catch(function(){b.disabled=false;b.textContent='Speichern';msg('Keine Verbindung oder Zeitüberschreitung. Bitte in Pipedrive prüfen.',false)})});
+  var ab=window._abNach;window._abNach=null;
+  senden('speichern',{daten:x}).then(function(r){if(ab&&r.ok){ab();}b.disabled=false;b.textContent='Speichern';if(r.ok){if(r.daten){fuellen(r.daten);ki(r.daten)}msg('Gespeichert.'+(r.erteilt?' Der Deal steht auf „Auftrag erteilt“.':'')+(r.tabellen?' Die Statustabellen sind angelegt, die Links stehen als Notiz am Deal.':''),true)}else msg(r.fehler||'Das hat nicht geklappt. Bitte noch einmal versuchen.',false)}).catch(function(){b.disabled=false;b.textContent='Speichern';msg('Keine Verbindung oder Zeitüberschreitung. Bitte in Pipedrive prüfen.',false)})});
 })();
 </script>
 </body></html>
