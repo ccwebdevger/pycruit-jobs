@@ -158,6 +158,45 @@
   "deal_id": 156
  },
  {
+  "slug": "senior-sps-programmierer-bu7i",
+  "titel": "Senior SPS-Programmierer (m/w/d)",
+  "ort": "Bad Salzuflen",
+  "plz": "",
+  "region": "",
+  "arbeitszeit": "Vollzeit",
+  "homeoffice": "",
+  "gehalt_von": 55000,
+  "gehalt_bis": 66000,
+  "gehalt_zeigen": true,
+  "einleitung": "Sie programmieren und nehmen Steuerungen für Maschinen und Anlagen in Betrieb. Sie arbeiten direkt mit Kunden und finden Lösungen, die in der Praxis funktionieren.",
+  "ueber_unternehmen": "Unser Auftraggeber ist ein kleiner Dienstleister für Automatisierungstechnik. Zu den Kunden zählen große Industrieunternehmen und wissenschaftliche Institute - schätzen die pragmatischen und innovativen Lösungen.",
+  "aufgaben": [
+   "Sie programmieren speicherprogrammierbare Steuerungen für Maschinen und Anlagen.",
+   "Sie nehmen Anlagen beim Kunden in Betrieb.",
+   "Sie entwickeln pragmatische Lösungen für Automatisierungsaufgaben.",
+   "Sie stimmen sich direkt mit Kunden aus Industrie und Forschung ab.",
+   "Sie suchen Fehler und optimieren bestehende Steuerungsprogramme."
+  ],
+  "profil": [
+   "Mehrjährige Berufserfahrung in der SPS-Programmierung",
+   "Erfahrung in der Inbetriebnahme von Maschinen und Anlagen",
+   "Abgeschlossene Ausbildung oder Studium in der Automatisierungstechnik oder einem verwandten Bereich",
+   "Selbstständige und lösungsorientierte Arbeitsweise",
+   "Bereitschaft zu Einsätzen beim Kunden",
+   "Sehr gutes Deutsch in Wort und Schrift"
+  ],
+  "angebot": [
+   "Unbefristete Festanstellung in Vollzeit",
+   "Jahresgehalt von 55.000 bis 66.000 Euro brutto",
+   "Weiterbildungen werden gefördert, mindestens auf dem Niveau der Mitarbeitenden bei den Kunden",
+   "Abwechslungsreiche Projekte mit Industrie- und Forschungskunden",
+   "Kleines Team mit kurzen Wegen und Raum für eigene Ideen"
+  ],
+  "datum": "2026-11-10",
+  "gueltig_bis": "2027-01-09",
+  "deal_id": 157
+ },
+ {
   "slug": "bauphysiker-fuer-thermische-bauphysik-und-energiebera-hamburg-plh4",
   "titel": "Bauphysiker (m/w/d) für thermische Bauphysik und Energieberatung",
   "ort": "Hamburg",
