@@ -236,6 +236,46 @@
   "deal_id": 158
  },
  {
+  "slug": "verkehrsplaner-strasse-und-energie-leipzig-2ebe",
+  "titel": "Verkehrsplaner (m/w/d) Straße und Energie",
+  "ort": "Leipzig",
+  "plz": "",
+  "region": "Sachsen",
+  "arbeitszeit": "Vollzeit",
+  "homeoffice": "2 Tage pro Woche",
+  "gehalt_von": 55000,
+  "gehalt_bis": 70000,
+  "gehalt_zeigen": true,
+  "einleitung": "Sie planen Infrastrukturprojekte im Straßenbau und im Energiebereich und begleiten diese über alle Leistungsphasen. Dabei arbeiten Sie an komplexen Bauvorhaben in einem etablierten Ingenieurbüro.",
+  "ueber_unternehmen": "Unser Auftraggeber ist ein großes, seit Jahrzehnten etabliertes Ingenieurbüro für komplexe Bauvorhaben. Es hat mehrere hundert Beschäftigte und Standorte in ganz Deutschland. Es gehört zu einer Unternehmensgruppe im Bereich Consulting und Engineering.",
+  "aufgaben": [
+   "Sie bearbeiten Infrastrukturprojekte der Straße und Energie.",
+   "Sie übernehmen die Objektplanung von Verkehrsanlagen in allen Leistungsphasen.",
+   "Sie planen Entwässerungsanlagen und stimmen diese mit der Straßenplanung ab.",
+   "Sie erstellen Trassierungen und Entwürfe mit CARD/1.",
+   "Sie arbeiten eng mit Kolleginnen und Kollegen aus Planung und Projektleitung zusammen."
+  ],
+  "profil": [
+   "Abgeschlossenes Studium des Bauingenieurwesens",
+   "Mehrjährige Berufserfahrung in der Objektplanung von Verkehrsanlagen der Straße",
+   "Routine in der Anwendung des Trassierungsprogramms CARD/1",
+   "Erfahrung in der Planung von Entwässerungsanlagen",
+   "Gute Kenntnisse in den MS-Office-Programmen",
+   "Sehr gutes Deutsch in Wort und Schrift"
+  ],
+  "angebot": [
+   "Unbefristete Festanstellung in Vollzeit mit einem Jahresgehalt von 55.000 bis 70.000 Euro brutto, je nach Erfahrung",
+   "Flexible Arbeitszeiten, Überstundenkonto und 30 Tage Urlaub",
+   "Mobiles Arbeiten an 2 Tagen pro Woche",
+   "Jobticket, Jobrad und Parkplatz",
+   "Weiterbildung in der hauseigenen Akademie",
+   "Zusätzliche Leistungen wie Betriebssport, Zuschuss zur Arbeitsplatzbrille, Unterstützung bei der Kita-Suche und gemeinsame Feiern"
+  ],
+  "datum": "2026-11-10",
+  "gueltig_bis": "2027-01-09",
+  "deal_id": 163
+ },
+ {
   "slug": "bauphysiker-fuer-thermische-bauphysik-und-energiebera-hamburg-plh4",
   "titel": "Bauphysiker (m/w/d) für thermische Bauphysik und Energieberatung",
   "ort": "Hamburg",
