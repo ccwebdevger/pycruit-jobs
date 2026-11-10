@@ -80,6 +80,45 @@
   "deal_id": 162
  },
  {
+  "slug": "fachplaner-vorbeugender-brandschutz-berlin-dd21",
+  "titel": "Fachplaner Vorbeugender Brandschutz (m/w/d)",
+  "ort": "Berlin",
+  "plz": "",
+  "region": "Berlin",
+  "arbeitszeit": "Vollzeit",
+  "homeoffice": "2 Tage pro Woche",
+  "gehalt_von": 50000,
+  "gehalt_bis": 65000,
+  "gehalt_zeigen": true,
+  "einleitung": "Sie beraten Kunden zum vorbeugenden Brandschutz und begleiten Bauvorhaben über alle Leistungsphasen. Sie entwickeln Brandschutzkonzepte eigenverantwortlich und prüfen Nachweise und Maßnahmen.",
+  "ueber_unternehmen": "Das Unternehmen ist ein großes, etabliertes Ingenieurbüro für komplexe Bauvorhaben und seit vielen Jahren am Markt. Es gehört zu einer größeren Unternehmensgruppe im Bereich Consulting und Engineering. Sie arbeiten in einem Team in der Region Berlin.",
+  "aufgaben": [
+   "Sie beraten Kunden in allen Belangen des vorbeugenden Brandschutzes über alle Leistungsphasen.",
+   "Sie planen und entwickeln Brandschutzkonzepte eigenverantwortlich.",
+   "Sie erstellen brandschutztechnische Stellungnahmen, Machbarkeitsstudien und Brandschutzgutachten.",
+   "Sie prüfen Brandschutznachweise.",
+   "Sie überprüfen Brandschutzmaßnahmen und nehmen sie ab."
+  ],
+  "profil": [
+   "Sie haben ein abgeschlossenes Studium des Bauingenieurwesens, der Architektur, des Brandschutzingenieurwesens oder des Sicherheitsingenieurwesens.",
+   "Sie sind qualifiziert als Fachplaner oder Sachverständiger für vorbeugenden Brandschutz oder haben eine vergleichbare Qualifikation.",
+   "Sie bringen Erfahrung in der Brandschutzplanung oder in der Prüfung von Sonderbauten mit.",
+   "Sie arbeiten selbstständig und strukturiert.",
+   "Sie beraten Kunden verständlich und überzeugend.",
+   "Sie sprechen sehr gutes Deutsch."
+  ],
+  "angebot": [
+   "Festanstellung in Vollzeit mit einem Jahresgehalt von 50.000 bis 65.000 Euro brutto.",
+   "Flexible Arbeitszeiten, 2 Tage pro Woche mobiles Arbeiten, 30 Tage Urlaub und ein Überstundenkonto mit Ausgleich.",
+   "Jobticket, Jobrad und Parkplatz.",
+   "Weiterbildung über eine unternehmenseigene Akademie.",
+   "Betriebssport, Firmenläufe, betriebsärztliche Untersuchungen, Zuschuss zu Arbeitsplatzbrillen und Unterstützung bei der Kita-Suche."
+  ],
+  "datum": "2026-11-10",
+  "gueltig_bis": "2027-01-09",
+  "deal_id": 164
+ },
+ {
   "slug": "bauphysiker-fuer-thermische-bauphysik-und-energiebera-hamburg-plh4",
   "titel": "Bauphysiker (m/w/d) für thermische Bauphysik und Energieberatung",
   "ort": "Hamburg",
