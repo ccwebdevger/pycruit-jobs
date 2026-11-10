@@ -276,6 +276,46 @@
   "deal_id": 163
  },
  {
+  "slug": "senior-projektingenieur-tga-wiesbaden-w5wd",
+  "titel": "Senior Projektingenieur TGA (m/w/d)",
+  "ort": "Wiesbaden",
+  "plz": "",
+  "region": "Hessen",
+  "arbeitszeit": "Vollzeit",
+  "homeoffice": "2 Tage pro Woche",
+  "gehalt_von": 50000,
+  "gehalt_bis": 70000,
+  "gehalt_zeigen": true,
+  "einleitung": "Sie leiten Projekte der Technischen Gebäudeausrüstung und planen HKLS in den Leistungsphasen 1 bis 8. Zusätzlich übernehmen Sie Bauleitertätigkeiten und gestalten die Weiterentwicklung der Abteilung mit.",
+  "ueber_unternehmen": "Das Unternehmen ist ein Ingenieur- und Planungshaus mit Fokus auf Hochbau. In der Region arbeitet ein größeres Hochbau-Team an Projekten für nationale und internationale Auftraggeber. Aufgrund von Wachstum wird die Position neu besetzt.",
+  "aufgaben": [
+   "Projektleitung als Projektingenieur TGA",
+   "HKLS Planung in den Leistungsphasen 1 bis 8",
+   "Bauleitertätigkeiten mit Reisen im Umkreis von 120 km",
+   "Betreuung von Projekten bis 70 Mio. Euro Gesamtbauvolumen, zum Beispiel Sondergebäude und Gewerbebauten",
+   "Mitarbeit an internationalen Projekten",
+   "Sonderrollen bei der Weiterentwicklung und Implementierung von Innovationen in der Abteilung"
+  ],
+  "profil": [
+   "Fundierte Kenntnisse in HKLS, auch in allen Leistungsphasen 1 bis 8",
+   "Erfahrung in der Projektleitung und in Projekten bis 70 Mio. Euro Gesamtbauvolumen",
+   "Sichere Anwendung von AutoCAD und LiNear",
+   "Englisch auf mindestens B2 Niveau, fließend in Wort und Schrift",
+   "Bereitschaft zu Reisen im Umkreis von 120 km für die Bauleitung",
+   "Kenntnisse in Revit MEP und BIM sind von Vorteil"
+  ],
+  "angebot": [
+   "Unbefristete Festanstellung in Vollzeit, Gehaltsrahmen von 50.000 bis 70.000 Euro brutto pro Jahr",
+   "Mobiles Arbeiten an 2 Tagen pro Woche",
+   "Großprojekte für nationale und internationale Auftraggeber",
+   "Klimatisierte Büroräume und ein Team mit Zusammenhalt",
+   "Raum, eigene Ideen für Innovationen in der Abteilung einzubringen"
+  ],
+  "datum": "2026-11-10",
+  "gueltig_bis": "2027-01-09",
+  "deal_id": 159
+ },
+ {
   "slug": "bauphysiker-fuer-thermische-bauphysik-und-energiebera-hamburg-plh4",
   "titel": "Bauphysiker (m/w/d) für thermische Bauphysik und Energieberatung",
   "ort": "Hamburg",
