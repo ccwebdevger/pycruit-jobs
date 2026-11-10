@@ -21,6 +21,9 @@
 .stufe span{font-size:13px;color:var(--tx2)}
 .hint{font-size:14px;color:var(--tx2);margin-top:8px}
 .btn2{background:#fff;color:inherit;border:1px solid #CFCFCF}
+.korr{border:1px solid var(--ln);border-radius:12px;padding:14px 16px;margin-top:12px;font-size:15px}
+.korr.wenig,.korr.unklar{background:#FFFBEA;border-color:#E3BF3A}.korr.viel{background:#F3F7FF;border-color:#9DB7E8}.korr.gut{background:#F2FAF4;border-color:#9BCFAA}
+.korr ul{margin:8px 0 0 18px;padding:0}.korr li{margin:3px 0}
 </style>
 </head>
 <body>
@@ -55,12 +58,13 @@
    <div class="stufe"><span>Stufe B</span><b id="s_B">–</b><span>Titel und Erfahrung passen, andere Dauer in der Position</span></div>
    <div class="stufe"><span>Stufe C</span><b id="s_C">–</b><span>Titel passt, weniger Erfahrung</span></div>
   </div>
+  <div id="korr" class="korr hide"></div>
  </div>
 
  <h2>2. Abrufen</h2>
  <p class="hint">Kostet Coresignal-Credits: je Profil etwa 10 Credits (Mini-Plan: 2.500 Credits pro Monat, also rund 250 Profile). Bereits abgerufene Profile werden übersprungen und kosten nichts.</p>
  <div class="row3" style="margin-top:10px">
-  <div><label for="stufe">Stufe</label><select id="stufe"><option value="A">A</option><option value="B">B</option><option value="C">C</option></select></div>
+  <div><label for="stufe">Stufe</label><select id="stufe"><option value="A">A</option><option value="B">B</option><option value="C">C</option><option value="R">R: ganze Region (Hebel)</option><option value="K">K: Kernbegriffe im Profil (Hebel)</option></select></div>
   <div><label for="max_profile">Höchstens neue Profile</label><select id="max_profile"><option value="20">20 (ca. 200 Credits)</option><option value="40">40 (ca. 400 Credits)</option><option value="60">60 (ca. 600 Credits)</option></select></div>
   <div></div>
  </div>
@@ -97,12 +101,14 @@
   if(!x.tabelle){$('abrufen').disabled=true;$('xray').disabled=true}
   $('inhalt').classList.remove('hide');
  });
+ function esc(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
  $('zaehlen').addEventListener('click',function(){
   sperren(true);msg('Zähle bei Coresignal, das dauert etwa 20 Sekunden …',true);
   senden('zaehlen',werte()).then(function(x){
    sperren(false);
    if(!x||!x.ok){msg((x&&x.fehler)||'Das Zählen hat nicht geklappt. Bitte später noch einmal versuchen.',false);return}
    (x.stufen||[]).forEach(function(s){if($('s_'+s.stufe))$('s_'+s.stufe).textContent=String(s.anzahl)});
+   var k=x.korridor;if(k){var kb=$('korr');kb.className='korr '+k.lage;var h='<b>Einschätzung:</b> '+esc(k.text)+'<div class="hint" style="margin-top:4px">Zielkorridor: '+esc(k.ziel)+'.</div>';if((k.hebel||[]).length){h+='<div style="margin-top:8px"><b>Hebel</b> (zusätzliche Profile, kostenlos gezählt):</div><ul>'+k.hebel.map(function(v){return '<li>'+esc(v.hebel)+': <b>+'+v.plus+'</b>'+(v.stufe?' (Stufe '+v.stufe+' unten wählbar)':'')+'</li>'}).join('')+'</ul>'}kb.innerHTML=h}
    $('ergebnis').classList.remove('hide');msg('Gezählt. Es wurde nichts abgerufen und kein Credit verbraucht.',true);
   }).catch(function(){sperren(false);msg('Keine Verbindung. Bitte später noch einmal versuchen.',false)});
  });
