@@ -110,6 +110,14 @@ function hinweise(k){var s=k.status.toLowerCase(),a=[];
  return a}
 function passt(k){var f=filter;if(f.q){var q=f.q.toLowerCase();if((k.k+' '+k.name+' '+k.kurzprofil+' '+k.notiz).toLowerCase().indexOf(q)<0)return false}
  if(f.runde&&k.runde!==f.runde)return false;if(f.chat&&k.p_kat!=='Im Chat prüfen')return false;if(f.gut&&k.p_kat!=='Top'&&k.p_kat!=='passt')return false;if(f.bedarf&&!hinweise(k).some(function(x){return x[0]!=='ok'}))return false;return true}
+function bedarfKpi(K){var c=function(f){return K.filter(f).length};var lc=function(k){return (k.status||'').toLowerCase()};
+ var aktiv=c(function(k){return ['vorgestellt','interview beim kunden','angebot'].indexOf(lc(k))>=0});var besetzt=c(function(k){return lc(k)==='platziert'})>0;
+ var tage=function(s){s=String(s||'');var m=s.match(/^(\d{4})-(\d{2})-(\d{2})/)||null,d=null;if(m)d=new Date(+m[1],+m[2]-1,+m[3]);else{m=s.match(/^(\d{1,2})\.(\d{1,2})\.(\d{2,4})/);if(m)d=new Date(+m[3]<100?2000+ +m[3]:+m[3],+m[2]-1,+m[1])}return d?Math.floor((Date.now()-d.getTime())/864e5):null};
+ var erw=c(function(k){return lc(k)==='freigabe erteilt'})*0.8+c(function(k){return lc(k)==='vorgespräch'})*0.5+c(function(k){return lc(k)==='interessiert'})*0.3
+  +c(function(k){var t=tage(k.angeschrieben);return lc(k)==='angeschrieben'&&(t===null||t<=14)})*0.05+c(function(k){return lc(k)==='noch nicht angeschrieben'&&(k.p_kat==='Top'||k.p_kat==='passt')&&k.p_text})*0.03;
+ erw=Math.round(erw*10)/10;var bed=besetzt?0:Math.max(0,Math.round((3-aktiv-erw)*10)/10);
+ var tip='Ziel: mindestens 3 Kandidaten aktiv beim Kunden (Vorgestellt, Interview, Angebot) bis zur Besetzung. Aktiv: '+aktiv+'. Aus der Pipeline erwartet: '+String(erw).replace('.',',')+' (Freigabe 0,8, Vorgespräch 0,5, Interessiert 0,3, angeschrieben bis 14 Tage 0,05, anschreibfertig 0,03). Folge: Bei Bedarf über 0 sucht die Chat-Prüfung neue Profile, sofern die Neusuche in der Auftragsklärung nicht auf nie steht.';
+ return '<div class="kpi" title="'+e(tip)+'"><span>Aktiv beim Kunden / Bedarf</span><b>'+(besetzt?'besetzt':aktiv+' von 3 · '+(bed>0?'fehlt '+String(bed).replace('.',','):'gedeckt'))+'</b></div>'}
 function render(){var A=D.auftrag,K=D.kandidaten;
  $('crumb').innerHTML=e(A.kunde||'')+' · <b>'+e(A.stelle)+'</b>';var ar=$('art');ar.style.display='';ar.className='badge '+(A.interim?'im':'vm');ar.textContent=A.interim?'Interim':'Erfolgsbasiert';
  $('l-intern').href=A.links.intern||'#';$('l-deal').href=A.links.deal;
@@ -122,7 +130,7 @@ function render(){var A=D.auftrag,K=D.kandidaten;
   +'<span class="chip'+(filter.gut?' on':'')+'" data-f="gut" title="Nur Kandidaten, die der Prüfagent oder die Chat-Prüfung als Top oder passt eingestuft hat (Folge: blendet die Spalte Noch nicht angeschrieben mit ein)">Top und passt ('+anz(function(k){return k.p_kat==='Top'||k.p_kat==='passt'})+')</span><span class="chip'+(filter.chat?' on':'')+'" data-f="chat" title="Profile, die der Prüfagent nicht sicher bewerten konnte. Die Chat-Prüfung werktags um 9:40 und 14 Uhr arbeitet sie ab.">Im Chat prüfen ('+anz(function(k){return k.p_kat==='Im Chat prüfen'})+')</span><span class="chip'+(filter.pool?' on':'')+'" data-f="pool">Noch nicht angeschrieben</span><span class="chip'+(filter.absage?' on':'')+'" data-f="absage">Absagen</span></div>'
   +'<div class="kpis"><div class="kpi"><span>Im Kontakt</span><b>'+kontakt+'</b></div><div class="kpi"><span>Antwortquote</span><b>'+(kontakt?Math.round(antw/kontakt*100):0)+' %</b></div>'
   +'<div class="kpi"><span>Interessiert und weiter</span><b>'+anz(function(k){return INTER.indexOf(lc(k))>=0})+'</b></div><div class="kpi"><span>Beim Kunden</span><b>'+anz(function(k){return ['vorgestellt','interview beim kunden','angebot','platziert'].indexOf(lc(k))>=0})+'</b></div>'
-  +'<div class="kpi"><span>Handlungsbedarf</span><b>'+anz(function(k){return hinweise(k).some(function(x){return x[0]!=='ok'})})+'</b></div></div><div class="board">';
+  +'<div class="kpi"><span>Handlungsbedarf</span><b>'+anz(function(k){return hinweise(k).some(function(x){return x[0]!=='ok'})})+'</b></div>'+bedarfKpi(K)+'</div><div class="board">';
  SPALTEN.forEach(function(s){if(s.opt&&!filter[s.opt]&&!(s.id==='pool'&&(filter.chat||filter.gut)))return;var ks=K.filter(function(k){return s.st.indexOf(lc(k))>=0&&passt(k)});if(s.id==='pool')ks.sort(function(a,b){return (Number(a.p_rang)||9999)-(Number(b.p_rang)||9999)});
   html+='<div class="col" data-col="'+s.id+'"><div class="ch"><div>'+s.t+(s.info?'<small>'+e(s.info)+'</small>':'')+'</div><i>'+ks.length+'</i></div>';
   ks.forEach(function(k){var tg=hinweise(k);var st=lc(k);
