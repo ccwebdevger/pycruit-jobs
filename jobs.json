@@ -40,6 +40,46 @@
   "deal_id": 160
  },
  {
+  "slug": "bauingenieur-konstruktiver-ingenieurbau-mit-teamvera-dresden-r4b2",
+  "titel": "Bauingenieur (m/w/d) Konstruktiver Ingenieurbau mit Teamverantwortung",
+  "ort": "Dresden",
+  "plz": "",
+  "region": "Sachsen",
+  "arbeitszeit": "Vollzeit",
+  "homeoffice": "2 Tage pro Woche",
+  "gehalt_von": 50000,
+  "gehalt_bis": 65000,
+  "gehalt_zeigen": true,
+  "einleitung": "Sie planen Infrastrukturprojekte im Massivbau, Stahlbau und Stahlverbundbau und führen dabei ein Projektteam. Sie begleiten Projekte von der Planung bis zur Ausführung und sind Ansprechperson für die Kunden.",
+  "ueber_unternehmen": "Unser Auftraggeber ist ein großes, seit Jahrzehnten etabliertes Ingenieurbüro für komplexe Bauvorhaben. Es ist bundesweit an mehreren Standorten aktiv und Teil einer Unternehmensgruppe im Consulting und Engineering. Die Standorte sind überschaubar groß, die Wege kurz.",
+  "aufgaben": [
+   "Sie bearbeiten Infrastrukturprojekte des Massivbaus, Stahlbaus und Stahlverbundbaus standortübergreifend und interdisziplinär.",
+   "Sie übernehmen die Objekt- und Tragwerksplanung für Ingenieurbauwerke in allen Leistungsphasen.",
+   "Sie steuern Projekte technisch und kaufmännisch.",
+   "Sie betreuen und beraten Kunden und präsentieren Ihnen die Planungsergebnisse.",
+   "Sie führen das Projektteam und entwickeln es weiter.",
+   "Sie unterstützen bei der Akquisition neuer Projekte."
+  ],
+  "profil": [
+   "Sie haben ein abgeschlossenes Studium des Bauingenieurwesens.",
+   "Sie bringen mindestens 5 Jahre Berufserfahrung mit.",
+   "Sie haben Routine in der Entwurfs-, Ausschreibungs- und Ausführungsplanung für Neubau und Instandsetzung von Ingenieurbauwerken.",
+   "Sie denken analytisch, vernetzt und strategisch.",
+   "Sie kommunizieren stark, setzen sich durch und treten freundlich und überzeugend auf.",
+   "Sie stellen sich gut auf Kunden ein und haben Freude an Teamführung und an Ihrer fachlichen Weiterentwicklung im Ingenieurbau."
+  ],
+  "angebot": [
+   "Unbefristete Festanstellung in Vollzeit mit 30 Tagen Urlaub",
+   "Flexible Arbeitszeiten, 2 Tage pro Woche mobiles Arbeiten und fairer Ausgleich für Überstunden",
+   "Weiterbildung über eine interne Akademie mit Schulungen und Workshops",
+   "Zuschuss zu den ÖPNV-Kosten, Dienstradleasing, Parkplatz und betriebliche Altersvorsorge",
+   "Geförderte Fitnessangebote, Familienservice, Empfehlungsprämien sowie kostenfreie Getränke und frisches Obst"
+  ],
+  "datum": "2026-11-10",
+  "gueltig_bis": "2027-01-09",
+  "deal_id": 162
+ },
+ {
   "slug": "bauphysiker-fuer-thermische-bauphysik-und-energiebera-hamburg-plh4",
   "titel": "Bauphysiker (m/w/d) für thermische Bauphysik und Energieberatung",
   "ort": "Hamburg",
