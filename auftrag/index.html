@@ -22,6 +22,13 @@
 .score b{font-size:16px}
 .hide{display:none}
 .ki{font-size:14px;color:var(--tx2);margin-top:6px}
+.ki-neu{background:#FFF8D6!important;border-color:#E3BF3A!important}
+.qbox{border:1px solid var(--ln);border-radius:14px;padding:14px 16px;margin-top:12px;background:#fff;font-size:14px}
+.qbox.warn{border-color:#E3BF3A;background:#FFFBEA}.qbox.err{border-color:#E8A0A0;background:#FFF4F4}
+.qw{border-top:1px solid var(--ln);padding:10px 0 4px}.qw:first-of-type{border-top:0}
+.qw .bel{font-size:12px;color:var(--tx3);margin-top:4px}
+.qw label.r{display:flex;gap:8px;align-items:flex-start;font-weight:400;margin:4px 0;font-size:14px}
+.qw label.r input{width:auto;margin-top:3px}
 </style>
 </head><body>
 <header class="top"><div class="wrap"><img src="/assets/logo.png" alt="pycruit" width="82" height="36"><span class="opt" id="kopf">Auftragsklärung</span></div></header>
@@ -32,14 +39,15 @@
  <p class="sub" id="info">Einen Moment …</p>
  <div id="inhalt" class="hide">
 
- <h2 style="border:0;padding-top:0">Grundlage</h2>
- <div class="tabs"><button type="button" class="tab on" data-m="manuell">Von Hand</button><button type="button" class="tab" data-m="transkript">Mit Transkript</button></div>
- <div id="m-transkript" class="hide">
-  <div class="dz"><b>Transkript des Kundengesprächs</b><br>Plaud-Export oder Teams-Transkript als TXT, DOCX, PDF, SRT oder VTT<br><input type="file" id="datei" accept=".txt,.docx,.pdf,.srt,.vtt,text/plain,application/pdf" style="margin-top:10px"></div>
-  <div id="transkriptInfo" class="hint"></div>
-  <label class="chk" style="margin-top:12px"><input type="checkbox" id="aufzeichnung"><span>Der Kunde hat der Aufzeichnung zu Beginn des Gesprächs zugestimmt.</span></label>
-  <p class="hint">Die KI füllt leere Felder aus dem Transkript. Was Sie eintragen, hat Vorrang.</p>
- </div>
+ <h2 style="border:0;padding-top:0">Quellen</h2>
+ <p class="hint" style="margin-top:0">Stellenanzeige (Datei oder Link) oder Gesprächstranskript. Die KI schlägt nur vor, was in der Quelle steht: Leere Felder werden vorbefüllt und gelb markiert, bei Abweichungen zum bisherigen Stand entscheidest du. Weitere Quellen kannst du jederzeit nachreichen.</p>
+ <div class="tabs"><button type="button" class="tab on" data-q="anzeige">Stellenanzeige</button><button type="button" class="tab" data-q="transkript">Gesprächstranskript</button></div>
+ <div class="dz"><b id="q-titel">Stellenanzeige als Datei oder Link</b><br><span id="q-hint">PDF, DOCX oder TXT</span><br><input type="file" id="datei" accept=".txt,.docx,.pdf,.srt,.vtt,text/plain,application/pdf" style="margin-top:10px"><div id="q-link-box" style="margin-top:10px"><input type="url" id="q-link" placeholder="oder Link zur Anzeige: https://…" style="width:100%;max-width:560px"></div></div>
+ <div id="transkriptInfo" class="hint"></div>
+ <label class="chk hide" id="q-zust" style="margin-top:12px"><input type="checkbox" id="aufzeichnung"><span>Der Kunde hat der Aufzeichnung zu Beginn des Gesprächs zugestimmt.</span></label>
+ <div style="margin-top:12px"><button class="btn" type="button" id="q-los" style="background:#fff;color:#191919;border:1px solid #CFCFCF">Quelle auswerten</button></div>
+ <p class="hint">(Folge: Die Vorschläge erscheinen im Formular, gespeichert wird noch nichts. Im Deal entsteht eine Notiz, welche Quelle ausgewertet wurde. Erst „Speichern“ übernimmt den geprüften Stand.)</p>
+ <div id="q-erg"></div>
 
  <h2>Stelle</h2>
  <div class="row2"><div><label for="titel">Stellentitel</label><input type="text" id="titel" maxlength="120"></div><div><label for="ort">Arbeitsort</label><input type="text" id="ort" maxlength="80"></div></div>
@@ -120,7 +128,7 @@
 (function(){
  var ZIEL='https://ccpycruit.app.n8n.cloud/webhook/pycruit-auftrag';
  var h=new URLSearchParams(location.hash.slice(1));var D=h.get('d'),T=h.get('t');
- var $=function(i){return document.getElementById(i)};var modus='manuell';var transkript='';
+ var $=function(i){return document.getElementById(i)};var modus='manuell';var transkript='';var pdfB64='';var qname='';var qart='anzeige';var ZIELQ='https://ccpycruit.app.n8n.cloud/webhook/pycruit-auftrag-quelle';
  var TXT=['titel','ort','arbeitszeit','homeoffice','niveau','gehalt_von','gehalt_bis','starttermin','vorstationen','grund','offen_seit','bisher','folgen','entscheider','team','firma_text','anzeige','name_zeigen','schritte','ansprechpartner','feedback_tage','nogos','exklusiv','honorar','agb','verantwortlich','auftrag_am','hot','sexy'];
  var LST=['aufgaben','muss','kann','benefits','offlimits'];
  ['hot','sexy'].forEach(function(id){var s=$(id);var o=document.createElement('option');o.value='';o.textContent='KI-Vorschlag';s.appendChild(o);for(var i=10;i>=1;i--){o=document.createElement('option');o.value=String(i);o.textContent=String(i);s.appendChild(o)}});
@@ -129,14 +137,38 @@
  function fuellen(x){TXT.forEach(function(k){if(x[k]!=null&&x[k]!=='')$(k).value=String(x[k])});LST.forEach(function(k){if(Array.isArray(x[k]))$(k).value=x[k].join('\n')})}
  function lesen(){var x={};TXT.forEach(function(k){x[k]=$(k).value.trim()});LST.forEach(function(k){x[k]=$(k).value.split('\n').map(function(s){return s.replace(/^[\s•\-–*]+/,'').trim()}).filter(Boolean)});return x}
  function ki(r){if(!r||(!r.hot_grund&&!r.sexy_grund))return;var b=$('kiBox');b.classList.remove('hide');b.innerHTML='';[['Hot',r.hot,r.hot_grund],['Sexy',r.sexy,r.sexy_grund]].forEach(function(z){if(!z[2])return;var d=document.createElement('div');d.className='ki';var s=document.createElement('b');s.textContent=z[0]+': '+z[1]+'  ';d.appendChild(s);d.appendChild(document.createTextNode(z[2]));b.appendChild(d)})}
- document.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){modus=b.dataset.m;document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===b)});$('m-transkript').classList.toggle('hide',modus!=='transkript')})});
+ document.querySelectorAll('.tab').forEach(function(b){b.addEventListener('click',function(){qart=b.dataset.q;document.querySelectorAll('.tab').forEach(function(x){x.classList.toggle('on',x===b)});var an=qart==='anzeige';$('q-titel').textContent=an?'Stellenanzeige als Datei oder Link':'Transkript des Kundengesprächs';$('q-hint').textContent=an?'PDF, DOCX oder TXT':'Plaud-Export oder Teams-Transkript als TXT, DOCX, PDF, SRT oder VTT';$('q-link-box').classList.toggle('hide',!an);$('q-zust').classList.toggle('hide',an)})});
  function srtText(t){return t.replace(/\r/g,'').split('\n').filter(function(l){return l.trim()&&!/^\d+$/.test(l.trim())&&!/-->/.test(l)&&!/^WEBVTT/.test(l)&&!/^NOTE\b/.test(l)}).map(function(l){return l.replace(/<v ([^>]+)>/g,'$1: ').replace(/<[^>]+>/g,'')}).join('\n')}
- $('datei').addEventListener('change',function(){var f=this.files[0];transkript='';$('transkriptInfo').textContent='';if(!f)return;if(f.size>5*1024*1024){$('transkriptInfo').textContent='Die Datei ist größer als 5 MB.';return}
-  var name=f.name.toLowerCase();var fertig=function(t){transkript=String(t||'').trim().slice(0,120000);$('transkriptInfo').textContent=transkript?('Transkript gelesen: '+transkript.length.toLocaleString('de-DE')+' Zeichen.'):'In der Datei war kein Text.'};
-  if(/\.docx$/.test(name)){if(!window.mammoth){$('transkriptInfo').textContent='DOCX lässt sich gerade nicht lesen. Bitte als TXT exportieren.';return}f.arrayBuffer().then(function(b){return mammoth.extractRawText({arrayBuffer:b})}).then(function(r){fertig(r.value)}).catch(function(){$('transkriptInfo').textContent='Die DOCX-Datei ließ sich nicht lesen.'})}
-  else if(/\.pdf$/.test(name)){$('transkriptInfo').textContent='PDF wird gelesen …';var lade=function(){return new Promise(function(ok,nein){if(window.pdfjsLib)return ok();var sc=document.createElement('script');sc.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';sc.onload=function(){window.pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';ok()};sc.onerror=nein;document.head.appendChild(sc)})};
-   lade().then(function(){return f.arrayBuffer()}).then(function(b){return window.pdfjsLib.getDocument({data:b}).promise}).then(function(pdf){var seiten=[];for(var i=1;i<=pdf.numPages;i++)seiten.push(pdf.getPage(i).then(function(pg){return pg.getTextContent()}).then(function(tc){var z='',y=null;tc.items.forEach(function(it){var yy=it.transform?Math.round(it.transform[5]):null;if(y!==null&&yy!==y)z+='\n';z+=it.str+(it.hasEOL?'\n':'');y=yy});return z}));return Promise.all(seiten)}).then(function(t){var txt=t.join('\n\n').replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n');if(txt.replace(/\s/g,'').length<30){$('transkriptInfo').textContent='In der PDF wurde kein Text gefunden (vermutlich ein Scan). Bitte als TXT oder DOCX exportieren.';return}fertig(txt)}).catch(function(){$('transkriptInfo').textContent='Die PDF ließ sich nicht lesen. Bitte als TXT oder DOCX exportieren.'})}
+ $('datei').addEventListener('change',function(){var f=this.files[0];transkript='';pdfB64='';qname='';$('transkriptInfo').textContent='';if(!f)return;if(f.size>5*1024*1024){$('transkriptInfo').textContent='Die Datei ist größer als 5 MB.';return}
+  qname=f.name.slice(0,120);var name=f.name.toLowerCase();var fertig=function(t){transkript=String(t||'').trim().slice(0,120000);$('transkriptInfo').textContent=transkript?('Datei gelesen: '+transkript.length.toLocaleString('de-DE')+' Zeichen. Jetzt „Quelle auswerten“.'):'In der Datei war kein Text.'};
+  if(/\.docx$/.test(name)){if(!window.mammoth){$('transkriptInfo').textContent='DOCX lässt sich gerade nicht lesen. Bitte als PDF oder TXT speichern.';return}f.arrayBuffer().then(function(b){return mammoth.extractRawText({arrayBuffer:b})}).then(function(r){fertig(r.value)}).catch(function(){$('transkriptInfo').textContent='Die DOCX-Datei ließ sich nicht lesen.'})}
+  else if(/\.pdf$/.test(name)){var rd=new FileReader();rd.onload=function(){pdfB64=String(rd.result||'').replace(/^data:[^,]*,/,'');$('transkriptInfo').textContent='PDF bereit ('+Math.round(f.size/1024).toLocaleString('de-DE')+' KB). Die KI liest das PDF direkt, auch eingescannte Seiten. Jetzt „Quelle auswerten“.'};rd.onerror=function(){$('transkriptInfo').textContent='Die PDF ließ sich nicht lesen.'};rd.readAsDataURL(f)}
   else f.text().then(function(t){fertig(/\.(srt|vtt)$/.test(name)?srtText(t):t)})});
+ var LAB={titel:'Stellentitel',ort:'Arbeitsort',arbeitszeit:'Arbeitszeit',homeoffice:'Homeoffice',niveau:'Niveau',gehalt_von:'Gehalt von',gehalt_bis:'Gehalt bis',starttermin:'Starttermin',aufgaben:'Aufgaben',muss:'Muss-Kriterien',kann:'Kann-Kriterien',vorstationen:'Typische Vorstationen',grund:'Grund der Vakanz',offen_seit:'Offen seit',bisher:'Bisherige Versuche',folgen:'Folgen',entscheider:'Entscheider',team:'Team',firma_text:'Über das Unternehmen',benefits:'Benefits',schritte:'Ablauf',ansprechpartner:'Ansprechpartner',feedback_tage:'Feedback in Werktagen',offlimits:'Off-Limits',nogos:'No-Gos',exklusiv:'Exklusiv',honorar:'Honorar'};
+ function esc(x){return String(x==null?'':x).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+ function zeig(f,v){if(Array.isArray(v))return v.join(' · ');if(f==='exklusiv')return v==='84'?'Ja':v==='85'?'Nein':v;if(f==='niveau')return ({80:'1 Helfer',81:'2 Fachkraft',82:'3 Spezialist',83:'4 Experte'})[v]||v;return v}
+ function setz(f,v,belg){var el=$(f);if(!el)return;el.value=Array.isArray(v)?v.join('\n'):String(v);el.classList.add('ki-neu');if(belg)el.title='Aus der Quelle: '+belg}
+ function qbox(cls,html){$('q-erg').innerHTML='<div class="qbox '+cls+'">'+html+'</div>'}
+ function zeigen(r){if(!r||!r.ok){qbox('err','<b>Die Quelle konnte nicht ausgewertet werden.</b><br>'+esc((r&&r.fehler)||'Unbekannter Fehler.'));return}
+  if(!r.lesbar){qbox('warn','<b>Aus der Quelle ließ sich nichts übernehmen.</b><br>'+esc(r.hinweis||'')+'<br>Bitte eine andere Datei (z. B. PDF oder TXT) oder den Text der Anzeige verwenden.');return}
+  var nk=Object.keys(r.neu||{});nk.forEach(function(f){setz(f,r.neu[f].wert,r.neu[f].beleg)});
+  var h='<b>'+(nk.length?('Vorbefüllt und gelb markiert: '+nk.length+' Felder</b> ('+nk.map(function(f){return esc(LAB[f]||f)}).join(', ')+'). Bitte prüfen. Den Beleg aus der Quelle zeigt ein Fahren mit der Maus über das Feld.'):'Keine offenen Felder gefüllt.</b>');
+  if(r.hinweis)h+='<div class="ki" style="margin-top:8px">Hinweis: '+esc(r.hinweis)+'</div>';
+  var eg=r.ergaenzen||{},wd=r.widersprueche||[],teile='';
+  Object.keys(eg).forEach(function(f){teile+='<div class="qw"><b>'+esc(eg[f].label||LAB[f]||f)+': weitere Punkte aus der Quelle</b>';eg[f].punkte.forEach(function(p,i){teile+='<label class="r"><input type="checkbox" data-eg="'+f+'" data-i="'+i+'" checked><span>'+esc(p.wert)+(p.beleg?'<div class="bel">„'+esc(p.beleg)+'“</div>':'')+'</span></label>'});teile+='</div>'});
+  wd.forEach(function(w,i){var akt=zeig(w.feld,w.aktuell),nv=zeig(w.feld,w.neu);teile+='<div class="qw"><b>'+esc(w.label||LAB[w.feld]||w.feld)+(w.art==='praeziser'?': Quelle ist genauer':': Abweichung')+'</b><label class="r"><input type="radio" name="wd'+i+'" value="alt" checked><span>Bisher behalten: '+esc(akt)+'</span></label><label class="r"><input type="radio" name="wd'+i+'" value="neu"><span>Aus der Quelle übernehmen: '+esc(nv)+(w.beleg?'<div class="bel">„'+esc(w.beleg)+'“</div>':'')+'</span></label></div>'});
+  if(teile){h+='<div style="margin-top:12px"><b>Bitte entscheiden</b> (vorausgewählt: bisherigen Stand behalten, neue Listenpunkte ergänzen)</div>'+teile+'<button class="btn" type="button" id="q-ueb" style="margin-top:10px">Auswahl ins Formular übernehmen</button>'}
+  h+='<div class="hint" style="margin-top:10px">Danach unten „Speichern“. Erst dann gilt der neue Stand.</div>';
+  qbox(teile?'warn':'',h);
+  if(teile)$('q-ueb').onclick=function(){Object.keys(eg).forEach(function(f){var add=[];document.querySelectorAll('input[data-eg="'+f+'"]').forEach(function(c){if(c.checked)add.push(eg[f].punkte[+c.dataset.i].wert)});if(add.length){var el=$(f);el.value=(el.value.trim()?el.value.trim()+'\n':'')+add.join('\n');el.classList.add('ki-neu')}});
+   wd.forEach(function(w,i){var c=document.querySelector('input[name="wd'+i+'"]:checked');if(c&&c.value==='neu')setz(w.feld,w.neu,w.beleg)});
+   qbox('','<b>Übernommen.</b> Geänderte Felder sind gelb markiert. Bitte prüfen und unten „Speichern“.')}}
+ $('q-los').addEventListener('click',function(){var link=$('q-link').value.trim();if(qart!=='anzeige')link='';if(!transkript&&!pdfB64&&!link){qbox('err','Bitte eine Datei wählen'+(qart==='anzeige'?' oder einen Link eintragen.':'.'));return}
+  if(qart==='transkript'&&!$('aufzeichnung').checked){qbox('err','Ohne Zustimmung zur Aufzeichnung dürfen wir das Transkript nicht verwenden.');return}
+  var b=this;b.disabled=true;b.textContent='Die KI liest die Quelle …';qbox('','Die KI liest die Quelle. Das dauert meist 20 bis 60 Sekunden.');
+  var akt=lesen();delete akt.hot;delete akt.sexy;delete akt.verantwortlich;delete akt.auftrag_am;delete akt.agb;delete akt.anzeige;delete akt.name_zeigen;
+  var nutzeLink=!transkript&&!pdfB64;
+  fetch(ZIELQ,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({d:D,t:T,art:qart,text:pdfB64?'':transkript,pdf_b64:pdfB64,url:nutzeLink?link:'',name:nutzeLink?link:qname,aktuell:akt})}).then(function(r){return r.json().catch(function(){return{ok:false,fehler:'Die Antwort war nicht lesbar (evtl. Zeitüberschreitung). Bitte noch einmal versuchen.'}})}).then(zeigen).catch(function(){qbox('err','Keine Verbindung zur Auswertung. Bitte noch einmal versuchen.')}).then(function(){b.disabled=false;b.textContent='Quelle auswerten'})});
  $('b-ab').addEventListener('click',function(){var b=this;if($('auftrag_am').value){msg('Bei „Auftrag erteilt am“ steht schon ein Datum. Eine Auftragsbestätigung ist dann nicht mehr nötig.',false);return}
   b.disabled=true;b.textContent='Wird vorbereitet …';
   window._abNach=function(){fetch('https://ccpycruit.app.n8n.cloud/webhook/pycruit-auftragsbestaetigung',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({aktion:'vorbereiten',d:D,t:T})}).then(function(r){return r.json()}).then(function(r){b.disabled=false;b.textContent='Auftragsbestätigung vorbereiten';msg(r.ok?('Entwurf an '+r.an+' liegt im Postfach '+r.postfach+'. Bitte prüfen und senden. Der Deal steht jetzt auf „Auftrag angeboten“.'+(r.version>1?' (Version '+r.version+', ältere Links sind ungültig.)':'')):(r.fehler||'Das hat nicht geklappt.'),!!r.ok)}).catch(function(){b.disabled=false;b.textContent='Auftragsbestätigung vorbereiten';msg('Keine Verbindung.',false)})};
@@ -145,12 +177,11 @@
  senden('laden').then(function(r){if(!r.ok){$('info').textContent=r.fehler||'Der Link ist ungültig.';return}
   $('info').textContent=r.titel;$('kopf').textContent=r.titel;fuellen(r.daten||{});ki(r.daten||{});$('inhalt').classList.remove('hide')}).catch(function(){$('info').textContent='Keine Verbindung.'});
  $('senden').addEventListener('click',function(){
-  if(modus==='transkript'){if(!transkript){msg('Bitte ein Transkript wählen oder auf „Von Hand“ wechseln.',false);return}if(!$('aufzeichnung').checked){msg('Ohne Zustimmung zur Aufzeichnung dürfen wir das Transkript nicht verwenden.',false);return}}
-  var x=lesen();x.modus=modus;x.transkript=modus==='transkript'?transkript:'';x.aufzeichnung=modus==='transkript'&&$('aufzeichnung').checked;
+  var x=lesen();x.modus='manuell';x.transkript='';x.aufzeichnung=false;
   if(!x.titel){msg('Den Stellentitel brauchen wir mindestens.',false);return}
-  var b=$('senden');b.disabled=true;b.textContent=(modus==='transkript'||!x.hot||!x.sexy)?'Die KI arbeitet …':'Einen Moment …';
+  var b=$('senden');b.disabled=true;b.textContent=(!x.hot||!x.sexy)?'Die KI arbeitet …':'Einen Moment …';
   var ab=window._abNach;window._abNach=null;
-  senden('speichern',{daten:x}).then(function(r){if(ab&&r.ok){ab();}b.disabled=false;b.textContent='Speichern';if(r.ok){if(r.daten){fuellen(r.daten);ki(r.daten)}msg('Gespeichert.'+(r.erteilt?' Der Deal steht auf „Auftrag erteilt“.':'')+(r.tabellen?' Die Statustabellen sind angelegt, die Links stehen als Notiz am Deal.':''),true)}else msg(r.fehler||'Das hat nicht geklappt. Bitte noch einmal versuchen.',false)}).catch(function(){b.disabled=false;b.textContent='Speichern';msg('Keine Verbindung oder Zeitüberschreitung. Bitte in Pipedrive prüfen.',false)})});
+  senden('speichern',{daten:x}).then(function(r){if(ab&&r.ok){ab();}b.disabled=false;b.textContent='Speichern';if(r.ok){document.querySelectorAll('.ki-neu').forEach(function(el){el.classList.remove('ki-neu');el.removeAttribute('title')});if(r.daten){fuellen(r.daten);ki(r.daten)}msg('Gespeichert.'+(r.erteilt?' Der Deal steht auf „Auftrag erteilt“.':'')+(r.tabellen?' Die Statustabellen sind angelegt, die Links stehen als Notiz am Deal.':''),true)}else msg(r.fehler||'Das hat nicht geklappt. Bitte noch einmal versuchen.',false)}).catch(function(){b.disabled=false;b.textContent='Speichern';msg('Keine Verbindung oder Zeitüberschreitung. Bitte in Pipedrive prüfen.',false)})});
 })();
 </script>
 </body></html>
