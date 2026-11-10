@@ -268,7 +268,7 @@ function cRender(){var A=C.auftraege;var me=C.user_id||ICH;$('crumb').innerHTML=
  function hbz(a){return a.kandidaten.filter(function(k){return hinweise(k).some(function(x){return x[0]!=='ok'})}).length}
  function score(a){if(a.hot==null&&a.sexy==null&&a.mach==null&&a.rang==null)return '<div class="score"><span class="hint" style="margin:0">Noch nicht im Mandats-Ranking bewertet</span></div>';
   return '<div class="score">'+(a.rang!=null?'<span class="rk">#'+e(a.rang)+'</span>':'')+'<span>Hot <b>'+(a.hot!=null?e(a.hot):'–')+'</b></span><span>Sexiness <b>'+(a.sexy!=null?e(a.sexy):'–')+'</b></span><span>Machbarkeit <b>'+(a.mach!=null?e(a.mach):'–')+'</b></span>'+(a.gesamt!=null?'<span class="ges">Gesamt <b>'+e(a.gesamt)+'</b></span>':'')+'</div>'}
- var PH={124:1,118:2,110:3,111:4,112:5,113:6,114:7,115:8,116:9};
+ var PH={124:1,118:2,110:3,111:4,125:4.5,112:5,113:6,114:7,115:8,116:9};
  function blockOf(a){if(hbz(a))return 'heute';var st=Number(a.stage_id);if([114,115,116].indexOf(st)>=0)return 'kunde';if([112,113].indexOf(st)>=0)return 'suche';return 'vorb'}
  function nv(v,d){return v==null?d:v}
  function kName(a){var t=String(a.titel||'');var ausT=(t.indexOf('|')>=0?t.split('|')[0]:t.split(/\s+\/\s+/)[0]).trim();var k=String(a.kunde||'').trim();k=(k.indexOf('|')>=0?k.split('|')[0]:k.split(/\s+\/\s+/)[0]).trim();return k||ausT}
@@ -286,7 +286,7 @@ function karte(a){var ks=a.kandidaten;var hb=hbz(a);var html='';
    +'<a class="btn g" target="_blank" rel="noopener" href="'+e(a.links.deal)+'">Pipedrive</a>'
    +(!a.tabelle&&a.links.auftrag?'<a class="btn g" target="_blank" rel="noopener" href="'+e(a.links.auftrag)+'">Auftragsklärung</a>':'')+'</div></div>';return html}
  if(!L.length)html+='<div class="msg">Keine offenen Suchaufträge in dieser Ansicht.</div>';
- [['heute','Heute handeln','Offene Aufgaben bei Kandidaten'],['kunde','Beim Kunden','Vorgestellt, Interviews, Angebot'],['suche','In Suche','Auftrag erteilt, Sourcing läuft'],['vorb','In Vorbereitung','Link, Intake, Machbarkeit']].forEach(function(bk){var li=L.filter(function(a){return blockOf(a)===bk[0]}).sort(SORT[cf.sort]||SORT.rang);if(!li.length)return;
+ [['heute','Heute handeln','Offene Aufgaben bei Kandidaten'],['kunde','Beim Kunden','Vorgestellt, Interviews, Angebot'],['suche','In Suche','Auftrag erteilt, Sourcing läuft'],['vorb','In Vorbereitung','Link, Intake, Machbarkeit, angeboten']].forEach(function(bk){var li=L.filter(function(a){return blockOf(a)===bk[0]}).sort(SORT[cf.sort]||SORT.rang);if(!li.length)return;
   html+='<div class="blk">'+bk[1]+'<i>'+li.length+'</i><small>'+bk[2]+'</small></div>';li.forEach(function(a){html+=karte(a)})});
  html+='</div><div class="todo"><h3>Heute zu tun</h3>';
  if(!todo.length&&!meld.length)html+='<div class="hint">Nichts offen. Gut so.</div>';
