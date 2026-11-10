@@ -88,7 +88,7 @@
  </div>
  <div class="row2">
   <div><label for="name_anschreiben">Firmenname im Anschreiben an Kandidaten</label><select id="name_anschreiben"><option value="nein">nein, anonym (Branche, Größe, Region)</option><option value="ja">ja, Auftraggeber nennen</option></select></div>
-  <div></div>
+  <div><label for="neusuche">Neusuche auf LinkedIn/Xing</label><select id="neusuche" title="Folge: automatisch = die Chat-Prüfung sucht neue Profile, solange weniger als 3 Kandidaten aktiv beim Kunden sind und die Pipeline das nicht auffüllt (attraktive Aufträge zuerst). immer = bei jedem Lauf suchen. nie = nur vorhandene Profile prüfen."><option value="automatisch">automatisch (nach Bedarf)</option><option value="immer">immer</option><option value="nie">nie, nur prüfen</option></select></div>
  </div>
 
  <h2>Prozess</h2>
@@ -134,7 +134,7 @@
  var ZIEL='https://ccpycruit.app.n8n.cloud/webhook/pycruit-auftrag';
  var h=new URLSearchParams(location.hash.slice(1));var D=h.get('d'),T=h.get('t');
  var $=function(i){return document.getElementById(i)};var modus='manuell';var transkript='';var pdfB64='';var qname='';var qart='anzeige';var ZIELQ='https://ccpycruit.app.n8n.cloud/webhook/pycruit-auftrag-quelle';
- var TXT=['titel','ort','arbeitszeit','homeoffice','niveau','gehalt_von','gehalt_bis','starttermin','vorstationen','grund','offen_seit','bisher','folgen','entscheider','team','firma_text','anzeige','name_zeigen','name_anschreiben','schritte','ansprechpartner','feedback_tage','nogos','exklusiv','honorar','agb','verantwortlich','auftrag_am','hot','sexy'];
+ var TXT=['titel','ort','arbeitszeit','homeoffice','niveau','gehalt_von','gehalt_bis','starttermin','vorstationen','grund','offen_seit','bisher','folgen','entscheider','team','firma_text','anzeige','name_zeigen','name_anschreiben','neusuche','schritte','ansprechpartner','feedback_tage','nogos','exklusiv','honorar','agb','verantwortlich','auftrag_am','hot','sexy'];
  var LST=['aufgaben','muss','kann','benefits','offlimits'];
  ['hot','sexy'].forEach(function(id){var s=$(id);var o=document.createElement('option');o.value='';o.textContent='KI-Vorschlag';s.appendChild(o);for(var i=10;i>=1;i--){o=document.createElement('option');o.value=String(i);o.textContent=String(i);s.appendChild(o)}});
  function msg(t,ok){var m=$('msg');m.className='msg '+(ok?'ok':'err');m.textContent=t}
@@ -171,7 +171,7 @@
  $('q-los').addEventListener('click',function(){var link=$('q-link').value.trim();if(qart!=='anzeige')link='';if(!transkript&&!pdfB64&&!link){qbox('err','Bitte eine Datei wählen'+(qart==='anzeige'?' oder einen Link eintragen.':'.'));return}
   if(qart==='transkript'&&!$('aufzeichnung').checked){qbox('err','Ohne Zustimmung zur Aufzeichnung dürfen wir das Transkript nicht verwenden.');return}
   var b=this;b.disabled=true;b.textContent='Die KI liest die Quelle …';qbox('','Die KI liest die Quelle. Das dauert meist 20 bis 60 Sekunden.');
-  var akt=lesen();delete akt.hot;delete akt.sexy;delete akt.verantwortlich;delete akt.auftrag_am;delete akt.agb;delete akt.anzeige;delete akt.name_zeigen;delete akt.name_anschreiben;
+  var akt=lesen();delete akt.hot;delete akt.sexy;delete akt.verantwortlich;delete akt.auftrag_am;delete akt.agb;delete akt.anzeige;delete akt.name_zeigen;delete akt.name_anschreiben;delete akt.neusuche;
   var nutzeLink=!transkript&&!pdfB64;
   fetch(ZIELQ,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({d:D,t:T,art:qart,text:pdfB64?'':transkript,pdf_b64:pdfB64,url:nutzeLink?link:'',name:nutzeLink?link:qname,aktuell:akt})}).then(function(r){return r.json().catch(function(){return{ok:false,fehler:'Die Antwort war nicht lesbar (evtl. Zeitüberschreitung). Bitte noch einmal versuchen.'}})}).then(zeigen).catch(function(){qbox('err','Keine Verbindung zur Auswertung. Bitte noch einmal versuchen.')}).then(function(){b.disabled=false;b.textContent='Quelle auswerten'})});
  $('b-ab').addEventListener('click',function(){var b=this;if($('auftrag_am').value){msg('Bei „Auftrag erteilt am“ steht schon ein Datum. Eine Auftragsbestätigung ist dann nicht mehr nötig.',false);return}
