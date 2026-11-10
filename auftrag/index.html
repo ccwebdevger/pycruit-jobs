@@ -22,6 +22,7 @@
 .score b{font-size:16px}
 .hide{display:none}
 .ki{font-size:14px;color:var(--tx2);margin-top:6px}
+.btn.hell{background:#fff!important;color:#191919!important;border:1px solid #CFCFCF!important;box-shadow:none!important}
 .ki-neu{background:#FFF8D6!important;border-color:#E3BF3A!important}
 .qbox{border:1px solid var(--ln);border-radius:14px;padding:14px 16px;margin-top:12px;background:#fff;font-size:14px}
 .qbox.warn{border-color:#E3BF3A;background:#FFFBEA}.qbox.err{border-color:#E8A0A0;background:#FFF4F4}
@@ -45,7 +46,7 @@
  <div class="dz"><b id="q-titel">Stellenanzeige als Datei oder Link</b><br><span id="q-hint">PDF, DOCX oder TXT</span><br><input type="file" id="datei" accept=".txt,.docx,.pdf,.srt,.vtt,text/plain,application/pdf" style="margin-top:10px"><div id="q-link-box" style="margin-top:10px"><input type="url" id="q-link" placeholder="oder Link zur Anzeige: https://…" style="width:100%;max-width:560px"></div></div>
  <div id="transkriptInfo" class="hint"></div>
  <label class="chk hide" id="q-zust" style="margin-top:12px"><input type="checkbox" id="aufzeichnung"><span>Der Kunde hat der Aufzeichnung zu Beginn des Gesprächs zugestimmt.</span></label>
- <div style="margin-top:12px"><button class="btn" type="button" id="q-los" style="background:#fff;color:#191919;border:1px solid #CFCFCF">Quelle auswerten</button></div>
+ <div style="margin-top:12px"><button class="btn hell" type="button" id="q-los">Quelle auswerten</button></div>
  <p class="hint">(Folge: Die Vorschläge erscheinen im Formular, gespeichert wird noch nichts. Im Deal entsteht eine Notiz, welche Quelle ausgewertet wurde. Erst „Speichern“ übernimmt den geprüften Stand.)</p>
  <div id="q-erg"></div>
 
@@ -117,7 +118,7 @@
  <p class="hint">Leer lassen heißt: Die KI macht einen Vorschlag mit Begründung. Den können Sie danach ändern.</p>
  <div id="kiBox" class="score hide"></div>
 
- <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap"><button class="btn" type="button" id="senden">Speichern</button><button class="btn" type="button" id="b-ab" style="background:#fff;color:#191919;border:1px solid #CFCFCF">Auftragsbestätigung vorbereiten</button></div>
+ <div style="display:flex;gap:10px;margin-top:22px;flex-wrap:wrap"><button class="btn" type="button" id="senden">Speichern</button><button class="btn hell" type="button" id="b-ab">Auftragsbestätigung vorbereiten</button></div>
  <p class="hint">(Folge von „Auftragsbestätigung vorbereiten“: Die Auftragsklärung wird gespeichert, danach liegt im Postfach des Jobverantwortlichen ein Entwurf an den Ansprechpartner mit Zusammenfassung, Konditionen, AGB-Link und dem Button „Suchauftrag verbindlich erteilen“. Der Deal rückt auf „Auftrag angeboten“. Nichts wird automatisch gesendet. Klickt der Kunde den Button, wird der Auftrag mit Zeitpunkt und AGB-Fassung protokolliert, und Statustabellen und Board entstehen automatisch.)</p>
  <div class="msg" id="msg" role="status" aria-live="polite"></div>
  </div>
