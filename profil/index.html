@@ -25,6 +25,7 @@ textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px
   <h2 style="font-size:22px">Profil prüfen</h2>
   <p class="sub" id="info">Einen Moment …</p>
   <div id="inhalt" style="display:none">
+  <label for="gespraech_von">Gespräch geführt von (Ansprechpartner im PDF und Unterschrift der Mail)</label><select id="gespraech_von"><option value="24260132">Christian Czepeczauer</option><option value="24263740">Tina Mater</option></select>
   <label for="rolle">Zeile unter dem Namen</label><input type="text" id="rolle" maxlength="160">
   <div class="row2"><div><label for="verfuegbar">Verfügbar</label><input type="text" id="verfuegbar" maxlength="60"></div><div><label for="gehalt">Gehaltswunsch</label><input type="text" id="gehalt" maxlength="60"></div></div>
   <div class="row2"><div><label for="wohnort">Wohnort</label><input type="text" id="wohnort" maxlength="60"></div><div><label for="arbeitsmodell">Arbeitsmodell</label><input type="text" id="arbeitsmodell" maxlength="60"></div></div>
@@ -66,13 +67,13 @@ textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px
  function zeigeP(l){var d=document.getElementById('pruef');l=l||[];if(!l.length){d.innerHTML='<p class="hint" style="color:#1E8A50">Endkontrolle: keine Auffälligkeiten.</p>';document.getElementById('b-frei').disabled=false;return}var rot=l.some(function(x){return x.stufe==='rot'});d.innerHTML='<p style="font-weight:600;margin:0 0 6px">Endkontrolle</p>'+l.map(function(x){return '<div style="padding:6px 10px;margin:4px 0;border-radius:8px;font-size:14px;background:'+(x.stufe==='rot'?'#FDECEC;color:#B42318':'#FBF0DA;color:#9A6400')+'">'+(x.stufe==='rot'?'Rot: ':'Gelb: ')+String(x.text).replace(/</g,'&lt;')+'</div>'}).join('')+(rot?'<p class="hint">Freigabe erst, wenn nichts Rotes übrig ist. Ändern, dann Speichern.</p>':'');document.getElementById('b-frei').disabled=rot}
  var EIN_ALT=EIN,FA=['verfuegbar','gehalt','wohnort','arbeitsmodell','staatsangehoerigkeit','arbeitserlaubnis'];
  function sp(l){return l.split('|').map(function(x){return x.trim()})}
- function fuellen(p){EIN.forEach(function(k){$(k).value=p[k]||'';if($(k).__up)$(k).__up()});FA.forEach(function(k){$(k).value=(p.fakten||{})[k]||''});
+ function fuellen(p){if($('gespraech_von'))$('gespraech_von').value=String(p.gespraech_von||p.owner||'24260132');EIN.forEach(function(k){$(k).value=p[k]||'';if($(k).__up)$(k).__up()});FA.forEach(function(k){$(k).value=(p.fakten||{})[k]||''});
   $('passung').value=(p.passung||[]).map(function(x){return [x.kriterium,x.gruppe,x.bewertung,x.beleg].join(' | ')}).join('\n');
   $('werdegang').value=(p.werdegang||[]).map(function(x){return [x.zeit,x.titel,x.firma].join(' | ')+(x.punkte||[]).map(function(y){return '\n- '+y}).join('')}).join('\n\n');
   $('ausbildung').value=(p.ausbildung||[]).map(function(x){return x.abschluss+' | '+x.ort_jahr}).join('\n');
   $('sprachen').value=(p.sprachen||[]).map(function(x){return x.sprache+' | '+x.niveau}).join('\n');
   $('kenntnisse').value=(p.kenntnisse||[]).map(function(x){return (x.top?'*':'')+x.name}).join(', ')}
- function lesen(){var p=Object.assign({},prof);EIN.forEach(function(k){p[k]=$(k).value.trim()});p.fakten={};FA.forEach(function(k){p.fakten[k]=$(k).value.trim()});
+ function lesen(){var p=Object.assign({},prof);if($('gespraech_von')){p.gespraech_von=$('gespraech_von').value;p.owner=p.gespraech_von}EIN.forEach(function(k){p[k]=$(k).value.trim()});p.fakten={};FA.forEach(function(k){p.fakten[k]=$(k).value.trim()});
   p.passung=$('passung').value.split('\n').filter(function(l){return l.trim()}).map(function(l){var a=sp(l);return {kriterium:a[0]||'',gruppe:/^kann/i.test(a[1]||'')?'kann':'muss',bewertung:['erfüllt','teilweise','offen'].indexOf((a[2]||'').toLowerCase())>=0?(a[2]||'').toLowerCase():'offen',beleg:a.slice(3).join(' | ')}});
   p.werdegang=$('werdegang').value.split(/\n\s*\n/).map(function(b){var z=b.split('\n').filter(function(l){return l.trim()});if(!z.length)return null;var a=sp(z[0]);return {zeit:a[0]||'',titel:a[1]||'',firma:a.slice(2).join(' | '),punkte:z.slice(1).map(function(l){return l.replace(/^\s*[-•*]\s*/,'').trim()}).filter(Boolean)}}).filter(Boolean);
   p.ausbildung=$('ausbildung').value.split('\n').filter(function(l){return l.trim()}).map(function(l){var a=sp(l);return {abschluss:a[0],ort_jahr:a.slice(1).join(' | ')}});
@@ -83,7 +84,7 @@ textarea.mono{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12.5px
  senden('laden').then(function(r){if(!r.ok){$('info').textContent=r.fehler||'Der Link ist ungültig.';return}prof=r.profil;fuellen(prof);zeigeP(r.pruefung);if(prof.art==='interim'){$('zusatz-box').style.display='';$('b-frei').textContent='Freigeben und Mail-Entwurf vorbereiten';document.querySelector('h2').textContent='Resümee prüfen'}$('kopf').textContent=prof.kuerzel+' '+prof.name;
   $('info').innerHTML='';$('info').appendChild(document.createTextNode((prof.stelle||'')+(prof.quelle?'. Grundlage: '+prof.quelle+'.':'')));if(prof.pdf){var a=document.createElement('a');a.href=prof.pdf;a.target='_blank';a.rel='noopener';a.textContent=' Freigegebenes PDF öffnen';$('info').appendChild(a)}
   $('inhalt').style.display='';vorschau()}).catch(function(){$('info').textContent='Keine Verbindung.'});
- document.querySelectorAll('#f input,#f textarea').forEach(function(el){el.addEventListener('input',vorschau)});
+ document.querySelectorAll('#f input,#f textarea,#f select').forEach(function(el){el.addEventListener('input',vorschau)});
  function knopf(id,aktion,txt){$(id).addEventListener('click',function(){if(!prof)return;var b=$(id),a=b.textContent;b.disabled=true;b.textContent=aktion==='freigeben'?'PDF wird erstellt …':'Einen Moment …';
   senden(aktion,{profil:lesen()}).then(function(r){b.disabled=false;b.textContent=a;if(r.pruefung)zeigeP(r.pruefung);if(r.ok){if(r.profil)prof=r.profil;msg(txt+(r.link?(prof&&prof.art==='interim'?' Der Mail-Entwurf liegt etwa eine Minute später in recruiting@, sobald die Zustimmung (H, I, J) vorliegt. Sie bekommen dazu eine Mail.':' Das PDF steht in der Statustabelle und ist für den Kunden sichtbar, sobald die Zustimmung vorliegt.'):''),true)}else msg(r.fehler||'Das hat nicht geklappt.',false)}).catch(function(){b.disabled=false;b.textContent=a;msg('Keine Verbindung oder Zeitüberschreitung.',false)})})}
  knopf('b-save','speichern','Gespeichert.');knopf('b-frei','freigeben','Freigegeben.');
