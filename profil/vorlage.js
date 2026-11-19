@@ -65,7 +65,7 @@ function profilHtml(p) {
   var datum = p.datum ? String(p.datum).split('-').reverse().join('.') : '';
   var gdatum = p.gespraech_am ? String(p.gespraech_am).split('-').reverse().join('.') : '';
   var foot = function (n) { return '<div class="foot"><span>Vertraulich. Nur für die Besetzung dieser Stelle, Weitergabe nicht gestattet.</span><span>pycruit GmbH · kontakt@pycruit.de · Seite ' + n + '/2</span></div>'; };
-  var css = "@font-face{font-family:'Inter';font-weight:400;src:url(" + B + "/assets/fonts/inter-400.woff2)}@font-face{font-family:'Inter';font-weight:500;src:url(" + B + "/assets/fonts/inter-500.woff2)}@font-face{font-family:'Inter';font-weight:600;src:url(" + B + "/assets/fonts/inter-600.woff2)}@font-face{font-family:'Inter Tight';font-weight:800;src:url(" + B + "/assets/fonts/inter-tight-800.woff2)}"
+  var css = "@import url(https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap);@font-face{font-family:'Inter Tight';font-weight:800;src:url(" + B + "/assets/fonts/inter-tight-800.woff2)}"
     + "@page{size:A4;margin:0}*{box-sizing:border-box}body{margin:0;font-family:Inter,sans-serif;color:#191919;font-size:10pt;line-height:1.45;-webkit-print-color-adjust:exact;print-color-adjust:exact;background:#fff}"
     + ".page{width:210mm;height:297mm;padding:0 0 14mm;position:relative;page-break-after:always;overflow:hidden;background:#fff}.page:last-child{page-break-after:auto}"
     + ".band{height:5mm;background:linear-gradient(90deg,#EE3934,#D2126C)}.head{display:flex;justify-content:space-between;align-items:center;padding:8mm 16mm 0}.head img{height:11mm}"
