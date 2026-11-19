@@ -88,7 +88,7 @@ function profilHtml(p) {
     + ".foot{position:absolute;left:16mm;right:16mm;bottom:7mm;display:flex;justify-content:space-between;font-size:7.5pt;color:#9A9A9A;border-top:1px solid #ECECEE;padding-top:2.5mm}";
   var werd = (p.werdegang || []).map(function (s) { return '<div class="st"><div class="z">' + e(s.zeit) + '</div><h3>' + e(s.titel) + '</h3>' + (s.firma ? '<div class="f">' + e(s.firma) + '</div>' : '') + ((s.punkte || []).length ? '<ul>' + s.punkte.map(function (x) { return '<li>' + e(x) + '</li>'; }).join('') + '</ul>' : '') + '</div>'; }).join('');
   var liste = function (l, a, b) { return (l || []).length ? '<ul class="list">' + l.map(function (x) { return '<li><b>' + e(x[a]) + '</b>' + (x[b] ? '<span>' + e(x[b]) + '</span>' : '') + '</li>'; }).join('') + '</ul>' : '<p style="color:#6B6B6B;margin:0">keine Angabe</p>'; };
-  var IM = p.art === 'interim';
+  var IM = p.variante ? p.variante === 'resuemee' : p.art === 'interim'; /* variante: resuemee = Lebenslauf + Resümee (Gesprächsnotizen pycruit), komplett = Komplettprofil */
   var TT = IM ? 'Kandidaten-Resümee' : 'Kandidatenprofil';
   var absatz = function (s) { return String(s || '').split(/\n+/).filter(function (x) { return x.trim(); }).map(function (x) { return '<p>' + e(x) + '</p>'; }).join(''); };
   var seite2 = IM
